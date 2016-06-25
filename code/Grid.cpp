@@ -6,6 +6,9 @@ Grid::Grid() {
 Grid::Grid(GridType type_) : type(type_) {
 }
 
+Grid::~Grid() {
+}
+
 Grid::GridType Grid::getType() const {
     return type;
 }

@@ -7,9 +7,9 @@ public:
         BLANK, WALL
     };
 
-    // Constructors
     Grid();
     Grid(GridType type_);
+    ~Grid();
 
     // Getters and setters
     GridType getType() const;
