@@ -2,6 +2,8 @@
 
 #include <string>
 
+class Map;
+
 class GameCtrl {
 public:
     static unsigned MAP_ROW;
@@ -23,5 +25,5 @@ public:
     static void exitWithException(const std::string &msg);
 
 private:
-
+    Map *map;
 };

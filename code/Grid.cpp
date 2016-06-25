@@ -1,7 +1,7 @@
 #include "Grid.h"
 
-Grid::Grid() {
-}
+//Grid::Grid() {
+//}
 
 Grid::Grid(GridType type_) : type(type_) {
 }
