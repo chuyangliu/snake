@@ -18,12 +18,12 @@ public:
     const Grid& at(const unsigned &x, const unsigned &y) const;
 
     // Getters and setters
-    unsigned getRowNum() const;
-    unsigned getColNum() const;
+    unsigned getRowCount() const;
+    unsigned getColCount() const;
 
 private:
-    unsigned rowNum;
-    unsigned colNum;
+    unsigned rowCnt;
+    unsigned colCnt;
 
     Grid **content = nullptr;
 };

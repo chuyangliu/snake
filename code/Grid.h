@@ -7,7 +7,6 @@ public:
         BLANK, WALL
     };
 
-    //Grid();
     Grid(GridType type_ = BLANK);
     ~Grid();
 

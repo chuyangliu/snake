@@ -24,8 +24,8 @@ int GameCtrl::start() {
     Console::clear();
     while (1) {
         Console::setCursor();
-        for (unsigned i = 0; i < map->getRowNum(); ++i) {
-            for (unsigned j = 0; j < map->getColNum(); ++j) {
+        for (unsigned i = 0; i < map->getRowCount(); ++i) {
+            for (unsigned j = 0; j < map->getColCount(); ++j) {
                 switch (map->at(i, j).getType()) {
                     case Grid::GridType::BLANK:
                         Console::writeWithColor("  ", 0);
