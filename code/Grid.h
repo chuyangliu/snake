@@ -6,7 +6,7 @@ public:
     Grid type declaration
     */
     enum GridType {
-        BLANK, WALL
+        BLANK, WALL, FOOD
     };
 
     Grid(GridType type_ = BLANK);

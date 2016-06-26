@@ -2,10 +2,12 @@
 #include "Console.h"
 #include "Map.h"
 #include <iostream>
+#include <exception>
 
 using std::cout;
 using std::endl;
 using std::thread;
+using std::exception;
 
 unsigned GameCtrl::MAP_ROW = 12;
 unsigned GameCtrl::MAP_COL = 12;
@@ -26,22 +28,36 @@ GameCtrl::GameCtrl() {
 GameCtrl::~GameCtrl() {
     delete map;
     map = nullptr;
-
     delete redrawThread;
     redrawThread = nullptr;
 }
 
 int GameCtrl::start() {
-    startDrawing();
-
-    while (1) {}
-
-    return 0;
+    try {
+        startDrawing();
+        while (1) {
+            map->clearFood();
+            if (!map->hasFood()) {
+                map->createFood();
+            }
+            Sleep(100);
+        }
+        return 0;
+    } catch (exception &e) {
+        cout << e.what() << endl;
+        return -1;
+    }
 }
  
 void GameCtrl::exitWithException(const std::string &msg) {
     Console::writeWithColor(msg, FOREGROUND_RED | FOREGROUND_INTENSITY);
-    redrawThread->join();
+    if (redrawThread) {
+        redrawThread->join();
+    }
+    delete map;
+    map = nullptr;
+    delete redrawThread;
+    redrawThread = nullptr;
     exit(-1);
 }
 
@@ -64,6 +80,9 @@ void GameCtrl::draw() {
                         break;
                     case Grid::GridType::WALL:
                         Console::writeWithColor("  ", BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
+                        break;
+                    case Grid::GridType::FOOD:
+                        Console::writeWithColor("  ", BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
                         break;
                     default:
                         break;
