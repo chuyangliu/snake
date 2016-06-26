@@ -5,12 +5,12 @@
 Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), colCnt(colCnt_) {
     content = new(std::nothrow) Grid*[rowCnt_];
     if (!content) {
-        GameCtrl::exitWithException("Not enough memory.\n");
+        GameCtrl::getInstance()->exitWithException("Not enough memory.\n");
     }
     for (unsigned i = 0; i < rowCnt_; ++i) {
         content[i] = new(std::nothrow) Grid[colCnt_];
         if (!content) {
-            GameCtrl::exitWithException("Not enough memory.\n");
+            GameCtrl::getInstance()->exitWithException("Not enough memory.\n");
         }
 
         // Initial map content

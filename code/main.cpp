@@ -1,5 +1,5 @@
 #include "GameCtrl.h"
 
 int main() {
-    return GameCtrl().start();
+    return GameCtrl::getInstance()->start();
 }

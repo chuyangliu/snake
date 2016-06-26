@@ -2,7 +2,9 @@
 
 class Grid {
 public:
-    // Grid type declaration
+    /*
+    Grid type declaration
+    */
     enum GridType {
         BLANK, WALL
     };
@@ -10,8 +12,11 @@ public:
     Grid(GridType type_ = BLANK);
     ~Grid();
 
-    // Getters and setters
+    /*
+    Getters and setters
+    */
     GridType getType() const;
+
     void setType(GridType type_);
 
 private:

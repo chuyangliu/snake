@@ -7,7 +7,9 @@ public:
     Map(const unsigned &rowNum_, const unsigned &colNum_);
     ~Map();
 
-    // Forbid copy
+    /*
+    Forbid copy
+    */
     Map(const Map &m) = delete;
     Map& operator=(const Map &m) = delete;
 
@@ -17,7 +19,9 @@ public:
     Grid& at(const unsigned &x, const unsigned &y);
     const Grid& at(const unsigned &x, const unsigned &y) const;
 
-    // Getters and setters
+    /*
+    Getters and setters
+    */
     unsigned getRowCount() const;
     unsigned getColCount() const;
 
