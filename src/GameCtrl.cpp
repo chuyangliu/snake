@@ -3,6 +3,11 @@
 #include "Map.h"
 #include <iostream>
 #include <exception>
+#ifdef __linux__ 
+#include <unistd.h>
+#elif _WIN32
+#include <Windows.h>
+#endif
 
 using std::cout;
 using std::endl;
@@ -36,11 +41,11 @@ int GameCtrl::start() {
     try {
         startDrawing();
         while (1) {
-            map->clearFood();
-            if (!map->hasFood()) {
+            //map->clearFood();
+            //if (!map->hasFood()) {
                 map->createFood();
-            }
-            Sleep(100);
+            //}
+            sleep_(20);
         }
         return 0;
     } catch (exception &e) {
@@ -50,7 +55,8 @@ int GameCtrl::start() {
 }
  
 void GameCtrl::exitWithException(const std::string &msg) {
-    Console::writeWithColor(msg, FOREGROUND_RED | FOREGROUND_INTENSITY);
+    Console::clear();
+    Console::writeWithColor(msg, ConsoleColor(RED, BLACK, true, true));
     if (redrawThread) {
         redrawThread->join();
     }
@@ -76,13 +82,13 @@ void GameCtrl::draw() {
             for (unsigned j = 0; j < map->getColCount(); ++j) {
                 switch (map->at(i, j).getType()) {
                     case Grid::GridType::BLANK:
-                        Console::writeWithColor("  ", 0);
+                        Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
                         break;
                     case Grid::GridType::WALL:
-                        Console::writeWithColor("  ", BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
+                        Console::writeWithColor("  ", ConsoleColor(WHITE, WHITE, true, true));
                         break;
                     case Grid::GridType::FOOD:
-                        Console::writeWithColor("  ", BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
+                        Console::writeWithColor("  ", ConsoleColor(YELLOW, YELLOW, true, true));
                         break;
                     default:
                         break;
@@ -91,4 +97,14 @@ void GameCtrl::draw() {
             cout << endl;
         }
     }
+}
+
+void GameCtrl::sleep_(const int time) {
+#ifdef __linux__ 
+    usleep(time * 1000);
+#elif _WIN32
+    Sleep(time);
+#else
+    // Other platform
+#endif
 }

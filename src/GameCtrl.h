@@ -57,4 +57,11 @@ private:
     Start drawing the map content.
     */
     void startDrawing();
+
+    /*
+    Sleep the thread.
+
+    @param time sleep time in ms.
+    */
+    void sleep_(const int time);
 };
