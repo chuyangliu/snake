@@ -21,6 +21,13 @@ public:
     const Grid& at(const unsigned &x, const unsigned &y) const;
 
     /*
+    Check if the point hits the boundary of the map.
+
+    @param p the point to check
+    */
+    bool hitBoundary(const Point &p) const;
+
+    /*
     Create a food on the map randomly.
     */
     void createFood();

@@ -1,5 +1,5 @@
 # Objects
-OBJS = main.o Console.o GameCtrl.o Grid.o Map.o Point.o
+OBJS = main.o Console.o GameCtrl.o Grid.o Map.o Point.o Snake.o
 
 # Compiler
 CC = g++ -std=c++11
@@ -27,6 +27,9 @@ Map.o: Map.cpp
 	
 Point.o: Point.cpp
 	$(CC) -c Point.cpp
+
+Snake.o: Snake.cpp
+	$(CC) -c Snake.cpp
 
 clean:
 	rm Snake ${OBJS}

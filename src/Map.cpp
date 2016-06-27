@@ -26,7 +26,7 @@ Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), co
 }
 
 Map::~Map() {
-    for (unsigned i = 0; i < GameCtrl::MAP_ROW; ++i) {
+    for (unsigned i = 0; i < rowCnt; ++i) {
         delete[] content[i];
         content[i] = nullptr;
     }
@@ -42,6 +42,10 @@ Grid& Map::at(const unsigned &x, const unsigned &y) {
 
 const Grid& Map::at(const unsigned &x, const unsigned &y) const {
     return content[x][y];
+}
+
+bool Map::hitBoundary(const Point &p) const {
+    return p.x == 0 || p.x == rowCnt - 1 || p.y == 0 || p.y == colCnt - 1;
 }
 
 void Map::createFood() {

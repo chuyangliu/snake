@@ -1,6 +1,5 @@
 #include "GameCtrl.h"
 #include "Console.h"
-#include "Map.h"
 #include <iostream>
 #include <exception>
 #ifdef __linux__ 
@@ -24,15 +23,15 @@ GameCtrl* GameCtrl::getInstance() {
 }
 
 GameCtrl::GameCtrl() {
-    map = new(std::nothrow) Map(GameCtrl::MAP_ROW, GameCtrl::MAP_COL);
-    if (!map) {
+    snake = new(std::nothrow) Snake();
+    if (!snake) {
         GameCtrl::exitWithException("Not enough memory.\n");
     }
 }
 
 GameCtrl::~GameCtrl() {
-    delete map;
-    map = nullptr;
+    delete snake;
+    snake = nullptr;
     delete redrawThread;
     redrawThread = nullptr;
 }
@@ -41,9 +40,9 @@ int GameCtrl::start() {
     try {
         startDrawing();
         while (1) {
-            //map->clearFood();
-            //if (!map->hasFood()) {
-                map->createFood();
+            //snake->getMoveArea()->clearFood();
+            //if (!snake->getMoveArea()->hasFood()) {
+                snake->getMoveArea()->createFood();
             //}
             sleep_(20);
         }
@@ -60,8 +59,8 @@ void GameCtrl::exitWithException(const std::string &msg) {
     if (redrawThread) {
         redrawThread->join();
     }
-    delete map;
-    map = nullptr;
+    delete snake;
+    snake = nullptr;
     delete redrawThread;
     redrawThread = nullptr;
     exit(-1);
@@ -78,9 +77,9 @@ void GameCtrl::draw() {
     Console::clear();
     while (1) {
         Console::setCursor();
-        for (unsigned i = 0; i < map->getRowCount(); ++i) {
-            for (unsigned j = 0; j < map->getColCount(); ++j) {
-                switch (map->at(i, j).getType()) {
+        for (unsigned i = 0; i < snake->getMoveArea()->getRowCount(); ++i) {
+            for (unsigned j = 0; j < snake->getMoveArea()->getColCount(); ++j) {
+                switch (snake->getMoveArea()->at(i, j).getType()) {
                     case Grid::GridType::BLANK:
                         Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
                         break;

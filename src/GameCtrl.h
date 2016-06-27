@@ -2,8 +2,9 @@
 
 #include <string>
 #include <thread>
+#include "Snake.h"
 
-class Map;
+class Snake;
 
 /*
 Game controller class.
@@ -11,6 +12,7 @@ This is a singleton.
 */
 class GameCtrl {
 public:
+    // Constants
     static unsigned MAP_ROW;
     static unsigned MAP_COL;
 
@@ -40,7 +42,7 @@ public:
     void exitWithException(const std::string &msg);
 
 private:
-    Map *map = nullptr;
+    Snake *snake = nullptr;
     std::thread *redrawThread = nullptr;
 
     /*
