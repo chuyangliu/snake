@@ -16,7 +16,7 @@ Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), co
 
         // Initial map content
         if (i == 0 || i == rowCnt - 1) {
-            for (unsigned j = 0; j < colCnt; ++j) {
+            for (int j = 0; j < colCnt; ++j) {
                 content[i][j].setType(Grid::GridType::WALL);
             }
         }
@@ -26,7 +26,7 @@ Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), co
 }
 
 Map::~Map() {
-    for (unsigned i = 0; i < rowCnt; ++i) {
+    for (int i = 0; i < rowCnt; ++i) {
         delete[] content[i];
         content[i] = nullptr;
     }
@@ -48,8 +48,17 @@ bool Map::hitBoundary(const Point &p) const {
     return p.x == 0 || p.x == rowCnt - 1 || p.y == 0 || p.y == colCnt - 1;
 }
 
+bool Map::isInside(const Point &p) const {
+    return p.x > 0 && p.x <= rowCnt - 1 && p.y > 0 && p.y < colCnt - 1;
+}
+
 void Map::createFood() {
-    int row = random(1, rowCnt - 2), col = random(1, colCnt - 2);
+    int row, col;
+    do {
+        row = random(1, rowCnt - 2);
+        col = random(1, colCnt - 2);
+    } while (content[row][col].getType() != Grid::GridType::EMPTY);
+
     if (!foodPos) {
         foodPos = new(std::nothrow) Point(row, col);
         if (!foodPos) {
@@ -64,7 +73,7 @@ void Map::createFood() {
 
 void Map::clearFood() {
     if (foodPos) {
-        content[foodPos->x][foodPos->y].setType(Grid::GridType::BLANK);
+        content[foodPos->x][foodPos->y].setType(Grid::GridType::EMPTY);
         delete foodPos;
         foodPos = nullptr;
     }

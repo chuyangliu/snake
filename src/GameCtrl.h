@@ -4,8 +4,6 @@
 #include <thread>
 #include "Snake.h"
 
-class Snake;
-
 /*
 Game controller class.
 This is a singleton.
@@ -62,6 +60,7 @@ private:
 
     /*
     Sleep the thread.
+    This is a cross-platform method.
 
     @param time sleep time in ms.
     */

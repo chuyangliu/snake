@@ -28,6 +28,13 @@ public:
     bool hitBoundary(const Point &p) const;
 
     /*
+    Check if the point is inside the map.
+
+    @param p the point to check
+    */
+    bool isInside(const Point &p) const;
+
+    /*
     Create a food on the map randomly.
     */
     void createFood();
@@ -58,8 +65,8 @@ public:
     const Point* getFoodPos() const;
 
 private:
-    unsigned rowCnt;
-    unsigned colCnt;
+    int rowCnt;
+    int colCnt;
     Point *foodPos = nullptr;
     Grid **content = nullptr;
 

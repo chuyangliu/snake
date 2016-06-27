@@ -42,9 +42,13 @@ int GameCtrl::start() {
         while (1) {
             //snake->getMoveArea()->clearFood();
             //if (!snake->getMoveArea()->hasFood()) {
-                snake->getMoveArea()->createFood();
+                //snake->getMoveArea()->createFood();
             //}
-            sleep_(20);
+            //sleep_(20);
+
+            snake->setMoveDirection(Snake::MoveDirection::RIGHT);
+            snake->move(true);
+            sleep_(1000);
         }
         return 0;
     } catch (exception &e) {
@@ -66,6 +70,16 @@ void GameCtrl::exitWithException(const std::string &msg) {
     exit(-1);
 }
 
+void GameCtrl::sleep_(const int time) {
+#ifdef __linux__ 
+    usleep(time * 1000);
+#elif _WIN32
+    Sleep(time);
+#else
+    // Other platform
+#endif
+}
+
 void GameCtrl::startDrawing() {
     redrawThread = new(std::nothrow) thread(&GameCtrl::draw, this);
     if (!redrawThread) {
@@ -80,7 +94,7 @@ void GameCtrl::draw() {
         for (unsigned i = 0; i < snake->getMoveArea()->getRowCount(); ++i) {
             for (unsigned j = 0; j < snake->getMoveArea()->getColCount(); ++j) {
                 switch (snake->getMoveArea()->at(i, j).getType()) {
-                    case Grid::GridType::BLANK:
+                    case Grid::GridType::EMPTY:
                         Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
                         break;
                     case Grid::GridType::WALL:
@@ -89,6 +103,12 @@ void GameCtrl::draw() {
                     case Grid::GridType::FOOD:
                         Console::writeWithColor("  ", ConsoleColor(YELLOW, YELLOW, true, true));
                         break;
+                    case Grid::GridType::SNAKEHEAD:
+                        Console::writeWithColor("  ", ConsoleColor(RED, RED, true, true));
+                        break;
+                    case Grid::GridType::SNAKEBODY:
+                        Console::writeWithColor("  ", ConsoleColor(GREEN, GREEN, true, true));
+                        break;
                     default:
                         break;
                 }
@@ -96,14 +116,4 @@ void GameCtrl::draw() {
             cout << endl;
         }
     }
-}
-
-void GameCtrl::sleep_(const int time) {
-#ifdef __linux__ 
-    usleep(time * 1000);
-#elif _WIN32
-    Sleep(time);
-#else
-    // Other platform
-#endif
 }
