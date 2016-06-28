@@ -47,14 +47,8 @@ Snake::MoveDirection Snake::getMoveDirection() const {
     return direc;
 }
 
-void Snake::move(const bool &removeOldTail) {
+void Snake::move() {
     if (direc == NONE || moveArea->hitBoundary(getHeadPos())) return;
-
-    if (removeOldTail) {
-        Point tail = getTailPos();
-        moveArea->at(tail.x, tail.y).setType(Grid::GridType::EMPTY);
-        body.erase(--body.end());  // Remove old tail
-    }
 
     // Calculate direction displacement
     int dx = 0, dy = 0;
@@ -84,6 +78,12 @@ void Snake::move(const bool &removeOldTail) {
     moveArea->at(head.x, head.y).setType(Grid::GridType::SNAKEBODY);
     Point newHead = Point(head.x + dx, head.y + dy);
     body.push_front(newHead);
+    if (moveArea->at(newHead.x, newHead.y).getType() != Grid::GridType::FOOD) {
+        // Remove old tail
+        Point tail = getTailPos();
+        moveArea->at(tail.x, tail.y).setType(Grid::GridType::EMPTY);
+        body.pop_back();
+    }
     moveArea->at(newHead.x, newHead.y).setType(Grid::GridType::SNAKEHEAD);
 }
 

@@ -36,10 +36,8 @@ public:
 
     /*
     Move at current diection.
-
-    @param retainOldTail whether to remove the old tail
     */
-    void move(const bool &removeOldTail);
+    void move();
 
     /*
     Return the head position.

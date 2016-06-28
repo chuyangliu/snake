@@ -45,6 +45,10 @@ public:
     */
     static void writeWithColor(const std::string &str, const ConsoleColor &consoleColor);
 
+    /*
+    A cross-platform getch() method.
+    */
+    static char getch();
 private:
 #ifdef WIN32
     /*

@@ -1,20 +1,18 @@
 #include "GameCtrl.h"
 #include "Console.h"
-#include <iostream>
 #include <exception>
-#ifdef __linux__ 
-#include <unistd.h>
-#elif _WIN32
+#include <cstdio>
+#ifdef _WIN32
 #include <Windows.h>
+#elif __linux__
+#include <unistd.h>
 #endif
 
-using std::cout;
-using std::endl;
 using std::thread;
 using std::exception;
 
-unsigned GameCtrl::MAP_ROW = 12;
-unsigned GameCtrl::MAP_COL = 12;
+unsigned GameCtrl::MAP_ROW = 20;
+unsigned GameCtrl::MAP_COL = 20;
 
 GameCtrl* GameCtrl::getInstance() {
     // According to C++11, static field constructor is thread-safe
@@ -30,15 +28,22 @@ GameCtrl::GameCtrl() {
 }
 
 GameCtrl::~GameCtrl() {
+    release();
+}
+
+void GameCtrl::release() {
     delete snake;
     snake = nullptr;
     delete redrawThread;
     redrawThread = nullptr;
+    delete keyboardThread;
+    keyboardThread = nullptr;
 }
 
 int GameCtrl::start() {
     try {
         startDrawing();
+        startKeyboardReceiver();
         while (1) {
             //snake->getMoveArea()->clearFood();
             //if (!snake->getMoveArea()->hasFood()) {
@@ -46,13 +51,17 @@ int GameCtrl::start() {
             //}
             //sleep_(20);
 
-            snake->setMoveDirection(Snake::MoveDirection::RIGHT);
-            snake->move(true);
-            sleep_(1000);
+            //snake->setMoveDirection(Snake::MoveDirection::RIGHT);
+            snake->move();
+            sleep_(200);
         }
+
+        redrawThread->join();
+        keyboardThread->join();
+
         return 0;
     } catch (exception &e) {
-        cout << e.what() << endl;
+        printf("%s\n", e.what());
         return -1;
     }
 }
@@ -63,14 +72,11 @@ void GameCtrl::exitWithException(const std::string &msg) {
     if (redrawThread) {
         redrawThread->join();
     }
-    delete snake;
-    snake = nullptr;
-    delete redrawThread;
-    redrawThread = nullptr;
+    release();
     exit(-1);
 }
 
-void GameCtrl::sleep_(const int time) {
+void GameCtrl::sleep_(const long time) const {
 #ifdef __linux__ 
     usleep(time * 1000);
 #elif _WIN32
@@ -80,6 +86,14 @@ void GameCtrl::sleep_(const int time) {
 #endif
 }
 
+void GameCtrl::sleepByFPS() const {
+    sleep_(static_cast<long>(fps * 1000));
+}
+
+void GameCtrl::setFPS(const double &fps_) {
+    fps = fps_;
+}
+
 void GameCtrl::startDrawing() {
     redrawThread = new(std::nothrow) thread(&GameCtrl::draw, this);
     if (!redrawThread) {
@@ -87,7 +101,7 @@ void GameCtrl::startDrawing() {
     }
 }
 
-void GameCtrl::draw() {
+void GameCtrl::draw() const {
     Console::clear();
     while (1) {
         Console::setCursor();
@@ -113,7 +127,35 @@ void GameCtrl::draw() {
                         break;
                 }
             }
-            cout << endl;
+            printf("\n");
         }
+        sleepByFPS();
+    }
+}
+
+void GameCtrl::startKeyboardReceiver() {
+    keyboardThread = new(std::nothrow) thread(&GameCtrl::receiveKeyboardInstruction, this);
+    if (!keyboardThread) {
+        GameCtrl::exitWithException("Not enough memory.\n");
+    }
+}
+
+void GameCtrl::receiveKeyboardInstruction() {
+    while (1) {
+        char c = Console::getch();
+        switch (c) {
+            case 'w':
+                snake->setMoveDirection(Snake::MoveDirection::UP); break;
+            case 'a':
+                snake->setMoveDirection(Snake::MoveDirection::LEFT); break;
+            case 's':
+                snake->setMoveDirection(Snake::MoveDirection::DOWN); break;
+            case 'd':
+                snake->setMoveDirection(Snake::MoveDirection::RIGHT); break;
+            case 27:  // Esc
+            default:
+                break;
+        }
+        sleepByFPS();
     }
 }

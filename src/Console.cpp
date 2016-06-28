@@ -1,7 +1,11 @@
 #include "Console.h"
 #include <cstdio>
-#ifdef WIN32
+#ifdef __linux__
+#include <termios.h>
+#include <unistd.h>
+#elif _WIN32
 #include <Windows.h>
+#include <conio.h>
 #endif
 
 ConsoleColor::ConsoleColor(const ColorType foreColor_, const ColorType backColor_,
@@ -141,6 +145,24 @@ void Console::writeWithColor(const std::string &str, const ConsoleColor &console
 #elif _WIN32
     setColor(consoleColor);
     printf("%s", str.c_str());
+#else
+    // Other platform
+#endif
+}
+
+char Console::getch() {
+#ifdef __linux__
+    struct termios oldattr, newattr;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldattr);
+    newattr = oldattr;
+    newattr.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
+    return ch;
+#elif _WIN32
+    return _getch();
 #else
     // Other platform
 #endif

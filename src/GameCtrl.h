@@ -39,9 +39,17 @@ public:
     */
     void exitWithException(const std::string &msg);
 
+    /*
+    Set the FPS.
+    Default is 60.
+    */
+    void setFPS(const double &fps_);
+
 private:
+    double fps = 1.0 / 60.0;
     Snake *snake = nullptr;
     std::thread *redrawThread = nullptr;
+    std::thread *keyboardThread = nullptr;
 
     /*
     Private constructor
@@ -49,9 +57,9 @@ private:
     GameCtrl();
 
     /*
-    Draw the map content.
+    Release the memory occupied.
     */
-    void draw();
+    void release();
 
     /*
     Start drawing the map content.
@@ -59,10 +67,32 @@ private:
     void startDrawing();
 
     /*
+    Called in redraw thread.
+    Draw the map content.
+    */
+    void draw() const;
+
+    /*
     Sleep the thread.
     This is a cross-platform method.
 
     @param time sleep time in ms.
     */
-    void sleep_(const int time);
+    void sleep_(const long time) const;
+
+    /*
+    Sleep a while by the FPS.
+    */
+    void sleepByFPS() const;
+
+    /*
+    Start keyboard receiver thread.
+    */
+    void startKeyboardReceiver();
+
+    /*
+    Call in keyboard thread.
+    Execute keyboard instructions.
+    */
+    void receiveKeyboardInstruction();
 };
