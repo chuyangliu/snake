@@ -40,9 +40,9 @@ public:
     void createFood();
 
     /*
-    Clear food if exists
+    Remove food if exists
     */
-    void clearFood();
+    void removeFood();
 
     /*
     Check if there is food on the map.

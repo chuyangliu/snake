@@ -53,12 +53,14 @@ void Snake::move() {
     Point newHead = getHeadPos() + getDisplacement(direc);
     body.push_front(newHead);
 
-    if (moveArea->hitBodyOrBoundary(newHead)) {
-        isDead_ = true;
-    }
-
     if (moveArea->at(newHead).getType() != Grid::GridType::FOOD) {
         removeTail();
+    } else {
+        moveArea->removeFood();
+    }
+
+    if (moveArea->hitBodyOrBoundary(newHead)) {
+        isDead_ = true;
     }
 
     moveArea->at(newHead).setType(Grid::GridType::SNAKEHEAD);

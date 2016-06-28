@@ -72,7 +72,7 @@ void Console::setColor(const ConsoleColor &consoleColor) {
 
 void Console::setCursor(const int &x, const int &y) {
 #ifdef __linux__ 
-    printf("\033[%d;%dH", x, y);
+    printf("\033[%d;%dH", y + 1, x);  // Param: row and col
 #elif _WIN32
     HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD coord;

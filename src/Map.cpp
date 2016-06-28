@@ -72,7 +72,7 @@ void Map::createFood() {
     content[row][col].setType(Grid::GridType::FOOD);
 }
 
-void Map::clearFood() {
+void Map::removeFood() {
     if (foodPos) {
         content[foodPos->x][foodPos->y].setType(Grid::GridType::EMPTY);
         delete foodPos;

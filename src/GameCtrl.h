@@ -47,19 +47,16 @@ public:
 
 private:
     double fps = 1.0 / 60.0;
+    bool threadRun = true;
     Snake *snake = nullptr;
-    std::thread *redrawThread = nullptr;
+    std::thread *drawThread = nullptr;
     std::thread *keyboardThread = nullptr;
+    std::thread *foodThread = nullptr;
 
     /*
     Private constructor
     */
     GameCtrl();
-
-    /*
-    Release the memory occupied.
-    */
-    void release();
 
     /*
     Start drawing the map content.
@@ -91,13 +88,38 @@ private:
     void startKeyboardReceiver();
 
     /*
-    Call in keyboard thread.
+    Called in keyboard thread.
     Execute keyboard instructions.
     */
     void receiveKeyboardInstruction();
 
     /*
+    Start creating food thread.
+    */
+    void startCreateFood();
+
+    /*
+    Called in food thread.
+    */
+    void createFood();
+
+    /*
+    Start all threads.
+    */
+    void startThreads();
+
+    /*
     Join all threads.
     */
     void joinThreads();
+
+    /*
+    Stop all threads
+    */
+    void stopThreads();
+
+    /*
+    Release the memory occupied.
+    */
+    void release();
 };
