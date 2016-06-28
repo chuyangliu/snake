@@ -25,19 +25,43 @@ public:
     const Map* getMoveArea() const;
 
     /*
+    Move at current diection.
+    */
+    void move();
+
+    /*
+    Check whether the snake is dead.
+    */
+    bool isDead() const;
+
+    /*
     Set move direction.
     */
     void setMoveDirection(const MoveDirection &d);
 
-    /*
-    Return move direction.
-    */
-    MoveDirection getMoveDirection() const;
+private:
+    Map *moveArea = nullptr;
+    MoveDirection direc = NONE;
+    bool isDead_ = false;
+    std::list<Point> body;
 
     /*
-    Move at current diection.
+    Add new body.
+
+    @param p the point of the new body
+    @return true if adding succeed, false otherwise
     */
-    void move();
+    bool addBody(const Point &p);
+
+    /*
+    Remove the tail of the snake.
+    */
+    void removeTail();
+
+    /*
+    Get the displacement of the direction.
+    */
+    static Point getDisplacement(const MoveDirection &d);
 
     /*
     Return the head position.
@@ -48,17 +72,4 @@ public:
     Return the tail position.
     */
     Point getTailPos() const;
-
-private:
-    Map *moveArea = nullptr;
-    MoveDirection direc = NONE;
-    std::list<Point> body;
-
-    /*
-    Add new body.
-
-    @param p the point of the new body
-    @return true if adding succeed, false otherwise
-    */
-    bool addBody(const Point &p);
 };

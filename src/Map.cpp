@@ -36,16 +36,17 @@ Map::~Map() {
     foodPos = nullptr;
 }
 
-Grid& Map::at(const unsigned &x, const unsigned &y) {
-    return content[x][y];
+Grid& Map::at(const Point &p) {
+    return content[p.x][p.y];
 }
 
-const Grid& Map::at(const unsigned &x, const unsigned &y) const {
-    return content[x][y];
+const Grid& Map::at(const Point &p) const {
+    return content[p.x][p.y];
 }
 
-bool Map::hitBoundary(const Point &p) const {
-    return p.x == 0 || p.x == rowCnt - 1 || p.y == 0 || p.y == colCnt - 1;
+bool Map::hitBodyOrBoundary(const Point &p) const {
+    return p.x == 0 || p.x == rowCnt - 1 || p.y == 0 || p.y == colCnt - 1
+        || at(p).getType() == Grid::GridType::SNAKEBODY;
 }
 
 bool Map::isInside(const Point &p) const {

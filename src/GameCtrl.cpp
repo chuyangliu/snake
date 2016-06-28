@@ -55,10 +55,7 @@ int GameCtrl::start() {
             snake->move();
             sleep_(200);
         }
-
-        redrawThread->join();
-        keyboardThread->join();
-
+        joinThreads();
         return 0;
     } catch (exception &e) {
         printf("%s\n", e.what());
@@ -107,7 +104,7 @@ void GameCtrl::draw() const {
         Console::setCursor();
         for (unsigned i = 0; i < snake->getMoveArea()->getRowCount(); ++i) {
             for (unsigned j = 0; j < snake->getMoveArea()->getColCount(); ++j) {
-                switch (snake->getMoveArea()->at(i, j).getType()) {
+                switch (snake->getMoveArea()->at(Point(i, j)).getType()) {
                     case Grid::GridType::EMPTY:
                         Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
                         break;
@@ -158,4 +155,9 @@ void GameCtrl::receiveKeyboardInstruction() {
         }
         sleepByFPS();
     }
+}
+
+void GameCtrl::joinThreads() {
+    redrawThread->join();
+    keyboardThread->join();
 }

@@ -25,13 +25,17 @@ const Map* Snake::getMoveArea() const {
     return moveArea;
 }
 
+bool Snake::isDead() const {
+    return isDead_;
+}
+
 bool Snake::addBody(const Point &p) {
     if (moveArea->isInside(p)) {
         body.push_back(p);
         if (body.size() == 1) {  // Insert a head
-            moveArea->at(p.x, p.y).setType(Grid::GridType::SNAKEHEAD);
+            moveArea->at(p).setType(Grid::GridType::SNAKEHEAD);
         } else {
-            moveArea->at(p.x, p.y).setType(Grid::GridType::SNAKEBODY);
+            moveArea->at(p).setType(Grid::GridType::SNAKEBODY);
         }
         return true;
     } else {
@@ -43,48 +47,21 @@ void Snake::setMoveDirection(const MoveDirection &d) {
     direc = d;
 }
 
-Snake::MoveDirection Snake::getMoveDirection() const {
-    return direc;
-}
-
 void Snake::move() {
-    if (direc == NONE || moveArea->hitBoundary(getHeadPos())) return;
-
-    // Calculate direction displacement
-    int dx = 0, dy = 0;
-    switch (direc) {
-        case LEFT:
-            dx = 0;
-            dy = -1;
-            break;
-        case UP:
-            dx = -1;
-            dy = 0;
-            break;
-        case RIGHT:
-            dx = 0;
-            dy = 1;
-            break;
-        case DOWN:
-            dx = 1;
-            dy = 0;
-            break;
-        default:
-            return;
-    }
-
-    // Create new head
-    Point head = getHeadPos();
-    moveArea->at(head.x, head.y).setType(Grid::GridType::SNAKEBODY);
-    Point newHead = Point(head.x + dx, head.y + dy);
+    if (isDead() || direc == NONE) return;
+    moveArea->at(getHeadPos()).setType(Grid::GridType::SNAKEBODY);
+    Point newHead = getHeadPos() + getDisplacement(direc);
     body.push_front(newHead);
-    if (moveArea->at(newHead.x, newHead.y).getType() != Grid::GridType::FOOD) {
-        // Remove old tail
-        Point tail = getTailPos();
-        moveArea->at(tail.x, tail.y).setType(Grid::GridType::EMPTY);
-        body.pop_back();
+
+    if (moveArea->hitBodyOrBoundary(newHead)) {
+        isDead_ = true;
     }
-    moveArea->at(newHead.x, newHead.y).setType(Grid::GridType::SNAKEHEAD);
+
+    if (moveArea->at(newHead).getType() != Grid::GridType::FOOD) {
+        removeTail();
+    }
+
+    moveArea->at(newHead).setType(Grid::GridType::SNAKEHEAD);
 }
 
 Point Snake::getHeadPos() const {
@@ -93,4 +70,26 @@ Point Snake::getHeadPos() const {
 
 Point Snake::getTailPos() const {
     return *body.rbegin();
+}
+
+void Snake::removeTail() {
+    moveArea->at(getTailPos()).setType(Grid::GridType::EMPTY);
+    body.pop_back();
+}
+
+Point Snake::getDisplacement(const MoveDirection &d) {
+    int dx = 0, dy = 0;
+    switch (d) {
+        case LEFT:
+            dx = 0; dy = -1; break;
+        case UP:
+            dx = -1; dy = 0; break;
+        case RIGHT:
+            dx = 0; dy = 1; break;
+        case DOWN:
+            dx = 1; dy = 0; break;
+        default:
+            return Point(0, 0);
+    }
+    return Point(dx, dy);
 }

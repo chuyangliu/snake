@@ -95,4 +95,9 @@ private:
     Execute keyboard instructions.
     */
     void receiveKeyboardInstruction();
+
+    /*
+    Join all threads.
+    */
+    void joinThreads();
 };

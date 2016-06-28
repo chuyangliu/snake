@@ -15,17 +15,17 @@ public:
     Map& operator=(const Map &m) = delete;
 
     /*
-    Return the grid at row x and column y.
+    Return the grid at the point.
     */
-    Grid& at(const unsigned &x, const unsigned &y);
-    const Grid& at(const unsigned &x, const unsigned &y) const;
+    Grid& at(const Point &p);
+    const Grid& at(const Point &p) const;
 
     /*
-    Check if the point hits the boundary of the map.
+    Check if the point hits the wall or the snake body of the map.
 
     @param p the point to check
     */
-    bool hitBoundary(const Point &p) const;
+    bool hitBodyOrBoundary(const Point &p) const;
 
     /*
     Check if the point is inside the map.
