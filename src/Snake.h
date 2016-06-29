@@ -2,6 +2,7 @@
 
 #include "Map.h"
 #include <list>
+#include <mutex>
 
 class Snake {
 public:
@@ -26,6 +27,7 @@ public:
 
     /*
     Move at current diection.
+    This is a thread-safe method.
     */
     void move();
 
@@ -39,11 +41,18 @@ public:
     */
     void setMoveDirection(const MoveDirection &d);
 
+    /*
+    Return move direction.
+    */
+    MoveDirection getMoveDirection() const;
+
 private:
     Map *moveArea = nullptr;
     MoveDirection direc = NONE;
     bool dead = false;
     std::list<Point> body;
+
+    std::mutex mutex;
 
     /*
     Add new body.

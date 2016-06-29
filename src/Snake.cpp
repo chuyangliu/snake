@@ -47,8 +47,18 @@ void Snake::setMoveDirection(const MoveDirection &d) {
     direc = d;
 }
 
+Snake::MoveDirection Snake::getMoveDirection() const {
+    return direc;
+}
+
 void Snake::move() {
-    if (isDead() || direc == NONE) return;
+    mutex.lock();
+
+    if (isDead() || direc == NONE) {
+        mutex.unlock();
+        return;
+    }
+
     moveArea->at(getHeadPos()).setType(Grid::GridType::SNAKEBODY);
     Point newHead = getHeadPos() + getDisplacement(direc);
     body.push_front(newHead);
@@ -64,6 +74,8 @@ void Snake::move() {
     }
 
     moveArea->at(newHead).setType(Grid::GridType::SNAKEHEAD);
+
+    mutex.unlock();
 }
 
 Point Snake::getHeadPos() const {

@@ -122,19 +122,37 @@ void GameCtrl::startKeyboardReceiver() {
 
 void GameCtrl::receiveKeyboardInstruction() {
     while (threadRun) {
-        if (Console::kbhit()) {
-            char c = Console::getch();
-            switch (c) {
+        if (Console::kbhit()) {  // Keyboard is hit
+            switch (Console::getch()) {
                 case 'w':
-                    snake->setMoveDirection(Snake::MoveDirection::UP); break;
-                case 'a':
-                    snake->setMoveDirection(Snake::MoveDirection::LEFT); break;
-                case 's':
-                    snake->setMoveDirection(Snake::MoveDirection::DOWN); break;
-                case 'd':
-                    snake->setMoveDirection(Snake::MoveDirection::RIGHT); break;
-                default:
+                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::UP) {
+                        snake->move();
+                    }
+                    snake->setMoveDirection(Snake::MoveDirection::UP);
                     break;
+                case 'a':
+                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::LEFT) {
+                        snake->move();
+                    }
+                    snake->setMoveDirection(Snake::MoveDirection::LEFT);
+                    break;
+                case 's':
+                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::DOWN) {
+                        snake->move();
+                    }
+                    snake->setMoveDirection(Snake::MoveDirection::DOWN);
+                    break;
+                case 'd':
+                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::RIGHT) {
+                        snake->move();
+                    }
+                    snake->setMoveDirection(Snake::MoveDirection::RIGHT);
+                    break;
+                default:
+                    continue;
+            }
+            if (!autoMoveSnake) {
+                snake->move();
             }
         }
         sleepByFPS();
