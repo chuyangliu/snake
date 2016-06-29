@@ -2,14 +2,10 @@
 #include "Console.h"
 #include <exception>
 #include <cstdio>
+#include <chrono>
 #ifdef _WIN32
 #include <Windows.h>
-#elif __linux__
-#include <unistd.h>
 #endif
-
-using std::thread;
-using std::exception;
 
 unsigned GameCtrl::MAP_ROW = 20;
 unsigned GameCtrl::MAP_COL = 20;
@@ -36,11 +32,11 @@ int GameCtrl::start() {
         startThreads();
         while (1) {
             snake->move();
-            sleep_(200);
+            sleepFor(200);
         }
         stopThreads();
         return 0;
-    } catch (exception &e) {
+    } catch (std::exception &e) {
         exitWithException(e.what());
         return -1;
     }
@@ -55,18 +51,12 @@ void GameCtrl::exitWithException(const std::string &msg) {
     exit(-1);
 }
 
-void GameCtrl::sleep_(const long time) const {
-#ifdef __linux__ 
-    usleep(time * 1000);
-#elif _WIN32
-    Sleep(time);
-#else
-    // Other platform
-#endif
+void GameCtrl::sleepFor(const long ms) const {
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 void GameCtrl::sleepByFPS() const {
-    sleep_(static_cast<long>(fps * 1000));
+    sleepFor(static_cast<long>(fps * 1000));
 }
 
 void GameCtrl::setFPS(const double &fps_) {
@@ -74,7 +64,7 @@ void GameCtrl::setFPS(const double &fps_) {
 }
 
 void GameCtrl::startDrawing() {
-    drawThread = new(std::nothrow) thread(&GameCtrl::draw, this);
+    drawThread = new(std::nothrow) std::thread(&GameCtrl::draw, this);
     if (!drawThread) {
         exitWithException("Not enough memory.\n");
     }
@@ -113,7 +103,7 @@ void GameCtrl::draw() const {
 }
 
 void GameCtrl::startKeyboardReceiver() {
-    keyboardThread = new(std::nothrow) thread(&GameCtrl::receiveKeyboardInstruction, this);
+    keyboardThread = new(std::nothrow) std::thread(&GameCtrl::receiveKeyboardInstruction, this);
     if (!keyboardThread) {
         exitWithException("Not enough memory.\n");
     }
@@ -141,7 +131,7 @@ void GameCtrl::receiveKeyboardInstruction() {
 }
 
 void GameCtrl::startCreateFood() {
-    foodThread = new(std::nothrow) thread(&GameCtrl::createFood, this);
+    foodThread = new(std::nothrow)  std::thread(&GameCtrl::createFood, this);
     if (!foodThread) {
         exitWithException("Not enough memory.\n");
     }

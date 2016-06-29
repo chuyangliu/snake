@@ -73,9 +73,9 @@ private:
     Sleep the thread.
     This is a cross-platform method.
 
-    @param time sleep time in ms.
+    @param ms sleep time in ms.
     */
-    void sleep_(const long time) const;
+    void sleepFor(const long ms) const;
 
     /*
     Sleep a while by the FPS.

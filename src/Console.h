@@ -47,13 +47,16 @@ public:
 
     /*
     A cross-platform getch() method.
+    Reference: http://stackoverflow.com/questions/3276546/how-to-implement-getch-function-of-c-in-linux
     */
     static char getch();
 
     /*
     A cross-platform kbhit() method.
+    Reference: http://cboard.cprogramming.com/c-programming/63166-kbhit-linux.html
     */
     static int kbhit();
+
 private:
 #ifdef WIN32
     /*

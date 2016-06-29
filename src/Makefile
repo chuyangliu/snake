@@ -33,3 +33,6 @@ Snake.o: Snake.cpp
 
 clean:
 	rm Snake ${OBJS}
+
+run:
+	./Snake
