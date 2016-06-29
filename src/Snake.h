@@ -42,7 +42,7 @@ public:
 private:
     Map *moveArea = nullptr;
     MoveDirection direc = NONE;
-    bool isDead_ = false;
+    bool dead = false;
     std::list<Point> body;
 
     /*

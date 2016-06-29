@@ -26,7 +26,7 @@ const Map* Snake::getMoveArea() const {
 }
 
 bool Snake::isDead() const {
-    return isDead_;
+    return dead;
 }
 
 bool Snake::addBody(const Point &p) {
@@ -60,7 +60,7 @@ void Snake::move() {
     }
 
     if (moveArea->hitBodyOrBoundary(newHead)) {
-        isDead_ = true;
+        dead = true;
     }
 
     moveArea->at(newHead).setType(Grid::GridType::SNAKEHEAD);

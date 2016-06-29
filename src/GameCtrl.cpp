@@ -27,12 +27,11 @@ GameCtrl::~GameCtrl() {
     release();
 }
 
-int GameCtrl::start() {
+int GameCtrl::run() {
     try {
         startThreads();
         while (1) {
-            snake->move();
-            sleepFor(200);
+
         }
         stopThreads();
         return 0;
@@ -56,11 +55,23 @@ void GameCtrl::sleepFor(const long ms) const {
 }
 
 void GameCtrl::sleepByFPS() const {
-    sleepFor(static_cast<long>(fps * 1000));
+    sleepFor(static_cast<long>((1.0 / fps) * 1000));
 }
 
 void GameCtrl::setFPS(const double &fps_) {
     fps = fps_;
+}
+
+void GameCtrl::setAutoMoveSnake(const bool &move) {
+    autoMoveSnake = move;
+}
+
+void GameCtrl::setEnableKeyboard(const bool &enable) {
+    enableKeyboard = enable;
+}
+
+void GameCtrl::setAutoMoveInterval(const long &ms) {
+    autoMoveInterval = ms;
 }
 
 void GameCtrl::startDrawing() {
@@ -146,16 +157,49 @@ void GameCtrl::createFood() {
     }
 }
 
+void GameCtrl::startAutoMove() {
+    moveThread = new(std::nothrow)  std::thread(&GameCtrl::autoMove, this);
+    if (!moveThread) {
+        exitWithException("Not enough memory.\n");
+    }
+}
+
+void GameCtrl::autoMove() {
+    while (1) {
+        snake->move();
+        sleepFor(autoMoveInterval);
+    }
+}
+
 void GameCtrl::startThreads() {
     startDrawing();
-    startKeyboardReceiver();
     startCreateFood();
+
+    if (enableKeyboard) {
+        startKeyboardReceiver();
+    }
+
+    if (autoMoveSnake) {
+        startAutoMove();
+    }
 }
 
 void GameCtrl::joinThreads() {
-    drawThread->join();
-    keyboardThread->join();
-    foodThread->join();
+    if (drawThread && drawThread->joinable()) {
+        drawThread->join();
+    }
+
+    if (keyboardThread && keyboardThread->joinable()) {
+        keyboardThread->join();
+    }
+
+    if (foodThread && foodThread->joinable()) {
+        foodThread->join();
+    }
+
+    if (moveThread && moveThread->joinable()) {
+        moveThread->join();
+    }
 }
 
 void GameCtrl::stopThreads() {
@@ -168,8 +212,10 @@ void GameCtrl::release() {
     delete drawThread;
     delete keyboardThread;
     delete foodThread;
+    delete moveThread;
     snake = nullptr;
     drawThread = nullptr;
     keyboardThread = nullptr;
     foodThread = nullptr;
+    moveThread = nullptr;
 }

@@ -28,9 +28,9 @@ public:
     static GameCtrl* getInstance();
 
     /*
-    Start game.
+    Run the game.
     */
-    int start();
+    int run();
 
     /*
     Exit the program with an exception message.
@@ -41,17 +41,37 @@ public:
 
     /*
     Set the FPS.
-    Default is 60.
     */
     void setFPS(const double &fps_);
 
+    /*
+    Set whether to auto move the snake.
+    */
+    void setAutoMoveSnake(const bool &move);
+
+    /*
+    Set the interval between snake's auto movements.
+
+    @param ms the interval in milliseconds.
+    */
+    void setAutoMoveInterval(const long &ms);
+
+    /*
+    Set whether to enable keyboard instructions.
+    */
+    void setEnableKeyboard(const bool &enable);
+
 private:
-    double fps = 1.0 / 60.0;
+    double fps = 60.0;
+    bool autoMoveSnake = false;
+    bool enableKeyboard = true;
     bool threadRun = true;
+    long autoMoveInterval = 200;
     Snake *snake = nullptr;
     std::thread *drawThread = nullptr;
     std::thread *keyboardThread = nullptr;
     std::thread *foodThread = nullptr;
+    std::thread *moveThread = nullptr;
 
     /*
     Private constructor
@@ -102,6 +122,16 @@ private:
     Called in food thread.
     */
     void createFood();
+
+    /*
+    Start auto moving the snake.
+    */
+    void startAutoMove();
+
+    /*
+    Called in move thread.
+    */
+    void autoMove();
 
     /*
     Start all threads.
