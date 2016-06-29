@@ -3,6 +3,7 @@
 #ifdef __linux__
 #include <termios.h>
 #include <unistd.h>
+#include <sys/select.h>
 #elif _WIN32
 #include <Windows.h>
 #include <conio.h>
@@ -163,6 +164,26 @@ char Console::getch() {
     return ch;
 #elif _WIN32
     return _getch();
+#else
+    // Other platform
+#endif
+}
+
+int Console::kbhit() {
+#ifdef __linux__
+    struct timeval tv;
+    fd_set read_fd;
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
+    FD_ZERO(&read_fd);
+    FD_SET(0, &read_fd);
+    if (select(1, &read_fd, NULL, NULL, &tv) == -1)
+        return 0;
+    if (FD_ISSET(0, &read_fd))
+        return 1;
+    return 0;
+#elif _WIN32
+    return _kbhit();
 #else
     // Other platform
 #endif

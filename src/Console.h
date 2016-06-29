@@ -49,6 +49,11 @@ public:
     A cross-platform getch() method.
     */
     static char getch();
+
+    /*
+    A cross-platform kbhit() method.
+    */
+    static int kbhit();
 private:
 #ifdef WIN32
     /*

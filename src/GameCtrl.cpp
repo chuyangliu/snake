@@ -42,6 +42,7 @@ int GameCtrl::start() {
         return 0;
     } catch (exception &e) {
         exitWithException(e.what());
+        return -1;
     }
 }
  
@@ -120,18 +121,20 @@ void GameCtrl::startKeyboardReceiver() {
 
 void GameCtrl::receiveKeyboardInstruction() {
     while (threadRun) {
-        char c = Console::getch();
-        switch (c) {
-            case 'w':
-                snake->setMoveDirection(Snake::MoveDirection::UP); break;
-            case 'a':
-                snake->setMoveDirection(Snake::MoveDirection::LEFT); break;
-            case 's':
-                snake->setMoveDirection(Snake::MoveDirection::DOWN); break;
-            case 'd':
-                snake->setMoveDirection(Snake::MoveDirection::RIGHT); break;
-            default:
-                break;
+        if (Console::kbhit()) {
+            char c = Console::getch();
+            switch (c) {
+                case 'w':
+                    snake->setMoveDirection(Snake::MoveDirection::UP); break;
+                case 'a':
+                    snake->setMoveDirection(Snake::MoveDirection::LEFT); break;
+                case 's':
+                    snake->setMoveDirection(Snake::MoveDirection::DOWN); break;
+                case 'd':
+                    snake->setMoveDirection(Snake::MoveDirection::RIGHT); break;
+                default:
+                    break;
+            }
         }
         sleepByFPS();
     }
