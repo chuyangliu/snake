@@ -10,10 +10,6 @@ This is a singleton.
 */
 class GameCtrl {
 public:
-    // Constants
-    static unsigned MAP_ROW;
-    static unsigned MAP_COL;
-
     ~GameCtrl();
 
     /*
@@ -61,6 +57,16 @@ public:
     */
     void setEnableKeyboard(const bool &enable);
 
+    /*
+    Set map row count.
+    */
+    void setMapRow(const int &n);
+
+    /*
+    Set map column count.
+    */
+    void setMapColumn(const int &n);
+
 private:
     double fps = 60.0;
     bool autoMoveSnake = false;
@@ -73,10 +79,18 @@ private:
     std::thread *foodThread = nullptr;
     std::thread *moveThread = nullptr;
 
+    unsigned mapRowCnt = 20;
+    unsigned mapColCnt = 20;
+
     /*
     Private constructor
     */
     GameCtrl();
+
+    /*
+    Create a snake.
+    */
+    void createSnake();
 
     /*
     Start drawing the map content.

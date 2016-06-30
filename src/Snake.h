@@ -6,11 +6,13 @@
 
 class Snake {
 public:
+    // Snake move direction declaration
     enum MoveDirection {
         NONE, LEFT, UP, RIGHT, DOWN 
     };
 
-    Snake();
+    Snake() = delete;
+    Snake(const unsigned &mapRowCnt, const unsigned &mapColCnt);
     ~Snake();
 
     /*

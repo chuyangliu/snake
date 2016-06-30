@@ -2,8 +2,8 @@
 #include "GameCtrl.h"
 #include <new>
 
-Snake::Snake() {
-    moveArea = new(std::nothrow) Map(GameCtrl::MAP_ROW, GameCtrl::MAP_COL);
+Snake::Snake(const unsigned &mapRowCnt, const unsigned &mapColCnt) {
+    moveArea = new(std::nothrow) Map(mapRowCnt, mapColCnt);
     if (!moveArea) {
         GameCtrl::getInstance()->exitWithException("Not enough memory.\n");
     }

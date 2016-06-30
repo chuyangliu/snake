@@ -7,9 +7,6 @@
 #include <Windows.h>
 #endif
 
-unsigned GameCtrl::MAP_ROW = 20;
-unsigned GameCtrl::MAP_COL = 20;
-
 GameCtrl* GameCtrl::getInstance() {
     // According to C++11, static field constructor is thread-safe
     static GameCtrl instance;
@@ -17,10 +14,6 @@ GameCtrl* GameCtrl::getInstance() {
 }
 
 GameCtrl::GameCtrl() {
-    snake = new(std::nothrow) Snake();
-    if (!snake) {
-        exitWithException("Not enough memory.\n");
-    }
 }
 
 GameCtrl::~GameCtrl() {
@@ -29,6 +22,7 @@ GameCtrl::~GameCtrl() {
 
 int GameCtrl::run() {
     try {
+        createSnake();
         startThreads();
         while (1) {
 
@@ -40,11 +34,18 @@ int GameCtrl::run() {
         return -1;
     }
 }
- 
+
+void GameCtrl::createSnake() {
+    snake = new(std::nothrow) Snake(mapRowCnt, mapColCnt);
+    if (!snake) {
+        exitWithException("Not enough memory.\n");
+    }
+}
+
 void GameCtrl::exitWithException(const std::string &msg) {
     stopThreads();
     release();
-    Console::setCursor(0, MAP_ROW + 1);
+    Console::setCursor(0, mapRowCnt + 1);
     Console::writeWithColor(msg + "\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
     exit(-1);
@@ -56,22 +57,6 @@ void GameCtrl::sleepFor(const long ms) const {
 
 void GameCtrl::sleepByFPS() const {
     sleepFor(static_cast<long>((1.0 / fps) * 1000));
-}
-
-void GameCtrl::setFPS(const double &fps_) {
-    fps = fps_;
-}
-
-void GameCtrl::setAutoMoveSnake(const bool &move) {
-    autoMoveSnake = move;
-}
-
-void GameCtrl::setEnableKeyboard(const bool &enable) {
-    enableKeyboard = enable;
-}
-
-void GameCtrl::setAutoMoveInterval(const long &ms) {
-    autoMoveInterval = ms;
 }
 
 void GameCtrl::startDrawing() {
@@ -236,4 +221,28 @@ void GameCtrl::release() {
     keyboardThread = nullptr;
     foodThread = nullptr;
     moveThread = nullptr;
+}
+
+void GameCtrl::setFPS(const double &fps_) {
+    fps = fps_;
+}
+
+void GameCtrl::setAutoMoveSnake(const bool &move) {
+    autoMoveSnake = move;
+}
+
+void GameCtrl::setEnableKeyboard(const bool &enable) {
+    enableKeyboard = enable;
+}
+
+void GameCtrl::setAutoMoveInterval(const long &ms) {
+    autoMoveInterval = ms;
+}
+
+void GameCtrl::setMapRow(const int &n) {
+    mapRowCnt = n;
+}
+
+void GameCtrl::setMapColumn(const int &n) {
+    mapColCnt = n;
 }
