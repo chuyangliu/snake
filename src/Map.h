@@ -74,9 +74,4 @@ private:
     unsigned colCnt;
     Point *foodPos = nullptr;
     Grid **content = nullptr;
-
-    /*
-    Return a random number in [min, max]
-    */
-    static int random(const int min, const int max);
 };

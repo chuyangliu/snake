@@ -69,8 +69,8 @@ bool Map::isFull() const {
 void Map::createFood() {
     int row, col;
     do {
-        row = random(1, rowCnt - 2);
-        col = random(1, colCnt - 2);
+        row = GameCtrl::getInstance()->random(1, rowCnt - 2);
+        col = GameCtrl::getInstance()->random(1, colCnt - 2);
     } while (content[row][col].getType() != Grid::GridType::EMPTY);
 
     if (!foodPos) {
@@ -107,11 +107,4 @@ unsigned Map::getColCount() const {
 
 const Point* Map::getFoodPos() const {
     return foodPos;
-}
-
-int Map::random(const int min, const int max) {
-    static bool set_seed = true;
-    if (set_seed) srand(static_cast<unsigned>(time(NULL)));
-    set_seed = false;
-    return rand() % (max - min + 1) + min;
 }

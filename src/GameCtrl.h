@@ -72,6 +72,11 @@ public:
     */
     void setMapColumn(const unsigned &n);
 
+    /*
+    Return a random number in [min, max]
+    */
+    static int random(const int min, const int max);
+
 private:
     bool autoMoveSnake = false;
     long autoMoveInterval = 200;

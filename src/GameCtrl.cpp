@@ -275,3 +275,10 @@ void GameCtrl::setMapRow(const unsigned &n) {
 void GameCtrl::setMapColumn(const unsigned &n) {
     mapColCnt = n;
 }
+
+int GameCtrl::random(const int min, const int max) {
+    static bool set_seed = true;
+    if (set_seed) srand(static_cast<unsigned>(time(NULL)));
+    set_seed = false;
+    return rand() % (max - min + 1) + min;
+}
