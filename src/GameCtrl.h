@@ -68,17 +68,18 @@ public:
     void setMapColumn(const int &n);
 
 private:
-    double fps = 60.0;
     bool autoMoveSnake = false;
-    bool enableKeyboard = true;
-    bool threadRun = true;
     long autoMoveInterval = 200;
+    bool enableKeyboard = true;
+    bool threadWorking = true;  // True if all the threads are running
+
     Snake *snake = nullptr;
     std::thread *drawThread = nullptr;
     std::thread *keyboardThread = nullptr;
     std::thread *foodThread = nullptr;
     std::thread *moveThread = nullptr;
 
+    double fps = 60.0;
     unsigned mapRowCnt = 20;
     unsigned mapColCnt = 20;
 

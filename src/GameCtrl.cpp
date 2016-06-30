@@ -68,7 +68,7 @@ void GameCtrl::startDrawing() {
 
 void GameCtrl::draw() const {
     Console::clear();
-    while (threadRun) {
+    while (threadWorking) {
         Console::setCursor();
         for (unsigned i = 0; i < snake->getMoveArea()->getRowCount(); ++i) {
             for (unsigned j = 0; j < snake->getMoveArea()->getColCount(); ++j) {
@@ -106,7 +106,7 @@ void GameCtrl::startKeyboardReceiver() {
 }
 
 void GameCtrl::receiveKeyboardInstruction() {
-    while (threadRun) {
+    while (threadWorking) {
         if (Console::kbhit()) {  // Keyboard is hit
             switch (Console::getch()) {
                 case 'w':
@@ -152,7 +152,7 @@ void GameCtrl::startCreateFood() {
 }
 
 void GameCtrl::createFood() {
-    while (threadRun) {
+    while (threadWorking) {
         if (!snake->getMoveArea()->hasFood()) {
             snake->getMoveArea()->createFood();
         }
@@ -206,7 +206,7 @@ void GameCtrl::joinThreads() {
 }
 
 void GameCtrl::stopThreads() {
-    threadRun = false;
+    threadWorking = false;
     joinThreads();
 }
 
