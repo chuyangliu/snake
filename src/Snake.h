@@ -49,11 +49,12 @@ public:
     MoveDirection getMoveDirection() const;
 
 private:
+    bool dead = false;
+
     Map *moveArea = nullptr;
     MoveDirection direc = NONE;
-    bool dead = false;
-    std::list<Point> body;
 
+    std::list<Point> body;
     std::mutex mutex;
 
     /*

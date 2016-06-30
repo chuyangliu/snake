@@ -10,6 +10,11 @@ This is a singleton.
 */
 class GameCtrl {
 public:
+    // Game exit messages
+    static const std::string MSG_BAD_ALLOC;
+    static const std::string MSG_LOSE;
+    static const std::string MSG_WIN;
+
     ~GameCtrl();
 
     /*
@@ -29,11 +34,11 @@ public:
     int run();
 
     /*
-    Exit the program with an exception message.
+    Print a message and exit the game.
 
-    @param msg the exception message
+    @param msg the message to be printed
     */
-    void exitWithException(const std::string &msg);
+    void exitGame(const std::string &msg);
 
     /*
     Set the FPS.
@@ -60,12 +65,12 @@ public:
     /*
     Set map row count.
     */
-    void setMapRow(const int &n);
+    void setMapRow(const unsigned &n);
 
     /*
     Set map column count.
     */
-    void setMapColumn(const int &n);
+    void setMapColumn(const unsigned &n);
 
 private:
     bool autoMoveSnake = false;
@@ -74,10 +79,10 @@ private:
     bool threadWorking = true;  // True if all the threads are running
 
     Snake *snake = nullptr;
-    std::thread *drawThread = nullptr;
-    std::thread *keyboardThread = nullptr;
-    std::thread *foodThread = nullptr;
-    std::thread *moveThread = nullptr;
+    std::thread *drawThread = nullptr;      // Thread to draw the map
+    std::thread *keyboardThread = nullptr;  // Thread to receive keyboard instructions
+    std::thread *foodThread = nullptr;      // Thread to create food
+    std::thread *moveThread = nullptr;      // Thread to move the snake
 
     double fps = 60.0;
     unsigned mapRowCnt = 20;
@@ -87,6 +92,13 @@ private:
     Private constructor
     */
     GameCtrl();
+
+    /*
+    Move snake and check game over
+    Call this method instead of snake->move() in order to
+    check game over after each movement.
+    */
+    void moveSnake();
 
     /*
     Create a snake.
@@ -155,8 +167,9 @@ private:
 
     /*
     Join all threads.
+    Not used anymore
     */
-    void joinThreads();
+    //void joinThreads();
 
     /*
     Stop all threads

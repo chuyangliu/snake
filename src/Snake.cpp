@@ -5,7 +5,7 @@
 Snake::Snake(const unsigned &mapRowCnt, const unsigned &mapColCnt) {
     moveArea = new(std::nothrow) Map(mapRowCnt, mapColCnt);
     if (!moveArea) {
-        GameCtrl::getInstance()->exitWithException("Not enough memory.\n");
+        GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
     }
     // Create three bodies first
     addBody(Point(1, 3));

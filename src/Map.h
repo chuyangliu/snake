@@ -35,6 +35,11 @@ public:
     bool isInside(const Point &p) const;
 
     /*
+    Check whether the map is filled with snake body.
+    */
+    bool isFull() const;
+
+    /*
     Create a food on the map randomly.
     */
     void createFood();
@@ -65,8 +70,8 @@ public:
     const Point* getFoodPos() const;
 
 private:
-    int rowCnt;
-    int colCnt;
+    unsigned rowCnt;
+    unsigned colCnt;
     Point *foodPos = nullptr;
     Grid **content = nullptr;
 

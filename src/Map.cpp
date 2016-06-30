@@ -6,17 +6,17 @@
 Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), colCnt(colCnt_) {
     content = new(std::nothrow) Grid*[rowCnt_];
     if (!content) {
-        GameCtrl::getInstance()->exitWithException("Not enough memory.\n");
+        GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
     }
     for (unsigned i = 0; i < rowCnt_; ++i) {
         content[i] = new(std::nothrow) Grid[colCnt_];
         if (!content) {
-            GameCtrl::getInstance()->exitWithException("Not enough memory.\n");
+            GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
         }
 
         // Initial map content
         if (i == 0 || i == rowCnt - 1) {
-            for (int j = 0; j < colCnt; ++j) {
+            for (unsigned j = 0; j < colCnt; ++j) {
                 content[i][j].setType(Grid::GridType::WALL);
             }
         }
@@ -26,7 +26,7 @@ Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), co
 }
 
 Map::~Map() {
-    for (int i = 0; i < rowCnt; ++i) {
+    for (unsigned i = 0; i < rowCnt; ++i) {
         delete[] content[i];
         content[i] = nullptr;
     }
@@ -50,7 +50,20 @@ bool Map::hitBodyOrBoundary(const Point &p) const {
 }
 
 bool Map::isInside(const Point &p) const {
-    return p.x > 0 && p.x <= rowCnt - 1 && p.y > 0 && p.y < colCnt - 1;
+    return p.x > 0 && p.y > 0 && p.x < rowCnt - 1 && p.y < colCnt - 1;
+}
+
+bool Map::isFull() const {
+    for (unsigned i = 0; i < rowCnt; ++i) {
+        for (unsigned j = 0; j < colCnt; ++j) {
+            auto type = content[i][j].getType();
+            if (!(type == Grid::GridType::SNAKEBODY
+                || type == Grid::GridType::SNAKEHEAD)) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 void Map::createFood() {
@@ -63,7 +76,7 @@ void Map::createFood() {
     if (!foodPos) {
         foodPos = new(std::nothrow) Point(row, col);
         if (!foodPos) {
-            GameCtrl::getInstance()->exitWithException("Not enough memory.\n");
+            GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
         }
     } else {
         foodPos->x = row;

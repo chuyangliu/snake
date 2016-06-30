@@ -7,6 +7,10 @@
 #include <Windows.h>
 #endif
 
+const std::string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game!\nPress any key to continue...\n";
+const std::string GameCtrl::MSG_LOSE = "Sorry! You lose!\nPress any key to continue...\n";
+const std::string GameCtrl::MSG_WIN = "Congratulations! You Win!\nPress any key to continue...\n";
+
 GameCtrl* GameCtrl::getInstance() {
     // According to C++11, static field constructor is thread-safe
     static GameCtrl instance;
@@ -25,12 +29,24 @@ int GameCtrl::run() {
         createSnake();
         startThreads();
         while (1) {
+            //// Check game over
+            //if (snake->getMoveArea()->isFull()) {
+            //    exitGame(MSG_WIN);
+            //} else if (snake->isDead()) {
+            //    exitGame(MSG_LOSE);
+            //}
 
+            ///*
+            //Sleep time must be much longer than FPS since when exitGame()
+            //called, all the threads will be stopped and the last movement of the
+            //snake may never be drawn on the screen. Thus may mislead the user.
+            //*/
+            //sleepByFPS();
         }
         stopThreads();
         return 0;
     } catch (std::exception &e) {
-        exitWithException(e.what());
+        exitGame(e.what());
         return -1;
     }
 }
@@ -38,17 +54,26 @@ int GameCtrl::run() {
 void GameCtrl::createSnake() {
     snake = new(std::nothrow) Snake(mapRowCnt, mapColCnt);
     if (!snake) {
-        exitWithException("Not enough memory.\n");
+        exitGame(MSG_BAD_ALLOC);
     }
 }
 
-void GameCtrl::exitWithException(const std::string &msg) {
+void GameCtrl::exitGame(const std::string &msg) {
     stopThreads();
     release();
     Console::setCursor(0, mapRowCnt + 1);
-    Console::writeWithColor(msg + "\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor(msg, ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
     exit(-1);
+}
+
+void GameCtrl::moveSnake() {
+    snake->move();
+    //if (snake->getMoveArea()->isFull()) {
+    //    exitGame(MSG_WIN);
+    //} else if (snake->isDead()) {
+    //    exitGame(MSG_LOSE);
+    //}
 }
 
 void GameCtrl::sleepFor(const long ms) const {
@@ -62,8 +87,9 @@ void GameCtrl::sleepByFPS() const {
 void GameCtrl::startDrawing() {
     drawThread = new(std::nothrow) std::thread(&GameCtrl::draw, this);
     if (!drawThread) {
-        exitWithException("Not enough memory.\n");
+        exitGame(MSG_BAD_ALLOC);
     }
+    drawThread->detach();
 }
 
 void GameCtrl::draw() const {
@@ -101,35 +127,36 @@ void GameCtrl::draw() const {
 void GameCtrl::startKeyboardReceiver() {
     keyboardThread = new(std::nothrow) std::thread(&GameCtrl::receiveKeyboardInstruction, this);
     if (!keyboardThread) {
-        exitWithException("Not enough memory.\n");
+        exitGame(MSG_BAD_ALLOC);
     }
+    keyboardThread->detach();
 }
 
 void GameCtrl::receiveKeyboardInstruction() {
     while (threadWorking) {
-        if (Console::kbhit()) {  // Keyboard is hit
+        if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
                 case 'w':
                     if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::UP) {
-                        snake->move();
+                        moveSnake();
                     }
                     snake->setMoveDirection(Snake::MoveDirection::UP);
                     break;
                 case 'a':
                     if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::LEFT) {
-                        snake->move();
+                        moveSnake();
                     }
                     snake->setMoveDirection(Snake::MoveDirection::LEFT);
                     break;
                 case 's':
                     if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::DOWN) {
-                        snake->move();
+                        moveSnake();
                     }
                     snake->setMoveDirection(Snake::MoveDirection::DOWN);
                     break;
                 case 'd':
                     if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::RIGHT) {
-                        snake->move();
+                        moveSnake();
                     }
                     snake->setMoveDirection(Snake::MoveDirection::RIGHT);
                     break;
@@ -137,7 +164,7 @@ void GameCtrl::receiveKeyboardInstruction() {
                     continue;
             }
             if (!autoMoveSnake) {
-                snake->move();
+                moveSnake();
             }
         }
         sleepByFPS();
@@ -147,8 +174,9 @@ void GameCtrl::receiveKeyboardInstruction() {
 void GameCtrl::startCreateFood() {
     foodThread = new(std::nothrow)  std::thread(&GameCtrl::createFood, this);
     if (!foodThread) {
-        exitWithException("Not enough memory.\n");
+        exitGame(MSG_BAD_ALLOC);
     }
+    foodThread->detach();
 }
 
 void GameCtrl::createFood() {
@@ -163,13 +191,14 @@ void GameCtrl::createFood() {
 void GameCtrl::startAutoMove() {
     moveThread = new(std::nothrow)  std::thread(&GameCtrl::autoMove, this);
     if (!moveThread) {
-        exitWithException("Not enough memory.\n");
+        exitGame(MSG_BAD_ALLOC);
     }
+    moveThread->detach();
 }
 
 void GameCtrl::autoMove() {
-    while (1) {
-        snake->move();
+    while (threadWorking) {
+        moveSnake();
         sleepFor(autoMoveInterval);
     }
 }
@@ -187,27 +216,27 @@ void GameCtrl::startThreads() {
     }
 }
 
-void GameCtrl::joinThreads() {
-    if (drawThread && drawThread->joinable()) {
-        drawThread->join();
-    }
-
-    if (keyboardThread && keyboardThread->joinable()) {
-        keyboardThread->join();
-    }
-
-    if (foodThread && foodThread->joinable()) {
-        foodThread->join();
-    }
-
-    if (moveThread && moveThread->joinable()) {
-        moveThread->join();
-    }
-}
+//void GameCtrl::joinThreads() {
+//    if (drawThread && drawThread->joinable()) {
+//        drawThread->join();
+//    }
+//
+//    if (keyboardThread && keyboardThread->joinable()) {
+//        keyboardThread->join();
+//    }
+//
+//    if (foodThread && foodThread->joinable()) {
+//        foodThread->join();
+//    }
+//
+//    if (moveThread && moveThread->joinable()) {
+//        moveThread->join();
+//    }
+//}
 
 void GameCtrl::stopThreads() {
     threadWorking = false;
-    joinThreads();
+    //joinThreads();
 }
 
 void GameCtrl::release() {
@@ -239,10 +268,10 @@ void GameCtrl::setAutoMoveInterval(const long &ms) {
     autoMoveInterval = ms;
 }
 
-void GameCtrl::setMapRow(const int &n) {
+void GameCtrl::setMapRow(const unsigned &n) {
     mapRowCnt = n;
 }
 
-void GameCtrl::setMapColumn(const int &n) {
+void GameCtrl::setMapColumn(const unsigned &n) {
     mapColCnt = n;
 }
