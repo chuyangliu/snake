@@ -119,7 +119,9 @@ void GameCtrl::draw() const {
                         break;
                 }
             }
-            printf("\n");
+            if (threadWork) {
+                printf("\n");
+            }
         }
         sleepByFPS();
     }

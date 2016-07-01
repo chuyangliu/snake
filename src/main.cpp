@@ -25,3 +25,9 @@ int main() {
 
     return game->run();
 }
+
+/*
+TODO
+1. Separate Map from Snake
+2. GameCtrl stores snake list
+*/
