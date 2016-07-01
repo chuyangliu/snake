@@ -38,6 +38,13 @@ public:
     static void clear();
 
     /*
+    Write string to console
+
+    @param str the string to write
+    */
+    static void write(const std::string &str);
+
+    /*
     Write string to console with a given color.
 
     @param str the string to write

@@ -53,7 +53,7 @@ bool Map::isInside(const Point &p) const {
     return p.x > 0 && p.y > 0 && p.x < rowCnt - 1 && p.y < colCnt - 1;
 }
 
-bool Map::isFull() const {
+bool Map::isFilledWithBody() const {
     for (unsigned i = 1; i < rowCnt - 1; ++i) {
         for (unsigned j = 1; j < colCnt - 1; ++j) {
             auto type = content[i][j].getType();
@@ -67,6 +67,10 @@ bool Map::isFull() const {
 }
 
 void Map::createFood() {
+    if (isFilledWithBody()) {
+        return;
+    }
+
     int row, col;
     do {
         row = GameCtrl::getInstance()->random(1, rowCnt - 2);

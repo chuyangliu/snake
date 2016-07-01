@@ -29,19 +29,7 @@ int GameCtrl::run() {
         createSnake();
         startThreads();
         while (1) {
-            //// Check game over
-            //if (snake->getMoveArea()->isFull()) {
-            //    exitGame(MSG_WIN);
-            //} else if (snake->isDead()) {
-            //    exitGame(MSG_LOSE);
-            //}
-
-            ///*
-            //Sleep time must be much longer than FPS since when exitGame()
-            //called, all the threads will be stopped and the last movement of the
-            //snake may never be drawn on the screen. Thus may mislead the user.
-            //*/
-            //sleepByFPS();
+            
         }
         stopThreads();
         return 0;
@@ -72,7 +60,7 @@ void GameCtrl::exitGame(const std::string &msg) {
 
 void GameCtrl::moveSnake() {
     mutexMove.lock();
-    if (snake->getMoveArea()->isFull()) {
+    if (snake->getMoveArea()->isFilledWithBody()) {
         // Unlock must outside the exitGame()
         // because exitGame() will terminate the program
         // and there is no chance to unlock the mutex
@@ -107,8 +95,6 @@ void GameCtrl::startDraw() {
 void GameCtrl::draw() const {
     Console::clear();
     while (threadWork) {
-        sleepByFPS();
-
         // Drawing
         Console::setCursor();
         for (unsigned i = 0; i < snake->getMoveArea()->getRowCount() && threadWork; ++i) {
@@ -135,6 +121,7 @@ void GameCtrl::draw() const {
             }
             printf("\n");
         }
+        sleepByFPS();
     }
 }
 
@@ -230,27 +217,8 @@ void GameCtrl::startThreads() {
     }
 }
 
-//void GameCtrl::joinThreads() {
-//    if (drawThread && drawThread->joinable()) {
-//        drawThread->join();
-//    }
-//
-//    if (keyboardThread && keyboardThread->joinable()) {
-//        keyboardThread->join();
-//    }
-//
-//    if (foodThread && foodThread->joinable()) {
-//        foodThread->join();
-//    }
-//
-//    if (moveThread && moveThread->joinable()) {
-//        moveThread->join();
-//    }
-//}
-
 void GameCtrl::stopThreads() {
     threadWork = false;
-    //joinThreads();
 }
 
 void GameCtrl::release() {
@@ -283,11 +251,19 @@ void GameCtrl::setAutoMoveInterval(const long &ms) {
 }
 
 void GameCtrl::setMapRow(const unsigned &n) {
-    mapRowCnt = n;
+    if (n < 3) {
+        mapRowCnt = 3;
+    } else {
+        mapRowCnt = n;
+    }
 }
 
 void GameCtrl::setMapColumn(const unsigned &n) {
-    mapColCnt = n;
+    if (n < 6) {
+        mapColCnt = 6;
+    } else {
+        mapColCnt = n;
+    }
 }
 
 int GameCtrl::random(const int min, const int max) {

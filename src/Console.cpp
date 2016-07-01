@@ -95,6 +95,10 @@ void Console::clear() {
 #endif
 }
 
+void Console::write(const std::string &str) {
+    printf("%s", str.c_str());
+}
+
 void Console::writeWithColor(const std::string &str, const ConsoleColor &consoleColor) {
 #ifdef __linux__
     int fore = -1, back = -1;

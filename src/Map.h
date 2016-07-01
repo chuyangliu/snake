@@ -37,7 +37,7 @@ public:
     /*
     Check whether the map is filled with snake body.
     */
-    bool isFull() const;
+    bool isFilledWithBody() const;
 
     /*
     Create a food on the map randomly.

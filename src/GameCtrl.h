@@ -178,12 +178,6 @@ private:
     void startThreads();
 
     /*
-    Join all threads.
-    Not used anymore
-    */
-    //void joinThreads();
-
-    /*
     Stop all threads
     */
     void stopThreads();

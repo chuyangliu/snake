@@ -4,11 +4,14 @@ int main() {
     auto game = GameCtrl::getInstance();
 
     // Set map's size. Default is 20*20
+    // The minimum size is 3*6 because there must be
+    // enough space to hold three snake bodies and
+    // one food.
     game->setMapRow(20);
     game->setMapColumn(20);
 
     // Set FPS. Default is 60.0
-    game->setFPS(60.0);
+    game->setFPS(59.0);
 
     // Set whether to make the snake automove. Default is false
     game->setAutoMoveSnake(true);
