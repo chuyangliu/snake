@@ -52,10 +52,7 @@ Snake::MoveDirection Snake::getMoveDirection() const {
 }
 
 void Snake::move() {
-    mutex.lock();
-
     if (isDead() || direc == NONE) {
-        mutex.unlock();
         return;
     }
 
@@ -74,8 +71,6 @@ void Snake::move() {
     }
 
     moveArea->at(newHead).setType(Grid::GridType::SNAKEHEAD);
-
-    mutex.unlock();
 }
 
 Point Snake::getHeadPos() const {

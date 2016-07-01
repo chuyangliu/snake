@@ -2,6 +2,7 @@
 
 #include <string>
 #include <thread>
+#include <mutex>
 #include "Snake.h"
 
 /*
@@ -35,6 +36,7 @@ public:
 
     /*
     Print a message and exit the game.
+    This is a thread-safe method.
 
     @param msg the message to be printed
     */
@@ -81,13 +83,17 @@ private:
     bool autoMoveSnake = false;
     long autoMoveInterval = 200;
     bool enableKeyboard = true;
-    bool threadWorking = true;  // True if all the threads are running
+
+    bool threadWork = true;  // True if all the threads are running
 
     Snake *snake = nullptr;
     std::thread *drawThread = nullptr;      // Thread to draw the map
     std::thread *keyboardThread = nullptr;  // Thread to receive keyboard instructions
     std::thread *foodThread = nullptr;      // Thread to create food
     std::thread *moveThread = nullptr;      // Thread to move the snake
+
+    std::mutex mutexMove;  // Mutex for snake movements
+    std::mutex mutexExit;  // Mutex for exit game
 
     double fps = 60.0;
     unsigned mapRowCnt = 20;
@@ -99,9 +105,10 @@ private:
     GameCtrl();
 
     /*
-    Move snake and check game over
-    Call this method instead of snake->move() in order to
-    check game over after each movement.
+    Move snake and check game over.
+    This is a thread-safe method.
+    Call this method instead of snake->move() because
+    snake->move() cannot check game over and is not thread-safe.
     */
     void moveSnake();
 
@@ -113,7 +120,7 @@ private:
     /*
     Start drawing the map content.
     */
-    void startDrawing();
+    void startDraw();
 
     /*
     Called in redraw thread.

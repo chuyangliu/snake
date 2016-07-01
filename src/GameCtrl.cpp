@@ -7,9 +7,9 @@
 #include <Windows.h>
 #endif
 
-const std::string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game!\nPress any key to continue...\n";
-const std::string GameCtrl::MSG_LOSE = "Sorry! You lose!\nPress any key to continue...\n";
-const std::string GameCtrl::MSG_WIN = "Congratulations! You Win!\nPress any key to continue...\n";
+const std::string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game! Press any key to continue...";
+const std::string GameCtrl::MSG_LOSE = "Sorry! You lose! Press any key to continue...";
+const std::string GameCtrl::MSG_WIN = "Congratulations! You Win! Press any key to continue...";
 
 GameCtrl* GameCtrl::getInstance() {
     // According to C++11, static field constructor is thread-safe
@@ -59,21 +59,33 @@ void GameCtrl::createSnake() {
 }
 
 void GameCtrl::exitGame(const std::string &msg) {
+    mutexExit.lock();
     stopThreads();
-    release();
     Console::setCursor(0, mapRowCnt + 1);
     Console::writeWithColor(msg, ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
-    exit(-1);
+    Console::setCursor(0, mapRowCnt + 2);
+    release();
+    mutexExit.unlock();
+    exit(0);
 }
 
 void GameCtrl::moveSnake() {
-    snake->move();
-    //if (snake->getMoveArea()->isFull()) {
-    //    exitGame(MSG_WIN);
-    //} else if (snake->isDead()) {
-    //    exitGame(MSG_LOSE);
-    //}
+    mutexMove.lock();
+    if (snake->getMoveArea()->isFull()) {
+        // Unlock must outside the exitGame()
+        // because exitGame() will terminate the program
+        // and there is no chance to unlock the mutex
+        // after exectuing exitGame().
+        mutexMove.unlock();
+        exitGame(MSG_WIN);
+    } else if (snake->isDead()) {
+        mutexMove.unlock();
+        exitGame(MSG_LOSE);
+    } else {
+        mutexMove.unlock();
+        snake->move();
+    }
 }
 
 void GameCtrl::sleepFor(const long ms) const {
@@ -84,7 +96,7 @@ void GameCtrl::sleepByFPS() const {
     sleepFor(static_cast<long>((1.0 / fps) * 1000));
 }
 
-void GameCtrl::startDrawing() {
+void GameCtrl::startDraw() {
     drawThread = new(std::nothrow) std::thread(&GameCtrl::draw, this);
     if (!drawThread) {
         exitGame(MSG_BAD_ALLOC);
@@ -94,10 +106,13 @@ void GameCtrl::startDrawing() {
 
 void GameCtrl::draw() const {
     Console::clear();
-    while (threadWorking) {
+    while (threadWork) {
+        sleepByFPS();
+
+        // Drawing
         Console::setCursor();
-        for (unsigned i = 0; i < snake->getMoveArea()->getRowCount(); ++i) {
-            for (unsigned j = 0; j < snake->getMoveArea()->getColCount(); ++j) {
+        for (unsigned i = 0; i < snake->getMoveArea()->getRowCount() && threadWork; ++i) {
+            for (unsigned j = 0; j < snake->getMoveArea()->getColCount() && threadWork; ++j) {
                 switch (snake->getMoveArea()->at(Point(i, j)).getType()) {
                     case Grid::GridType::EMPTY:
                         Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
@@ -120,7 +135,6 @@ void GameCtrl::draw() const {
             }
             printf("\n");
         }
-        sleepByFPS();
     }
 }
 
@@ -133,7 +147,7 @@ void GameCtrl::startKeyboardReceiver() {
 }
 
 void GameCtrl::receiveKeyboardInstruction() {
-    while (threadWorking) {
+    while (threadWork) {
         if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
                 case 'w':
@@ -180,7 +194,7 @@ void GameCtrl::startCreateFood() {
 }
 
 void GameCtrl::createFood() {
-    while (threadWorking) {
+    while (threadWork) {
         if (!snake->getMoveArea()->hasFood()) {
             snake->getMoveArea()->createFood();
         }
@@ -197,14 +211,14 @@ void GameCtrl::startAutoMove() {
 }
 
 void GameCtrl::autoMove() {
-    while (threadWorking) {
+    while (threadWork) {
         moveSnake();
         sleepFor(autoMoveInterval);
     }
 }
 
 void GameCtrl::startThreads() {
-    startDrawing();
+    startDraw();
     startCreateFood();
 
     if (enableKeyboard) {
@@ -235,7 +249,7 @@ void GameCtrl::startThreads() {
 //}
 
 void GameCtrl::stopThreads() {
-    threadWorking = false;
+    threadWork = false;
     //joinThreads();
 }
 

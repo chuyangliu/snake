@@ -54,8 +54,8 @@ bool Map::isInside(const Point &p) const {
 }
 
 bool Map::isFull() const {
-    for (unsigned i = 0; i < rowCnt; ++i) {
-        for (unsigned j = 0; j < colCnt; ++j) {
+    for (unsigned i = 1; i < rowCnt - 1; ++i) {
+        for (unsigned j = 1; j < colCnt - 1; ++j) {
             auto type = content[i][j].getType();
             if (!(type == Grid::GridType::SNAKEBODY
                 || type == Grid::GridType::SNAKEHEAD)) {
