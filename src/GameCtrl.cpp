@@ -65,14 +65,15 @@ void GameCtrl::moveSnake() {
         // because exitGame() will terminate the program
         // and there is no chance to unlock the mutex
         // after exectuing exitGame().
+        // Notice that exitGame() is a thread-safe method.
         mutexMove.unlock();
         exitGame(MSG_WIN);
     } else if (snake->isDead()) {
         mutexMove.unlock();
         exitGame(MSG_LOSE);
     } else {
-        mutexMove.unlock();
         snake->move();
+        mutexMove.unlock();
     }
 }
 
