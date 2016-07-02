@@ -66,7 +66,7 @@ void Snake::move() {
         moveArea->removeFood();
     }
 
-    if (moveArea->hitBodyOrBoundary(newHead)) {
+    if (moveArea->isBodyOrBoundary(newHead)) {
         dead = true;
     }
 

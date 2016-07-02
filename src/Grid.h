@@ -1,10 +1,10 @@
 #pragma once
 
+/*
+A Grid on the map.
+*/
 class Grid {
 public:
-    /*
-    Grid type declaration
-    */
     enum GridType {
         EMPTY, WALL, FOOD, SNAKEHEAD, SNAKEBODY
     };
@@ -16,7 +16,6 @@ public:
     Getters and setters
     */
     GridType getType() const;
-
     void setType(GridType type_);
 
 private:

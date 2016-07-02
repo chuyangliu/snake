@@ -3,12 +3,12 @@
 #include <new>
 #include <cstdlib>
 
-Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), colCnt(colCnt_) {
+Map::Map(const long &rowCnt_, const long &colCnt_) : rowCnt(rowCnt_), colCnt(colCnt_) {
     content = new(std::nothrow) Grid*[rowCnt_];
     if (!content) {
         GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
     }
-    for (unsigned i = 0; i < rowCnt_; ++i) {
+    for (auto i = 0; i < rowCnt_; ++i) {
         content[i] = new(std::nothrow) Grid[colCnt_];
         if (!content) {
             GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
@@ -16,7 +16,7 @@ Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), co
 
         // Initial map content
         if (i == 0 || i == rowCnt - 1) {
-            for (unsigned j = 0; j < colCnt; ++j) {
+            for (auto j = 0; j < colCnt; ++j) {
                 content[i][j].setType(Grid::GridType::WALL);
             }
         }
@@ -26,7 +26,7 @@ Map::Map(const unsigned &rowCnt_, const unsigned &colCnt_) : rowCnt(rowCnt_), co
 }
 
 Map::~Map() {
-    for (unsigned i = 0; i < rowCnt; ++i) {
+    for (auto i = 0; i < rowCnt; ++i) {
         delete[] content[i];
         content[i] = nullptr;
     }
@@ -37,25 +37,28 @@ Map::~Map() {
 }
 
 Grid& Map::at(const Point &p) {
-    return content[p.x][p.y];
+    return content[p.getX()][p.getY()];
 }
 
 const Grid& Map::at(const Point &p) const {
-    return content[p.x][p.y];
+    return content[p.getX()][p.getY()];
 }
 
-bool Map::hitBodyOrBoundary(const Point &p) const {
-    return p.x == 0 || p.x == rowCnt - 1 || p.y == 0 || p.y == colCnt - 1
+bool Map::isBodyOrBoundary(const Point &p) const {
+    return p.getX() == 0 || p.getX() == rowCnt - 1 
+        || p.getY() == 0 || p.getY() == colCnt - 1
         || at(p).getType() == Grid::GridType::SNAKEBODY;
 }
 
 bool Map::isInside(const Point &p) const {
-    return p.x > 0 && p.y > 0 && p.x < rowCnt - 1 && p.y < colCnt - 1;
+    return p.getX() > 0 && p.getY() > 0
+        && p.getX() < rowCnt - 1
+        && p.getY() < colCnt - 1;
 }
 
 bool Map::isFilledWithBody() const {
-    for (unsigned i = 1; i < rowCnt - 1; ++i) {
-        for (unsigned j = 1; j < colCnt - 1; ++j) {
+    for (auto i = 1; i < rowCnt - 1; ++i) {
+        for (auto j = 1; j < colCnt - 1; ++j) {
             auto type = content[i][j].getType();
             if (!(type == Grid::GridType::SNAKEBODY
                 || type == Grid::GridType::SNAKEHEAD)) {
@@ -83,15 +86,15 @@ void Map::createFood() {
             GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
         }
     } else {
-        foodPos->x = row;
-        foodPos->y = col;
+        foodPos->setX(row);
+        foodPos->setY(col);
     }
     content[row][col].setType(Grid::GridType::FOOD);
 }
 
 void Map::removeFood() {
     if (foodPos) {
-        content[foodPos->x][foodPos->y].setType(Grid::GridType::EMPTY);
+        content[foodPos->getX()][foodPos->getY()].setType(Grid::GridType::EMPTY);
         delete foodPos;
         foodPos = nullptr;
     }
@@ -101,11 +104,11 @@ bool Map::hasFood() const {
     return foodPos != nullptr;
 }
 
-unsigned Map::getRowCount() const {
+long Map::getRowCount() const {
     return rowCnt;
 }
 
-unsigned Map::getColCount() const {
+long Map::getColCount() const {
     return colCnt;
 }
 

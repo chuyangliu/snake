@@ -3,13 +3,16 @@
 #include "Grid.h"
 #include "Point.h"
 
+/*
+A map of the game
+*/
 class Map {
 public:
-    Map(const unsigned &rowCnt_, const unsigned &colCnt_);
+    Map(const long &rowCnt_, const long &colCnt_);
     ~Map();
 
     /*
-    Forbid copy
+    Forbid copy(temporary)
     */
     Map(const Map &m) = delete;
     Map& operator=(const Map &m) = delete;
@@ -21,14 +24,16 @@ public:
     const Grid& at(const Point &p) const;
 
     /*
-    Check if the point hits the wall or the snake body of the map.
+    Check if the grid at the point is a snake body
+    or map boundary.
 
     @param p the point to check
     */
-    bool hitBodyOrBoundary(const Point &p) const;
+    bool isBodyOrBoundary(const Point &p) const;
 
     /*
-    Check if the point is inside the map.
+    Check if the point is inside the map
+    (not include the boundary).
 
     @param p the point to check
     */
@@ -57,21 +62,21 @@ public:
     /*
     Return the count of the rows.
     */
-    unsigned getRowCount() const;
+    long getRowCount() const;
 
     /*
     Return the count of the columns.
     */
-    unsigned getColCount() const;
+    long getColCount() const;
 
     /*
-    Return the food point.
+    Return the food position.
     */
     const Point* getFoodPos() const;
 
 private:
-    unsigned rowCnt;
-    unsigned colCnt;
+    long rowCnt;
+    long colCnt;
     Point *foodPos = nullptr;
     Grid **content = nullptr;
 };
