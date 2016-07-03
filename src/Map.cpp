@@ -35,7 +35,8 @@ bool Map::isBodyOrBoundary(const Point &p) const {
     return getGrid(p).getType() == Grid::GridType::WALL
         || getGrid(p).getType() == Grid::GridType::SNAKEHEAD1
         || getGrid(p).getType() == Grid::GridType::SNAKEHEAD2
-        || getGrid(p).getType() == Grid::GridType::SNAKEBODY;
+        || getGrid(p).getType() == Grid::GridType::SNAKEBODY1
+        || getGrid(p).getType() == Grid::GridType::SNAKEBODY2;
 }
 
 bool Map::isInside(const Point &p) const {
@@ -49,7 +50,7 @@ bool Map::isFilledWithBody() const {
     for (size_type i = 1; i < rows - 1; ++i) {
         for (size_type j = 1; j < cols - 1; ++j) {
             auto type = content[i][j].getType();
-            if (!(type == Grid::GridType::SNAKEBODY
+            if (!(type == Grid::GridType::SNAKEBODY1
                 || type == Grid::GridType::SNAKEHEAD1)) {
                 return false;
             }

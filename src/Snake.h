@@ -53,7 +53,12 @@ public:
     /*
     Set the head type of the snake.
     */
-    void setHeadType(const Grid::GridType headType_);
+    void setHeadType(const Grid::GridType &headType_);
+
+    /*
+    Set the body type of the snake.
+    */
+    void setBodyType(const Grid::GridType &bodyType_);
 
 private:
     bool dead = false;
@@ -64,7 +69,8 @@ private:
 
     std::list<Point> body;
 
-    Grid::GridType headType;  // Snake's head type
+    Grid::GridType headType;
+    Grid::GridType bodyType;
 
     /*
     Remove the tail of the snake.

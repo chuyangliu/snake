@@ -47,6 +47,7 @@ void GameCtrl::initMap() {
 
 void GameCtrl::initSnakes() {
     snake1.setHeadType(Grid::GridType::SNAKEHEAD1);
+    snake1.setBodyType(Grid::GridType::SNAKEBODY1);
     snake1.setMap(map);
     snake1.addBody(Point(1, 3));
     snake1.addBody(Point(1, 2));
@@ -54,6 +55,7 @@ void GameCtrl::initSnakes() {
 
     if (enableSecondSnake) {
         snake2.setHeadType(Grid::GridType::SNAKEHEAD2);
+        snake2.setBodyType(Grid::GridType::SNAKEBODY2);
         snake2.setMap(map);
         snake2.addBody(Point(3, 3));
         snake2.addBody(Point(3, 2));
@@ -124,8 +126,11 @@ void GameCtrl::draw() const {
                     case Grid::GridType::SNAKEHEAD2:
                         Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
                         break;
-                    case Grid::GridType::SNAKEBODY:
+                    case Grid::GridType::SNAKEBODY1:
                         Console::writeWithColor("  ", ConsoleColor(GREEN, GREEN, true, true));
+                        break;
+                    case Grid::GridType::SNAKEBODY2:
+                        Console::writeWithColor("  ", ConsoleColor(CYAN, CYAN, true, true));
                         break;
                     default:
                         break;

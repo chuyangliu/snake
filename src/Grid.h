@@ -11,7 +11,8 @@ public:
         EMPTY,
         WALL,
         FOOD,
-        SNAKEBODY,
+        SNAKEBODY1,
+        SNAKEBODY2,
         SNAKEHEAD1,
         SNAKEHEAD2
     };

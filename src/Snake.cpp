@@ -16,7 +16,7 @@ bool Snake::addBody(const Point &p) {
         if (body.size() == 0) {  // Insert a head
             map->getGrid(p).setType(headType);
         } else {  // Insert a body
-            map->getGrid(p).setType(Grid::GridType::SNAKEBODY);
+            map->getGrid(p).setType(bodyType);
         }
         body.push_back(p);
         return true;
@@ -29,8 +29,12 @@ void Snake::setDirection(const Direction &d) {
     direc = d;
 }
 
-void Snake::setHeadType(const Grid::GridType headType_) {
+void Snake::setHeadType(const Grid::GridType &headType_) {
     headType = headType_;
+}
+
+void Snake::setBodyType(const Grid::GridType &bodyType_) {
+    bodyType = bodyType_;
 }
 
 Snake::Direction Snake::getDirection() const {
@@ -78,7 +82,7 @@ void Snake::move() {
         return;
     }
 
-    map->getGrid(getHead()).setType(Grid::GridType::SNAKEBODY);
+    map->getGrid(getHead()).setType(bodyType);
     Point newHead = getHead() + getDisplacement(direc);
     body.push_front(newHead);
 
