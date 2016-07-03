@@ -101,7 +101,7 @@ private:
 
     // Game objects
     Snake snake;
-    Map *map = nullptr;
+    std::shared_ptr<Map> map;
 
     // Thread fields
     bool threadWork = true;      // Thread running switcher
@@ -111,18 +111,13 @@ private:
     std::thread autoMoveThread;  // Thread to auto move the snake
 
     // Mutex variables
-    std::mutex mutexMove;  // Mutex for snake movements
-    std::mutex mutexExit;  // Mutex for exit game
+    std::mutex mutexMove;  // Mutex for moveSnake()
+    std::mutex mutexExit;  // Mutex for exitGame()
 
     /*
     Private constructor for singleton.
     */
     GameCtrl();
-
-    /*
-    Release the memory occupied.
-    */
-    void release();
 
     /*
     Sleep for a time calculated by FPS value.
@@ -168,6 +163,13 @@ private:
     Execute keyboard instructions.
     */
     void keyboard();
+
+    /*
+    Execute keyboard move instruction.
+
+    @param d the direction to move
+    */
+    void keyboardMove(const Snake::Direction &d);
 
     /*
     Callback for food thread.

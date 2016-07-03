@@ -21,7 +21,6 @@ GameCtrl::GameCtrl() {
 }
 
 GameCtrl::~GameCtrl() {
-    release();
 }
 
 int GameCtrl::run() {
@@ -43,7 +42,7 @@ int GameCtrl::run() {
 }
 
 void GameCtrl::initMap() {
-    map = new Map(mapRowCnt, mapColCnt);
+    map = std::make_shared<Map>(mapRowCnt, mapColCnt);
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
     }
@@ -63,7 +62,6 @@ void GameCtrl::exitGame(const std::string &msg) {
     Console::writeWithColor(msg, ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
     Console::setCursor(0, mapRowCnt + 2);
-    release();
     mutexExit.unlock();
     exit(0);
 }
@@ -137,37 +135,32 @@ void GameCtrl::keyboard() {
         if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
                 case 'w':
-                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::UP) {
-                        moveSnake();
-                    }
-                    snake.setDirection(Snake::MoveDirection::UP);
+                    keyboardMove(Snake::Direction::UP);
                     break;
                 case 'a':
-                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::LEFT) {
-                        moveSnake();
-                    }
-                    snake.setDirection(Snake::MoveDirection::LEFT);
+                    keyboardMove(Snake::Direction::LEFT);
                     break;
                 case 's':
-                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::DOWN) {
-                        moveSnake();
-                    }
-                    snake.setDirection(Snake::MoveDirection::DOWN);
+                    keyboardMove(Snake::Direction::DOWN);
                     break;
                 case 'd':
-                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::RIGHT) {
-                        moveSnake();
-                    }
-                    snake.setDirection(Snake::MoveDirection::RIGHT);
+                    keyboardMove(Snake::Direction::RIGHT);
                     break;
                 default:
-                    continue;
-            }
-            if (!autoMoveSnake) {
-                moveSnake();
+                    break;
             }
         }
         sleepByFPS();
+    }
+}
+
+void GameCtrl::keyboardMove(const Snake::Direction &d) {
+    if (autoMoveSnake && snake.getDirection() == d) {
+        moveSnake();  // Accelerate the movements
+    }
+    snake.setDirection(d);
+    if (!autoMoveSnake) {
+        moveSnake();
     }
 }
 
@@ -188,6 +181,8 @@ void GameCtrl::autoMove() {
 }
 
 void GameCtrl::startThreads() {
+    // Detach each thread make each 
+    // thread don't need to be joined
     drawThread = std::thread(&GameCtrl::draw, this);
     drawThread.detach();
 
@@ -207,11 +202,6 @@ void GameCtrl::startThreads() {
 
 void GameCtrl::stopThreads() {
     threadWork = false;
-}
-
-void GameCtrl::release() {
-    delete map;
-    map = nullptr;
 }
 
 void GameCtrl::setFPS(const double &fps_) {
@@ -247,8 +237,8 @@ void GameCtrl::setMapColumn(const Map::size_type &n) {
 }
 
 int GameCtrl::random(const int min, const int max) {
-    static bool set_seed = true;
-    if (set_seed) srand(static_cast<unsigned>(time(NULL)));
-    set_seed = false;
+    static bool setSeed = true;
+    if (setSeed) srand(static_cast<unsigned>(time(NULL)));
+    setSeed = false;
     return rand() % (max - min + 1) + min;
 }

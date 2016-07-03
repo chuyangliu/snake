@@ -2,10 +2,11 @@
 
 #include "Map.h"
 #include <list>
+#include <memory>
 
 class Snake {
 public:
-    enum MoveDirection {
+    enum Direction {
         NONE,
         LEFT,
         UP,
@@ -13,19 +14,8 @@ public:
         DOWN 
     };
 
-    /*
-    Initialize with a map.
-
-    @param m the map to attach
-    */
-    Snake(Map *m = nullptr);
+    Snake();
     ~Snake();
-
-    /*
-    Forbid copy
-    */
-    Snake(const Snake &m) = delete;
-    Snake& operator=(const Snake &m) = delete;
 
     /*
     Move at current diection.
@@ -40,17 +30,17 @@ public:
     /*
     Set move direction.
     */
-    void setDirection(const MoveDirection &d);
+    void setDirection(const Direction &d);
 
     /*
     Return move direction.
     */
-    MoveDirection getDirection() const;
+    Direction getDirection() const;
 
     /*
     Set the map of the snake.
     */
-    void setMap(Map *m);
+    void setMap(std::shared_ptr<Map> m);
 
     /*
     Add a new body.
@@ -63,9 +53,9 @@ public:
 private:
     bool dead = false;
 
-    Map *map = nullptr;  // The map that the snake attaches to
+    std::shared_ptr<Map> map;  // The map that the snake attaches to
 
-    MoveDirection direc = NONE;  // Current snake move direcition
+    Direction direc = NONE;  // Current snake move direcition
 
     std::list<Point> body;
 
@@ -80,7 +70,7 @@ private:
     @param d the move direction
     @return the displacement stored in a Point object
     */
-    static Point getDisplacement(const MoveDirection &d);
+    static Point getDisplacement(const Direction &d);
 
     /*
     Return the head position.

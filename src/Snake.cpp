@@ -1,7 +1,7 @@
 #include "Snake.h"
 #include "GameCtrl.h"
 
-Snake::Snake(Map *m) : map(m) {
+Snake::Snake() {
 }
 
 Snake::~Snake() {
@@ -25,15 +25,15 @@ bool Snake::addBody(const Point &p) {
     }
 }
 
-void Snake::setDirection(const MoveDirection &d) {
+void Snake::setDirection(const Direction &d) {
     direc = d;
 }
 
-Snake::MoveDirection Snake::getDirection() const {
+Snake::Direction Snake::getDirection() const {
     return direc;
 }
 
-void Snake::setMap(Map *m) {
+void Snake::setMap(std::shared_ptr<Map> m) {
     map = m;
 }
 
@@ -52,7 +52,7 @@ void Snake::removeTail() {
     body.pop_back();
 }
 
-Point Snake::getDisplacement(const MoveDirection &d) {
+Point Snake::getDisplacement(const Direction &d) {
     int dx = 0, dy = 0;
     switch (d) {
         case LEFT:
