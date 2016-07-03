@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Grid.h"
-#include "Point.h"
 #include <vector>
 
 /*
@@ -9,14 +8,12 @@ A map of the game
 */
 class Map {
 public:
-    Map(const long &rowCnt_, const long &colCnt_);
-    ~Map();
+    typedef std::vector<std::vector<Grid>> content_type;
+    typedef content_type::size_type size_type;
 
-    /*
-    Forbid copy(temporary)
-    */
-    Map(const Map &m) = delete;
-    Map& operator=(const Map &m) = delete;
+    Map() = delete;
+    Map(const size_type &rowCnt_, const size_type &colCnt_);
+    ~Map();
 
     /*
     Return the grid at the point.
@@ -69,20 +66,29 @@ public:
     /*
     Return the count of the rows.
     */
-    long getRowCount() const;
+    size_type getRowCount() const;
 
     /*
     Return the count of the columns.
     */
-    long getColCount() const;
+    size_type getColCount() const;
 
 private:
     Point food = Point::INVALID;
 
-    std::vector<std::vector<Grid>> content;  // The elements on the map
+    content_type content;  // The elements on the map
 
     /*
     Set default walls on the map.
     */
     void setDefaultWalls();
+
+    /*
+    Generate a food position on the map.
+    WARNING: if there is no space for food,
+             this will be an endless loop.
+
+    @return the new food position
+    */
+    Point generateFoodPos() const;
 };

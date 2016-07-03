@@ -1,9 +1,7 @@
 #include "Map.h"
 #include "GameCtrl.h"
-#include <new>
-#include <cstdlib>
 
-Map::Map(const long &rowCnt_, const long &colCnt_)
+Map::Map(const size_type &rowCnt_, const size_type &colCnt_)
     : content(rowCnt_, std::vector<Grid>(colCnt_)) {
     setDefaultWalls();
 }
@@ -12,11 +10,10 @@ Map::~Map() {
 }
 
 void Map::setDefaultWalls() {
-    auto rows = getRowCount();
-    auto cols = getColCount();
-    for (auto i = 0; i < getRowCount(); ++i) {
+    auto rows = getRowCount(), cols = getColCount();
+    for (size_type i = 0; i < rows; ++i) {
         if (i == 0 || i == rows - 1) {  // The first and last rows
-            for (auto j = 0; j < cols; ++j) {
+            for (size_type j = 0; j < cols; ++j) {
                 content[i][j].setType(Grid::GridType::WALL);
             }
         } else {  // Rows in the middle
@@ -42,13 +39,14 @@ bool Map::isBodyOrBoundary(const Point &p) const {
 
 bool Map::isInside(const Point &p) const {
     return p.getX() > 0 && p.getY() > 0
-        && p.getX() < getRowCount() - 1
-        && p.getY() < getColCount() - 1;
+        && p.getX() < (Point::attr_type)getRowCount() - 1
+        && p.getY() < (Point::attr_type)getColCount() - 1;
 }
 
 bool Map::isFilledWithBody() const {
-    for (auto i = 1; i < getRowCount() - 1; ++i) {
-        for (auto j = 1; j < getColCount() - 1; ++j) {
+    auto rows = getRowCount(), cols = getColCount();
+    for (size_type i = 1; i < rows - 1; ++i) {
+        for (size_type j = 1; j < cols - 1; ++j) {
             auto type = content[i][j].getType();
             if (!(type == Grid::GridType::SNAKEBODY
                 || type == Grid::GridType::SNAKEHEAD)) {
@@ -63,16 +61,20 @@ void Map::createFood() {
     if (isFilledWithBody()) {
         return;
     }
+    food = generateFoodPos();
+    content[food.getX()][food.getY()].setType(Grid::GridType::FOOD);
+}
 
-    int row, col;
+Point Map::generateFoodPos() const {
+    auto rows = getRowCount(), cols = getColCount();
+    Point::attr_type r, c;
+
     do {
-        row = GameCtrl::getInstance()->random(1, getRowCount() - 2);
-        col = GameCtrl::getInstance()->random(1, getColCount() - 2);
-    } while (content[row][col].getType() != Grid::GridType::EMPTY);
-
-    food.setX(row);
-    food.setY(col);
-    content[row][col].setType(Grid::GridType::FOOD);
+        r = GameCtrl::getInstance()->random(1, rows - 2);
+        c = GameCtrl::getInstance()->random(1, cols - 2);
+    } while (content[r][c].getType() != Grid::GridType::EMPTY);
+    
+    return Point(r, c);
 }
 
 void Map::removeFood() {
@@ -86,11 +88,11 @@ bool Map::hasFood() const {
     return food != Point::INVALID;
 }
 
-long Map::getRowCount() const {
+Map::size_type Map::getRowCount() const {
     return content.size();
 }
 
-long Map::getColCount() const {
+Map::size_type Map::getColCount() const {
     return content[0].size();
 }
 

@@ -2,7 +2,7 @@
 
 const Point Point::INVALID = Point(-1, -1);
 
-Point::Point(const AttrType &x_, const AttrType &y_)
+Point::Point(const attr_type &x_, const attr_type &y_)
     : x(x_), y(y_) {
 }
 
@@ -10,19 +10,19 @@ Point::~Point() {
 }
 
 
-Point::AttrType Point::getX() const {
+Point::attr_type Point::getX() const {
     return x;
 }
 
-Point::AttrType Point::getY() const {
+Point::attr_type Point::getY() const {
     return y;
 }
 
-void Point::setX(const AttrType &x_) {
+void Point::setX(const attr_type &x_) {
     x = x_;
 }
 
-void Point::setY(const AttrType &y_) {
+void Point::setY(const attr_type &y_) {
     y = y_;
 }
 

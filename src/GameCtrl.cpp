@@ -98,8 +98,10 @@ void GameCtrl::draw() const {
     while (threadWork) {
         // Drawing
         Console::setCursor();
-        for (auto i = 0; i < snake->getMoveArea()->getRowCount() && threadWork; ++i) {
-            for (auto j = 0; j < snake->getMoveArea()->getColCount() && threadWork; ++j) {
+        auto rows = snake->getMoveArea()->getRowCount();
+        auto cols = snake->getMoveArea()->getColCount();
+        for (Map::size_type i = 0; i < rows && threadWork; ++i) {
+            for (Map::size_type j = 0; j < cols && threadWork; ++j) {
                 switch (snake->getMoveArea()->getGrid(Point(i, j)).getType()) {
                     case Grid::GridType::EMPTY:
                         Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));

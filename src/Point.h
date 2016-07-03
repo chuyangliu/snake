@@ -6,20 +6,20 @@ y coordinate attributes.
 */
 class Point {
 public:
-    typedef long AttrType;
+    typedef long attr_type;
 
     // Constants
     static const Point INVALID;
 
     // Constructor and destructor
-    Point(const AttrType &x_ = 0, const AttrType &y_ = 0);
+    Point(const attr_type &x_ = 0, const attr_type &y_ = 0);
     ~Point();
 
     // Getters and setters
-    AttrType getX() const;
-    AttrType getY() const;
-    void setX(const AttrType &x_);
-    void setY(const AttrType &y_);
+    attr_type getX() const;
+    attr_type getY() const;
+    void setX(const attr_type &x_);
+    void setY(const attr_type &y_);
 
     // Operators
     friend Point operator+(const Point &a, const Point &b);
@@ -27,6 +27,6 @@ public:
     friend bool operator!=(const Point &a, const Point &b);
 
 private:
-    AttrType x;
-    AttrType y;
+    attr_type x;
+    attr_type y;
 };

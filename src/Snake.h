@@ -5,9 +5,12 @@
 
 class Snake {
 public:
-    // Snake move direction declaration
     enum MoveDirection {
-        NONE, LEFT, UP, RIGHT, DOWN 
+        NONE,
+        LEFT,
+        UP,
+        RIGHT,
+        DOWN 
     };
 
     Snake() = delete;

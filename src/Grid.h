@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Point.h"
+
 /*
 A Grid on the game map.
 */
@@ -23,4 +25,5 @@ public:
 
 private:
     GridType type;
+    //Point p;
 };
