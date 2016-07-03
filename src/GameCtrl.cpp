@@ -26,6 +26,7 @@ GameCtrl::~GameCtrl() {
 
 int GameCtrl::run() {
     try {
+        initMap();
         createSnake();
         startThreads();
         while (1) {
@@ -39,8 +40,15 @@ int GameCtrl::run() {
     }
 }
 
+void GameCtrl::initMap() {
+    map = new Map(mapRowCnt, mapColCnt);
+    if (!map) {
+        exitGame(MSG_BAD_ALLOC);
+    }
+}
+
 void GameCtrl::createSnake() {
-    snake = new(std::nothrow) Snake(mapRowCnt, mapColCnt);
+    snake = new(std::nothrow) Snake(map);
     if (!snake) {
         exitGame(MSG_BAD_ALLOC);
     }
@@ -60,7 +68,7 @@ void GameCtrl::exitGame(const std::string &msg) {
 
 void GameCtrl::moveSnake() {
     mutexMove.lock();
-    if (snake->getMoveArea()->isFilledWithBody()) {
+    if (map->isFilledWithBody()) {
         // Unlock must outside the exitGame()
         // because exitGame() will terminate the program
         // and there is no chance to unlock the mutex
@@ -98,11 +106,11 @@ void GameCtrl::draw() const {
     while (threadWork) {
         // Drawing
         Console::setCursor();
-        auto rows = snake->getMoveArea()->getRowCount();
-        auto cols = snake->getMoveArea()->getColCount();
+        auto rows = map->getRowCount();
+        auto cols = map->getColCount();
         for (Map::size_type i = 0; i < rows && threadWork; ++i) {
             for (Map::size_type j = 0; j < cols && threadWork; ++j) {
-                switch (snake->getMoveArea()->getGrid(Point(i, j)).getType()) {
+                switch (map->getGrid(Point(i, j)).getType()) {
                     case Grid::GridType::EMPTY:
                         Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
                         break;
@@ -187,8 +195,8 @@ void GameCtrl::startCreateFood() {
 
 void GameCtrl::createFood() {
     while (threadWork) {
-        if (!snake->getMoveArea()->hasFood()) {
-            snake->getMoveArea()->createFood();
+        if (!map->hasFood()) {
+            map->createFood();
         }
         sleepByFPS();
     }
@@ -228,11 +236,13 @@ void GameCtrl::stopThreads() {
 
 void GameCtrl::release() {
     delete snake;
+    delete map;
     delete drawThread;
     delete keyboardThread;
     delete foodThread;
     delete moveThread;
     snake = nullptr;
+    map = nullptr;
     drawThread = nullptr;
     keyboardThread = nullptr;
     foodThread = nullptr;

@@ -1,28 +1,14 @@
 #include "Snake.h"
 #include "GameCtrl.h"
-#include <new>
 
-Snake::Snake(const unsigned &mapRowCnt, const unsigned &mapColCnt) {
-    moveArea = new(std::nothrow) Map(mapRowCnt, mapColCnt);
-    if (!moveArea) {
-        GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
-    }
-    // Create three bodies first
+Snake::Snake(Map *m) : map(m) {
+    // Create three bodies initially
     addBody(Point(1, 3));
     addBody(Point(1, 2));
     addBody(Point(1, 1));
 }
 
 Snake::~Snake() {
-    delete moveArea;
-}
-
-Map* Snake::getMoveArea() {
-    return moveArea;
-}
-
-const Map* Snake::getMoveArea() const {
-    return moveArea;
 }
 
 bool Snake::isDead() const {
@@ -30,12 +16,12 @@ bool Snake::isDead() const {
 }
 
 bool Snake::addBody(const Point &p) {
-    if (moveArea->isInside(p)) {
+    if (map->isInside(p)) {
         body.push_back(p);
         if (body.size() == 1) {  // Insert a head
-            moveArea->getGrid(p).setType(Grid::GridType::SNAKEHEAD);
+            map->getGrid(p).setType(Grid::GridType::SNAKEHEAD);
         } else {
-            moveArea->getGrid(p).setType(Grid::GridType::SNAKEBODY);
+            map->getGrid(p).setType(Grid::GridType::SNAKEBODY);
         }
         return true;
     } else {
@@ -56,33 +42,33 @@ void Snake::move() {
         return;
     }
 
-    moveArea->getGrid(getHeadPos()).setType(Grid::GridType::SNAKEBODY);
+    map->getGrid(getHeadPos()).setType(Grid::GridType::SNAKEBODY);
     Point newHead = getHeadPos() + getDisplacement(direc);
     body.push_front(newHead);
 
-    if (moveArea->getGrid(newHead).getType() != Grid::GridType::FOOD) {
+    if (map->getGrid(newHead).getType() != Grid::GridType::FOOD) {
         removeTail();
     } else {
-        moveArea->removeFood();
+        map->removeFood();
     }
 
-    if (moveArea->isBodyOrBoundary(newHead)) {
+    if (map->isBodyOrBoundary(newHead)) {
         dead = true;
     }
 
-    moveArea->getGrid(newHead).setType(Grid::GridType::SNAKEHEAD);
+    map->getGrid(newHead).setType(Grid::GridType::SNAKEHEAD);
 }
 
-Point Snake::getHeadPos() const {
+const Point& Snake::getHeadPos() const {
     return *body.begin();
 }
 
-Point Snake::getTailPos() const {
+const Point& Snake::getTailPos() const {
     return *body.rbegin();
 }
 
 void Snake::removeTail() {
-    moveArea->getGrid(getTailPos()).setType(Grid::GridType::EMPTY);
+    map->getGrid(getTailPos()).setType(Grid::GridType::EMPTY);
     body.pop_back();
 }
 

@@ -28,7 +28,6 @@ int main() {
 
 /*
 TODO
-1. Separate Map from Snake
-2. GameCtrl stores snake list
-3. AI
+1. GameCtrl stores snake list
+2. AI
 */

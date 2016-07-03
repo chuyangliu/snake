@@ -14,7 +14,7 @@ public:
     };
 
     Snake() = delete;
-    Snake(const unsigned &mapRowCnt, const unsigned &mapColCnt);
+    Snake(Map *m);
     ~Snake();
 
     /*
@@ -22,12 +22,6 @@ public:
     */
     Snake(const Snake &m) = delete;
     Snake& operator=(const Snake &m) = delete;
-
-    /*
-    Return the moveArea field.
-    */
-    Map* getMoveArea();
-    const Map* getMoveArea() const;
 
     /*
     Move at current diection.
@@ -52,13 +46,14 @@ public:
 private:
     bool dead = false;
 
-    Map *moveArea = nullptr;
-    MoveDirection direc = NONE;
+    Map *map = nullptr;  // The map that the snake attaches to
+
+    MoveDirection direc = NONE;  // Current snake move direcition
 
     std::list<Point> body;
 
     /*
-    Add new body.
+    Add a new body.
 
     @param p the point of the new body
     @return true if adding succeed, false otherwise
@@ -71,17 +66,20 @@ private:
     void removeTail();
 
     /*
-    Get the displacement of the direction.
+    Get a displacement of a direction.
+
+    @param d the move direction
+    @return the displacement stored in a Point object
     */
     static Point getDisplacement(const MoveDirection &d);
 
     /*
     Return the head position.
     */
-    Point getHeadPos() const;
+    const Point& getHeadPos() const;
 
     /*
     Return the tail position.
     */
-    Point getTailPos() const;
+    const Point& getTailPos() const;
 };

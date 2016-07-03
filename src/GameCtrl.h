@@ -87,6 +87,8 @@ private:
     bool threadWork = true;  // True if all the threads are running
 
     Snake *snake = nullptr;
+    Map *map = nullptr;
+
     std::thread *drawThread = nullptr;      // Thread to draw the map
     std::thread *keyboardThread = nullptr;  // Thread to receive keyboard instructions
     std::thread *foodThread = nullptr;      // Thread to create food
@@ -103,6 +105,11 @@ private:
     Private constructor
     */
     GameCtrl();
+
+    /*
+    Initialize the game map
+    */
+    void initMap();
 
     /*
     Move snake and check game over.
