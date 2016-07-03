@@ -146,6 +146,14 @@ private:
     void moveSnake(Snake &s);
 
     /*
+    Return a string contain the current score info.
+    The score is equals to the number of bodies on the map.
+
+    @return the score string
+    */
+    std::string getScoreStr() const;
+
+    /*
     Start all threads.
     */
     void startThreads();

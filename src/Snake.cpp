@@ -53,6 +53,10 @@ const Point& Snake::getTail() const {
     return *body.rbegin();
 }
 
+Snake::size_type Snake::size() const {
+    return body.size();
+}
+
 void Snake::removeTail() {
     if (map) {
         map->getGrid(getTail()).setType(Grid::GridType::EMPTY);

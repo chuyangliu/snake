@@ -6,6 +6,8 @@
 
 class Snake {
 public:
+    typedef Map::size_type size_type;
+
     enum Direction {
         NONE,
         LEFT,
@@ -59,6 +61,11 @@ public:
     Set the body type of the snake.
     */
     void setBodyType(const Grid::GridType &bodyType_);
+
+    /*
+    Return the snake bodies size.
+    */
+    size_type size() const;
 
 private:
     bool dead = false;

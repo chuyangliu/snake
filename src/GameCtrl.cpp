@@ -3,6 +3,7 @@
 #include <exception>
 #include <cstdio>
 #include <chrono>
+#include <sstream>
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -68,9 +69,10 @@ void GameCtrl::exitGame(const std::string &msg) {
     stopThreads();
     sleepFor(100);  // Wait draw thread to finish last drawing
     Console::setCursor(0, mapRowCnt + 6);
+    Console::writeWithColor(getScoreStr(), ConsoleColor(WHITE, BLACK, true, false));
     Console::writeWithColor(msg, ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
-    Console::setCursor(0, mapRowCnt + 7);
+    Console::setCursor(0, mapRowCnt + 8);
     mutexExit.unlock();
     exit(0);
 }
@@ -92,6 +94,14 @@ void GameCtrl::moveSnake(Snake &s) {
         s.move();
         mutexMove.unlock();
     }
+}
+
+std::string GameCtrl::getScoreStr() const {
+    std::stringstream s;
+    std::string score;
+    s << (snake1.size() + snake2.size());
+    s >> score;
+    return "Score: " + score + "\n";
 }
 
 void GameCtrl::sleepFor(const long ms) const {
