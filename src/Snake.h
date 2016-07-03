@@ -13,8 +13,12 @@ public:
         DOWN 
     };
 
-    Snake() = delete;
-    Snake(Map *m);
+    /*
+    Initialize with a map.
+
+    @param m the map to attach
+    */
+    Snake(Map *m = nullptr);
     ~Snake();
 
     /*
@@ -36,12 +40,12 @@ public:
     /*
     Set move direction.
     */
-    void setMoveDirection(const MoveDirection &d);
+    void setDirection(const MoveDirection &d);
 
     /*
     Return move direction.
     */
-    MoveDirection getMoveDirection() const;
+    MoveDirection getDirection() const;
 
 private:
     bool dead = false;
@@ -76,10 +80,10 @@ private:
     /*
     Return the head position.
     */
-    const Point& getHeadPos() const;
+    const Point& getHead() const;
 
     /*
     Return the tail position.
     */
-    const Point& getTailPos() const;
+    const Point& getTail() const;
 };

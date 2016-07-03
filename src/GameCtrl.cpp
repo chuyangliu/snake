@@ -151,28 +151,28 @@ void GameCtrl::receiveKeyboardInstruction() {
         if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
                 case 'w':
-                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::UP) {
+                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::UP) {
                         moveSnake();
                     }
-                    snake->setMoveDirection(Snake::MoveDirection::UP);
+                    snake->setDirection(Snake::MoveDirection::UP);
                     break;
                 case 'a':
-                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::LEFT) {
+                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::LEFT) {
                         moveSnake();
                     }
-                    snake->setMoveDirection(Snake::MoveDirection::LEFT);
+                    snake->setDirection(Snake::MoveDirection::LEFT);
                     break;
                 case 's':
-                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::DOWN) {
+                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::DOWN) {
                         moveSnake();
                     }
-                    snake->setMoveDirection(Snake::MoveDirection::DOWN);
+                    snake->setDirection(Snake::MoveDirection::DOWN);
                     break;
                 case 'd':
-                    if (autoMoveSnake && snake->getMoveDirection() == Snake::MoveDirection::RIGHT) {
+                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::RIGHT) {
                         moveSnake();
                     }
-                    snake->setMoveDirection(Snake::MoveDirection::RIGHT);
+                    snake->setDirection(Snake::MoveDirection::RIGHT);
                     break;
                 default:
                     continue;

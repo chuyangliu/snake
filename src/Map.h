@@ -11,8 +11,7 @@ public:
     typedef std::vector<std::vector<Grid>> content_type;
     typedef content_type::size_type size_type;
 
-    Map() = delete;
-    Map(const size_type &rowCnt_, const size_type &colCnt_);
+    Map(const size_type &rowCnt_ = 20, const size_type &colCnt_ = 20);
     ~Map();
 
     /*

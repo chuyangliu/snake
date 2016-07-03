@@ -17,58 +17,36 @@ bool Snake::isDead() const {
 
 bool Snake::addBody(const Point &p) {
     if (map->isInside(p)) {
-        body.push_back(p);
-        if (body.size() == 1) {  // Insert a head
+        if (body.size() == 0) {  // Insert a head
             map->getGrid(p).setType(Grid::GridType::SNAKEHEAD);
-        } else {
+        } else {  // Insert a body
             map->getGrid(p).setType(Grid::GridType::SNAKEBODY);
         }
+        body.push_back(p);
         return true;
     } else {
         return false;
     }
 }
 
-void Snake::setMoveDirection(const MoveDirection &d) {
+void Snake::setDirection(const MoveDirection &d) {
     direc = d;
 }
 
-Snake::MoveDirection Snake::getMoveDirection() const {
+Snake::MoveDirection Snake::getDirection() const {
     return direc;
 }
 
-void Snake::move() {
-    if (isDead() || direc == NONE) {
-        return;
-    }
-
-    map->getGrid(getHeadPos()).setType(Grid::GridType::SNAKEBODY);
-    Point newHead = getHeadPos() + getDisplacement(direc);
-    body.push_front(newHead);
-
-    if (map->getGrid(newHead).getType() != Grid::GridType::FOOD) {
-        removeTail();
-    } else {
-        map->removeFood();
-    }
-
-    if (map->isBodyOrBoundary(newHead)) {
-        dead = true;
-    }
-
-    map->getGrid(newHead).setType(Grid::GridType::SNAKEHEAD);
-}
-
-const Point& Snake::getHeadPos() const {
+const Point& Snake::getHead() const {
     return *body.begin();
 }
 
-const Point& Snake::getTailPos() const {
+const Point& Snake::getTail() const {
     return *body.rbegin();
 }
 
 void Snake::removeTail() {
-    map->getGrid(getTailPos()).setType(Grid::GridType::EMPTY);
+    map->getGrid(getTail()).setType(Grid::GridType::EMPTY);
     body.pop_back();
 }
 
@@ -87,4 +65,26 @@ Point Snake::getDisplacement(const MoveDirection &d) {
             return Point(0, 0);
     }
     return Point(dx, dy);
+}
+
+void Snake::move() {
+    if (isDead() || direc == NONE) {
+        return;
+    }
+
+    map->getGrid(getHead()).setType(Grid::GridType::SNAKEBODY);
+    Point newHead = getHead() + getDisplacement(direc);
+    body.push_front(newHead);
+
+    if (map->getGrid(newHead).getType() != Grid::GridType::FOOD) {
+        removeTail();
+    } else {
+        map->removeFood();
+    }
+
+    if (map->isBodyOrBoundary(newHead)) {
+        dead = true;
+    }
+
+    map->getGrid(newHead).setType(Grid::GridType::SNAKEHEAD);
 }
