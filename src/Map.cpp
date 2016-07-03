@@ -32,8 +32,9 @@ const Grid& Map::getGrid(const Point &p) const {
 }
 
 bool Map::isBodyOrBoundary(const Point &p) const {
-    return p.getX() == 0 || p.getX() == getRowCount() - 1 
-        || p.getY() == 0 || p.getY() == getColCount() - 1
+    return getGrid(p).getType() == Grid::GridType::WALL
+        || getGrid(p).getType() == Grid::GridType::SNAKEHEAD1
+        || getGrid(p).getType() == Grid::GridType::SNAKEHEAD2
         || getGrid(p).getType() == Grid::GridType::SNAKEBODY;
 }
 
@@ -49,7 +50,7 @@ bool Map::isFilledWithBody() const {
         for (size_type j = 1; j < cols - 1; ++j) {
             auto type = content[i][j].getType();
             if (!(type == Grid::GridType::SNAKEBODY
-                || type == Grid::GridType::SNAKEHEAD)) {
+                || type == Grid::GridType::SNAKEHEAD1)) {
                 return false;
             }
         }

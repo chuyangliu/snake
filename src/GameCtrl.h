@@ -63,9 +63,9 @@ public:
     void setAutoMoveInterval(const long &ms);
 
     /*
-    Set whether to enable keyboard instructions.
+    Set whether to enable the second snake.
     */
-    void setEnableKeyboard(const bool &enable);
+    void setEnableSecondSnake(const bool &enable);
 
     /*
     Set map row count.
@@ -97,10 +97,11 @@ private:
     Map::size_type mapColCnt = 20;
     bool autoMoveSnake = true;
     long autoMoveInterval = 200;
-    bool enableKeyboard = true;
+    bool enableSecondSnake = false;
 
     // Game objects
-    Snake snake;
+    Snake snake1;
+    Snake snake2;
     std::shared_ptr<Map> map;
 
     // Thread fields
@@ -130,17 +131,19 @@ private:
     void initMap();
 
     /*
-    Initialize the snake of the game.
+    Initialize the snakes of the game.
     */
-    void initSnake();
+    void initSnakes();
 
     /*
     Move snake and check game over.
     This is a thread-safe method.
     Call this method instead of snake->move() because
     snake->move() cannot check game over and is not thread-safe.
+
+    @param s the snake to move
     */
-    void moveSnake();
+    void moveSnake(Snake &s);
 
     /*
     Start all threads.
@@ -167,9 +170,10 @@ private:
     /*
     Execute keyboard move instruction.
 
+    @param s the snake to move
     @param d the direction to move
     */
-    void keyboardMove(const Snake::Direction &d);
+    void keyboardMove(Snake &s, const Snake::Direction &d);
 
     /*
     Callback for food thread.

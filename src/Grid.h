@@ -11,8 +11,9 @@ public:
         EMPTY,
         WALL,
         FOOD,
-        SNAKEHEAD,
-        SNAKEBODY
+        SNAKEBODY,
+        SNAKEHEAD1,
+        SNAKEHEAD2
     };
 
     // Constructor and destructor

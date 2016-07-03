@@ -50,6 +50,11 @@ public:
     */
     bool addBody(const Point &p);
 
+    /*
+    Set the head type of the snake.
+    */
+    void setHeadType(const Grid::GridType headType_);
+
 private:
     bool dead = false;
 
@@ -58,6 +63,8 @@ private:
     Direction direc = NONE;  // Current snake move direcition
 
     std::list<Point> body;
+
+    Grid::GridType headType;  // Snake's head type
 
     /*
     Remove the tail of the snake.

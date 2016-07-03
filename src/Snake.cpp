@@ -14,7 +14,7 @@ bool Snake::isDead() const {
 bool Snake::addBody(const Point &p) {
     if (map && map->isInside(p)) {
         if (body.size() == 0) {  // Insert a head
-            map->getGrid(p).setType(Grid::GridType::SNAKEHEAD);
+            map->getGrid(p).setType(headType);
         } else {  // Insert a body
             map->getGrid(p).setType(Grid::GridType::SNAKEBODY);
         }
@@ -27,6 +27,10 @@ bool Snake::addBody(const Point &p) {
 
 void Snake::setDirection(const Direction &d) {
     direc = d;
+}
+
+void Snake::setHeadType(const Grid::GridType headType_) {
+    headType = headType_;
 }
 
 Snake::Direction Snake::getDirection() const {
@@ -88,5 +92,5 @@ void Snake::move() {
         dead = true;
     }
 
-    map->getGrid(newHead).setType(Grid::GridType::SNAKEHEAD);
+    map->getGrid(newHead).setType(headType);
 }

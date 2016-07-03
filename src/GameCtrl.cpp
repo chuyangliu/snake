@@ -26,14 +26,11 @@ GameCtrl::~GameCtrl() {
 int GameCtrl::run() {
     try {
         initMap();
-        initSnake();
+        initSnakes();
         startThreads();
-
         while (1) {
             
         }
-
-        //stopThreads();
         return 0;
     } catch (std::exception &e) {
         exitGame(e.what());
@@ -48,11 +45,20 @@ void GameCtrl::initMap() {
     }
 }
 
-void GameCtrl::initSnake() {
-    snake.setMap(map);
-    snake.addBody(Point(1, 3));
-    snake.addBody(Point(1, 2));
-    snake.addBody(Point(1, 1));
+void GameCtrl::initSnakes() {
+    snake1.setHeadType(Grid::GridType::SNAKEHEAD1);
+    snake1.setMap(map);
+    snake1.addBody(Point(1, 3));
+    snake1.addBody(Point(1, 2));
+    snake1.addBody(Point(1, 1));
+
+    if (enableSecondSnake) {
+        snake2.setHeadType(Grid::GridType::SNAKEHEAD2);
+        snake2.setMap(map);
+        snake2.addBody(Point(3, 3));
+        snake2.addBody(Point(3, 2));
+        snake2.addBody(Point(3, 1));
+    }
 }
 
 void GameCtrl::exitGame(const std::string &msg) {
@@ -66,7 +72,7 @@ void GameCtrl::exitGame(const std::string &msg) {
     exit(0);
 }
 
-void GameCtrl::moveSnake() {
+void GameCtrl::moveSnake(Snake &s) {
     mutexMove.lock();
     if (map->isFilledWithBody()) {
         // Unlock must outside the exitGame()
@@ -76,11 +82,11 @@ void GameCtrl::moveSnake() {
         // Notice that exitGame() is a thread-safe method.
         mutexMove.unlock();
         exitGame(MSG_WIN);
-    } else if (snake.isDead()) {
+    } else if (s.isDead()) {
         mutexMove.unlock();
         exitGame(MSG_LOSE);
     } else {
-        snake.move();
+        s.move();
         mutexMove.unlock();
     }
 }
@@ -112,8 +118,11 @@ void GameCtrl::draw() const {
                     case Grid::GridType::FOOD:
                         Console::writeWithColor("  ", ConsoleColor(YELLOW, YELLOW, true, true));
                         break;
-                    case Grid::GridType::SNAKEHEAD:
+                    case Grid::GridType::SNAKEHEAD1:
                         Console::writeWithColor("  ", ConsoleColor(RED, RED, true, true));
+                        break;
+                    case Grid::GridType::SNAKEHEAD2:
+                        Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
                         break;
                     case Grid::GridType::SNAKEBODY:
                         Console::writeWithColor("  ", ConsoleColor(GREEN, GREEN, true, true));
@@ -135,16 +144,28 @@ void GameCtrl::keyboard() {
         if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
                 case 'w':
-                    keyboardMove(Snake::Direction::UP);
+                    keyboardMove(snake1, Snake::Direction::UP);
                     break;
                 case 'a':
-                    keyboardMove(Snake::Direction::LEFT);
+                    keyboardMove(snake1, Snake::Direction::LEFT);
                     break;
                 case 's':
-                    keyboardMove(Snake::Direction::DOWN);
+                    keyboardMove(snake1, Snake::Direction::DOWN);
                     break;
                 case 'd':
-                    keyboardMove(Snake::Direction::RIGHT);
+                    keyboardMove(snake1, Snake::Direction::RIGHT);
+                    break;
+                case 'i':
+                    keyboardMove(snake2, Snake::Direction::UP);
+                    break;
+                case 'j':
+                    keyboardMove(snake2, Snake::Direction::LEFT);
+                    break;
+                case 'k':
+                    keyboardMove(snake2, Snake::Direction::DOWN);
+                    break;
+                case 'l':
+                    keyboardMove(snake2, Snake::Direction::RIGHT);
                     break;
                 default:
                     break;
@@ -154,13 +175,13 @@ void GameCtrl::keyboard() {
     }
 }
 
-void GameCtrl::keyboardMove(const Snake::Direction &d) {
-    if (autoMoveSnake && snake.getDirection() == d) {
-        moveSnake();  // Accelerate the movements
+void GameCtrl::keyboardMove(Snake &s, const Snake::Direction &d) {
+    if (autoMoveSnake && s.getDirection() == d) {
+        moveSnake(s);  // Accelerate the movements
     }
-    snake.setDirection(d);
+    s.setDirection(d);
     if (!autoMoveSnake) {
-        moveSnake();
+        moveSnake(s);
     }
 }
 
@@ -175,7 +196,8 @@ void GameCtrl::createFood() {
 
 void GameCtrl::autoMove() {
     while (threadWork) {
-        moveSnake();
+        moveSnake(snake1);
+        moveSnake(snake2);
         sleepFor(autoMoveInterval);
     }
 }
@@ -189,10 +211,8 @@ void GameCtrl::startThreads() {
     foodThread = std::thread(&GameCtrl::createFood, this);
     foodThread.detach();
 
-    if (enableKeyboard) {
-        keyboardThread = std::thread(&GameCtrl::keyboard, this);
-        keyboardThread.detach();
-    }
+    keyboardThread = std::thread(&GameCtrl::keyboard, this);
+    keyboardThread.detach();
 
     if (autoMoveSnake) {
         autoMoveThread = std::thread(&GameCtrl::autoMove, this);
@@ -212,8 +232,8 @@ void GameCtrl::setAutoMoveSnake(const bool &move) {
     autoMoveSnake = move;
 }
 
-void GameCtrl::setEnableKeyboard(const bool &enable) {
-    enableKeyboard = enable;
+void GameCtrl::setEnableSecondSnake(const bool &enable) {
+    enableSecondSnake = enable;
 }
 
 void GameCtrl::setAutoMoveInterval(const long &ms) {
@@ -221,8 +241,8 @@ void GameCtrl::setAutoMoveInterval(const long &ms) {
 }
 
 void GameCtrl::setMapRow(const Map::size_type &n) {
-    if (n < 3) {
-        mapRowCnt = 3;
+    if (n < 5) {
+        mapRowCnt = 5;
     } else {
         mapRowCnt = n;
     }

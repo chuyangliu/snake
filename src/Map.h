@@ -22,7 +22,7 @@ public:
     const Grid& getGrid(const Point &p) const;
 
     /*
-    Check if the grid at the point is a snake body
+    Check if the grid at the point is a snake body/head
     or map boundary.
 
     @param p the point to check
