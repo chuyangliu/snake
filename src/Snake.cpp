@@ -33,9 +33,9 @@ bool Snake::addBody(const Point &p) {
     if (moveArea->isInside(p)) {
         body.push_back(p);
         if (body.size() == 1) {  // Insert a head
-            moveArea->at(p).setType(Grid::GridType::SNAKEHEAD);
+            moveArea->getGrid(p).setType(Grid::GridType::SNAKEHEAD);
         } else {
-            moveArea->at(p).setType(Grid::GridType::SNAKEBODY);
+            moveArea->getGrid(p).setType(Grid::GridType::SNAKEBODY);
         }
         return true;
     } else {
@@ -56,11 +56,11 @@ void Snake::move() {
         return;
     }
 
-    moveArea->at(getHeadPos()).setType(Grid::GridType::SNAKEBODY);
+    moveArea->getGrid(getHeadPos()).setType(Grid::GridType::SNAKEBODY);
     Point newHead = getHeadPos() + getDisplacement(direc);
     body.push_front(newHead);
 
-    if (moveArea->at(newHead).getType() != Grid::GridType::FOOD) {
+    if (moveArea->getGrid(newHead).getType() != Grid::GridType::FOOD) {
         removeTail();
     } else {
         moveArea->removeFood();
@@ -70,7 +70,7 @@ void Snake::move() {
         dead = true;
     }
 
-    moveArea->at(newHead).setType(Grid::GridType::SNAKEHEAD);
+    moveArea->getGrid(newHead).setType(Grid::GridType::SNAKEHEAD);
 }
 
 Point Snake::getHeadPos() const {
@@ -82,7 +82,7 @@ Point Snake::getTailPos() const {
 }
 
 void Snake::removeTail() {
-    moveArea->at(getTailPos()).setType(Grid::GridType::EMPTY);
+    moveArea->getGrid(getTailPos()).setType(Grid::GridType::EMPTY);
     body.pop_back();
 }
 

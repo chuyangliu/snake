@@ -1,20 +1,23 @@
 #pragma once
 
 /*
-A Grid on the map.
+A Grid on the game map.
 */
 class Grid {
 public:
     enum GridType {
-        EMPTY, WALL, FOOD, SNAKEHEAD, SNAKEBODY
+        EMPTY,
+        WALL,
+        FOOD,
+        SNAKEHEAD,
+        SNAKEBODY
     };
 
+    // Constructor and destructor
     Grid(GridType type_ = EMPTY);
     ~Grid();
 
-    /*
-    Getters and setters
-    */
+    // Getters and setters
     GridType getType() const;
     void setType(GridType type_);
 

@@ -3,62 +3,52 @@
 #include <new>
 #include <cstdlib>
 
-Map::Map(const long &rowCnt_, const long &colCnt_) : rowCnt(rowCnt_), colCnt(colCnt_) {
-    content = new(std::nothrow) Grid*[rowCnt_];
-    if (!content) {
-        GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
-    }
-    for (auto i = 0; i < rowCnt_; ++i) {
-        content[i] = new(std::nothrow) Grid[colCnt_];
-        if (!content) {
-            GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
-        }
-
-        // Initial map content
-        if (i == 0 || i == rowCnt - 1) {
-            for (auto j = 0; j < colCnt; ++j) {
-                content[i][j].setType(Grid::GridType::WALL);
-            }
-        }
-        content[i][0].setType(Grid::GridType::WALL);
-        content[i][colCnt - 1].setType(Grid::GridType::WALL);
-    }
+Map::Map(const long &rowCnt_, const long &colCnt_)
+    : content(rowCnt_, std::vector<Grid>(colCnt_)) {
+    setDefaultWalls();
 }
 
 Map::~Map() {
-    for (auto i = 0; i < rowCnt; ++i) {
-        delete[] content[i];
-        content[i] = nullptr;
-    }
-    delete[] content;
-    content = nullptr;
-    delete foodPos;
-    foodPos = nullptr;
 }
 
-Grid& Map::at(const Point &p) {
+void Map::setDefaultWalls() {
+    auto rows = getRowCount();
+    auto cols = getColCount();
+    for (auto i = 0; i < getRowCount(); ++i) {
+        if (i == 0 || i == rows - 1) {  // The first and last rows
+            for (auto j = 0; j < cols; ++j) {
+                content[i][j].setType(Grid::GridType::WALL);
+            }
+        } else {  // Rows in the middle
+            content[i][0].setType(Grid::GridType::WALL);
+            content[i][cols - 1].setType(Grid::GridType::WALL);
+        }
+    }
+}
+
+Grid& Map::getGrid(const Point &p) {
     return content[p.getX()][p.getY()];
 }
 
-const Grid& Map::at(const Point &p) const {
+const Grid& Map::getGrid(const Point &p) const {
     return content[p.getX()][p.getY()];
 }
 
 bool Map::isBodyOrBoundary(const Point &p) const {
-    return p.getX() == 0 || p.getX() == rowCnt - 1 
-        || p.getY() == 0 || p.getY() == colCnt - 1
-        || at(p).getType() == Grid::GridType::SNAKEBODY;
+    return p.getX() == 0 || p.getX() == getRowCount() - 1 
+        || p.getY() == 0 || p.getY() == getColCount() - 1
+        || getGrid(p).getType() == Grid::GridType::SNAKEBODY;
 }
 
 bool Map::isInside(const Point &p) const {
     return p.getX() > 0 && p.getY() > 0
-        && p.getX() < rowCnt - 1
-        && p.getY() < colCnt - 1;
+        && p.getX() < getRowCount() - 1
+        && p.getY() < getColCount() - 1;
 }
 
 bool Map::isFilledWithBody() const {
-    for (auto i = 1; i < rowCnt - 1; ++i) {
-        for (auto j = 1; j < colCnt - 1; ++j) {
+    for (auto i = 1; i < getRowCount() - 1; ++i) {
+        for (auto j = 1; j < getColCount() - 1; ++j) {
             auto type = content[i][j].getType();
             if (!(type == Grid::GridType::SNAKEBODY
                 || type == Grid::GridType::SNAKEHEAD)) {
@@ -76,42 +66,34 @@ void Map::createFood() {
 
     int row, col;
     do {
-        row = GameCtrl::getInstance()->random(1, rowCnt - 2);
-        col = GameCtrl::getInstance()->random(1, colCnt - 2);
+        row = GameCtrl::getInstance()->random(1, getRowCount() - 2);
+        col = GameCtrl::getInstance()->random(1, getColCount() - 2);
     } while (content[row][col].getType() != Grid::GridType::EMPTY);
 
-    if (!foodPos) {
-        foodPos = new(std::nothrow) Point(row, col);
-        if (!foodPos) {
-            GameCtrl::getInstance()->exitGame(GameCtrl::MSG_BAD_ALLOC);
-        }
-    } else {
-        foodPos->setX(row);
-        foodPos->setY(col);
-    }
+    food.setX(row);
+    food.setY(col);
     content[row][col].setType(Grid::GridType::FOOD);
 }
 
 void Map::removeFood() {
-    if (foodPos) {
-        content[foodPos->getX()][foodPos->getY()].setType(Grid::GridType::EMPTY);
-        delete foodPos;
-        foodPos = nullptr;
+    if (food != Point::INVALID) {
+        content[food.getX()][food.getY()].setType(Grid::GridType::EMPTY);
+        food = Point::INVALID;
     }
 }
 
 bool Map::hasFood() const {
-    return foodPos != nullptr;
+    return food != Point::INVALID;
 }
 
 long Map::getRowCount() const {
-    return rowCnt;
+    return content.size();
 }
 
 long Map::getColCount() const {
-    return colCnt;
+    return content[0].size();
 }
 
-const Point* Map::getFoodPos() const {
-    return foodPos;
+const Point& Map::getFood() const {
+    return food;
 }

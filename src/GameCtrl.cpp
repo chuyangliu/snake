@@ -100,7 +100,7 @@ void GameCtrl::draw() const {
         Console::setCursor();
         for (auto i = 0; i < snake->getMoveArea()->getRowCount() && threadWork; ++i) {
             for (auto j = 0; j < snake->getMoveArea()->getColCount() && threadWork; ++j) {
-                switch (snake->getMoveArea()->at(Point(i, j)).getType()) {
+                switch (snake->getMoveArea()->getGrid(Point(i, j)).getType()) {
                     case Grid::GridType::EMPTY:
                         Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
                         break;
