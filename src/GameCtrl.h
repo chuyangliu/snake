@@ -6,7 +6,7 @@
 #include "Snake.h"
 
 /*
-Game controller class.
+A game controller to control the game.
 This is a singleton.
 */
 class GameCtrl {
@@ -31,6 +31,9 @@ public:
 
     /*
     Run the game.
+
+    @return the exit status of the program.
+            Use it as the return value of the main function.
     */
     int run();
 
@@ -43,7 +46,7 @@ public:
     void exitGame(const std::string &msg);
 
     /*
-    Set the FPS.
+    Set fps value.
     */
     void setFPS(const double &fps_);
 
@@ -67,49 +70,74 @@ public:
     /*
     Set map row count.
     */
-    void setMapRow(const unsigned &n);
+    void setMapRow(const Map::size_type &n);
 
     /*
     Set map column count.
     */
-    void setMapColumn(const unsigned &n);
+    void setMapColumn(const Map::size_type &n);
 
     /*
     Return a random number in [min, max]
     */
-    static int random(const int min, const int max);
+    int random(const int min, const int max);
+
+    /*
+    Sleep current thread.
+    This is a cross-platform method.
+
+    @param ms sleep time in ms.
+    */
+    void sleepFor(const long ms) const;
 
 private:
+    // Game conf fields
+    double fps = 60.0;
+    Map::size_type mapRowCnt = 20;
+    Map::size_type mapColCnt = 20;
     bool autoMoveSnake = false;
     long autoMoveInterval = 200;
     bool enableKeyboard = true;
 
-    bool threadWork = true;  // True if all the threads are running
-
+    // Game objects
     Snake *snake = nullptr;
     Map *map = nullptr;
 
-    std::thread *drawThread = nullptr;      // Thread to draw the map
-    std::thread *keyboardThread = nullptr;  // Thread to receive keyboard instructions
-    std::thread *foodThread = nullptr;      // Thread to create food
-    std::thread *moveThread = nullptr;      // Thread to move the snake
+    // Thread fields
+    bool threadWork = true;      // Thread running switcher
+    std::thread drawThread;      // Thread to draw the map
+    std::thread keyboardThread;  // Thread to receive keyboard instructions
+    std::thread foodThread;      // Thread to create food
+    std::thread autoMoveThread;  // Thread to auto move the snake
 
+    // Mutex variables
     std::mutex mutexMove;  // Mutex for snake movements
     std::mutex mutexExit;  // Mutex for exit game
 
-    double fps = 60.0;
-    unsigned mapRowCnt = 20;
-    unsigned mapColCnt = 20;
-
     /*
-    Private constructor
+    Private constructor for singleton.
     */
     GameCtrl();
 
     /*
-    Initialize the game map
+    Release the memory occupied.
+    */
+    void release();
+
+    /*
+    Sleep for a time calculated by FPS value.
+    */
+    void sleepByFPS() const;
+
+    /*
+    Initialize the map of the game.
     */
     void initMap();
+
+    /*
+    Initialize the snake of the game.
+    */
+    void initSnake();
 
     /*
     Move snake and check game over.
@@ -118,66 +146,6 @@ private:
     snake->move() cannot check game over and is not thread-safe.
     */
     void moveSnake();
-
-    /*
-    Create a snake.
-    */
-    void createSnake();
-
-    /*
-    Start drawing the map content.
-    */
-    void startDraw();
-
-    /*
-    Called in redraw thread.
-    Draw the map content.
-    */
-    void draw() const;
-
-    /*
-    Sleep the thread.
-    This is a cross-platform method.
-
-    @param ms sleep time in ms.
-    */
-    void sleepFor(const long ms) const;
-
-    /*
-    Sleep a while by the FPS.
-    */
-    void sleepByFPS() const;
-
-    /*
-    Start keyboard receiver thread.
-    */
-    void startKeyboardReceiver();
-
-    /*
-    Called in keyboard thread.
-    Execute keyboard instructions.
-    */
-    void receiveKeyboardInstruction();
-
-    /*
-    Start creating food thread.
-    */
-    void startCreateFood();
-
-    /*
-    Called in food thread.
-    */
-    void createFood();
-
-    /*
-    Start auto moving the snake.
-    */
-    void startAutoMove();
-
-    /*
-    Called in move thread.
-    */
-    void autoMove();
 
     /*
     Start all threads.
@@ -190,7 +158,26 @@ private:
     void stopThreads();
 
     /*
-    Release the memory occupied.
+    Callback for draw thread.
+    Draw the map content.
     */
-    void release();
+    void draw() const;
+
+    /*
+    Callback for keyboard thread.
+    Execute keyboard instructions.
+    */
+    void keyboard();
+
+    /*
+    Callback for food thread.
+    Create food on the map if it doesn't exist.
+    */
+    void createFood();
+
+    /*
+    Callback for auto move thread.
+    Auto move the snake on the map.
+    */
+    void autoMove();
 };

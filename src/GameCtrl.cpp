@@ -27,12 +27,14 @@ GameCtrl::~GameCtrl() {
 int GameCtrl::run() {
     try {
         initMap();
-        createSnake();
+        initSnake();
         startThreads();
+
         while (1) {
             
         }
-        stopThreads();
+
+        //stopThreads();
         return 0;
     } catch (std::exception &e) {
         exitGame(e.what());
@@ -47,7 +49,7 @@ void GameCtrl::initMap() {
     }
 }
 
-void GameCtrl::createSnake() {
+void GameCtrl::initSnake() {
     snake = new(std::nothrow) Snake(map);
     if (!snake) {
         exitGame(MSG_BAD_ALLOC);
@@ -93,14 +95,6 @@ void GameCtrl::sleepByFPS() const {
     sleepFor(static_cast<long>((1.0 / fps) * 1000));
 }
 
-void GameCtrl::startDraw() {
-    drawThread = new(std::nothrow) std::thread(&GameCtrl::draw, this);
-    if (!drawThread) {
-        exitGame(MSG_BAD_ALLOC);
-    }
-    drawThread->detach();
-}
-
 void GameCtrl::draw() const {
     Console::clear();
     while (threadWork) {
@@ -138,15 +132,7 @@ void GameCtrl::draw() const {
     }
 }
 
-void GameCtrl::startKeyboardReceiver() {
-    keyboardThread = new(std::nothrow) std::thread(&GameCtrl::receiveKeyboardInstruction, this);
-    if (!keyboardThread) {
-        exitGame(MSG_BAD_ALLOC);
-    }
-    keyboardThread->detach();
-}
-
-void GameCtrl::receiveKeyboardInstruction() {
+void GameCtrl::keyboard() {
     while (threadWork) {
         if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
@@ -185,14 +171,6 @@ void GameCtrl::receiveKeyboardInstruction() {
     }
 }
 
-void GameCtrl::startCreateFood() {
-    foodThread = new(std::nothrow)  std::thread(&GameCtrl::createFood, this);
-    if (!foodThread) {
-        exitGame(MSG_BAD_ALLOC);
-    }
-    foodThread->detach();
-}
-
 void GameCtrl::createFood() {
     while (threadWork) {
         if (!map->hasFood()) {
@@ -200,14 +178,6 @@ void GameCtrl::createFood() {
         }
         sleepByFPS();
     }
-}
-
-void GameCtrl::startAutoMove() {
-    moveThread = new(std::nothrow)  std::thread(&GameCtrl::autoMove, this);
-    if (!moveThread) {
-        exitGame(MSG_BAD_ALLOC);
-    }
-    moveThread->detach();
 }
 
 void GameCtrl::autoMove() {
@@ -218,15 +188,20 @@ void GameCtrl::autoMove() {
 }
 
 void GameCtrl::startThreads() {
-    startDraw();
-    startCreateFood();
+    drawThread = std::thread(&GameCtrl::draw, this);
+    drawThread.detach();
+
+    foodThread = std::thread(&GameCtrl::createFood, this);
+    foodThread.detach();
 
     if (enableKeyboard) {
-        startKeyboardReceiver();
+        keyboardThread = std::thread(&GameCtrl::keyboard, this);
+        keyboardThread.detach();
     }
 
     if (autoMoveSnake) {
-        startAutoMove();
+        autoMoveThread = std::thread(&GameCtrl::autoMove, this);
+        autoMoveThread.detach();
     }
 }
 
@@ -237,16 +212,8 @@ void GameCtrl::stopThreads() {
 void GameCtrl::release() {
     delete snake;
     delete map;
-    delete drawThread;
-    delete keyboardThread;
-    delete foodThread;
-    delete moveThread;
     snake = nullptr;
     map = nullptr;
-    drawThread = nullptr;
-    keyboardThread = nullptr;
-    foodThread = nullptr;
-    moveThread = nullptr;
 }
 
 void GameCtrl::setFPS(const double &fps_) {
@@ -265,7 +232,7 @@ void GameCtrl::setAutoMoveInterval(const long &ms) {
     autoMoveInterval = ms;
 }
 
-void GameCtrl::setMapRow(const unsigned &n) {
+void GameCtrl::setMapRow(const Map::size_type &n) {
     if (n < 3) {
         mapRowCnt = 3;
     } else {
@@ -273,7 +240,7 @@ void GameCtrl::setMapRow(const unsigned &n) {
     }
 }
 
-void GameCtrl::setMapColumn(const unsigned &n) {
+void GameCtrl::setMapColumn(const Map::size_type &n) {
     if (n < 6) {
         mapColCnt = 6;
     } else {
