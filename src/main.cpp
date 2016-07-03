@@ -13,7 +13,7 @@ int main() {
     // Set FPS. Default is 60.0
     game->setFPS(59.0);
 
-    // Set whether to make the snake automove. Default is false
+    // Set whether to make the snake automove. Default is true
     game->setAutoMoveSnake(true);
 
     // Set interval time for automove. Default is 200.

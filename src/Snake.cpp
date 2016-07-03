@@ -2,10 +2,6 @@
 #include "GameCtrl.h"
 
 Snake::Snake(Map *m) : map(m) {
-    // Create three bodies initially
-    addBody(Point(1, 3));
-    addBody(Point(1, 2));
-    addBody(Point(1, 1));
 }
 
 Snake::~Snake() {
@@ -16,7 +12,7 @@ bool Snake::isDead() const {
 }
 
 bool Snake::addBody(const Point &p) {
-    if (map->isInside(p)) {
+    if (map && map->isInside(p)) {
         if (body.size() == 0) {  // Insert a head
             map->getGrid(p).setType(Grid::GridType::SNAKEHEAD);
         } else {  // Insert a body
@@ -37,6 +33,10 @@ Snake::MoveDirection Snake::getDirection() const {
     return direc;
 }
 
+void Snake::setMap(Map *m) {
+    map = m;
+}
+
 const Point& Snake::getHead() const {
     return *body.begin();
 }
@@ -46,7 +46,9 @@ const Point& Snake::getTail() const {
 }
 
 void Snake::removeTail() {
-    map->getGrid(getTail()).setType(Grid::GridType::EMPTY);
+    if (map) {
+        map->getGrid(getTail()).setType(Grid::GridType::EMPTY);
+    }
     body.pop_back();
 }
 
@@ -68,7 +70,7 @@ Point Snake::getDisplacement(const MoveDirection &d) {
 }
 
 void Snake::move() {
-    if (isDead() || direc == NONE) {
+    if (isDead() || direc == NONE || !map) {
         return;
     }
 

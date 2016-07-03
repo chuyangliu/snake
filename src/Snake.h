@@ -47,14 +47,10 @@ public:
     */
     MoveDirection getDirection() const;
 
-private:
-    bool dead = false;
-
-    Map *map = nullptr;  // The map that the snake attaches to
-
-    MoveDirection direc = NONE;  // Current snake move direcition
-
-    std::list<Point> body;
+    /*
+    Set the map of the snake.
+    */
+    void setMap(Map *m);
 
     /*
     Add a new body.
@@ -63,6 +59,15 @@ private:
     @return true if adding succeed, false otherwise
     */
     bool addBody(const Point &p);
+
+private:
+    bool dead = false;
+
+    Map *map = nullptr;  // The map that the snake attaches to
+
+    MoveDirection direc = NONE;  // Current snake move direcition
+
+    std::list<Point> body;
 
     /*
     Remove the tail of the snake.

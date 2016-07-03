@@ -50,10 +50,10 @@ void GameCtrl::initMap() {
 }
 
 void GameCtrl::initSnake() {
-    snake = new(std::nothrow) Snake(map);
-    if (!snake) {
-        exitGame(MSG_BAD_ALLOC);
-    }
+    snake.setMap(map);
+    snake.addBody(Point(1, 3));
+    snake.addBody(Point(1, 2));
+    snake.addBody(Point(1, 1));
 }
 
 void GameCtrl::exitGame(const std::string &msg) {
@@ -78,11 +78,11 @@ void GameCtrl::moveSnake() {
         // Notice that exitGame() is a thread-safe method.
         mutexMove.unlock();
         exitGame(MSG_WIN);
-    } else if (snake->isDead()) {
+    } else if (snake.isDead()) {
         mutexMove.unlock();
         exitGame(MSG_LOSE);
     } else {
-        snake->move();
+        snake.move();
         mutexMove.unlock();
     }
 }
@@ -137,28 +137,28 @@ void GameCtrl::keyboard() {
         if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
                 case 'w':
-                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::UP) {
+                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::UP) {
                         moveSnake();
                     }
-                    snake->setDirection(Snake::MoveDirection::UP);
+                    snake.setDirection(Snake::MoveDirection::UP);
                     break;
                 case 'a':
-                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::LEFT) {
+                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::LEFT) {
                         moveSnake();
                     }
-                    snake->setDirection(Snake::MoveDirection::LEFT);
+                    snake.setDirection(Snake::MoveDirection::LEFT);
                     break;
                 case 's':
-                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::DOWN) {
+                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::DOWN) {
                         moveSnake();
                     }
-                    snake->setDirection(Snake::MoveDirection::DOWN);
+                    snake.setDirection(Snake::MoveDirection::DOWN);
                     break;
                 case 'd':
-                    if (autoMoveSnake && snake->getDirection() == Snake::MoveDirection::RIGHT) {
+                    if (autoMoveSnake && snake.getDirection() == Snake::MoveDirection::RIGHT) {
                         moveSnake();
                     }
-                    snake->setDirection(Snake::MoveDirection::RIGHT);
+                    snake.setDirection(Snake::MoveDirection::RIGHT);
                     break;
                 default:
                     continue;
@@ -210,9 +210,7 @@ void GameCtrl::stopThreads() {
 }
 
 void GameCtrl::release() {
-    delete snake;
     delete map;
-    snake = nullptr;
     map = nullptr;
 }
 

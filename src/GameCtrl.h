@@ -95,12 +95,12 @@ private:
     double fps = 60.0;
     Map::size_type mapRowCnt = 20;
     Map::size_type mapColCnt = 20;
-    bool autoMoveSnake = false;
+    bool autoMoveSnake = true;
     long autoMoveInterval = 200;
     bool enableKeyboard = true;
 
     // Game objects
-    Snake *snake = nullptr;
+    Snake snake;
     Map *map = nullptr;
 
     // Thread fields
