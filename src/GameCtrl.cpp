@@ -66,10 +66,11 @@ void GameCtrl::initSnakes() {
 void GameCtrl::exitGame(const std::string &msg) {
     mutexExit.lock();
     stopThreads();
-    Console::setCursor(0, mapRowCnt + 1);
+    sleepFor(100);  // Wait draw thread to finish last drawing
+    Console::setCursor(0, mapRowCnt + 6);
     Console::writeWithColor(msg, ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
-    Console::setCursor(0, mapRowCnt + 2);
+    Console::setCursor(0, mapRowCnt + 7);
     mutexExit.unlock();
     exit(0);
 }
@@ -104,44 +105,54 @@ void GameCtrl::sleepByFPS() const {
 void GameCtrl::draw() const {
     Console::clear();
     while (threadWork) {
-        // Drawing
-        Console::setCursor();
-        auto rows = map->getRowCount();
-        auto cols = map->getColCount();
-        for (Map::size_type i = 0; i < rows && threadWork; ++i) {
-            for (Map::size_type j = 0; j < cols && threadWork; ++j) {
-                switch (map->getGrid(Point(i, j)).getType()) {
-                    case Grid::GridType::EMPTY:
-                        Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
-                        break;
-                    case Grid::GridType::WALL:
-                        Console::writeWithColor("  ", ConsoleColor(WHITE, WHITE, true, true));
-                        break;
-                    case Grid::GridType::FOOD:
-                        Console::writeWithColor("  ", ConsoleColor(YELLOW, YELLOW, true, true));
-                        break;
-                    case Grid::GridType::SNAKEHEAD1:
-                        Console::writeWithColor("  ", ConsoleColor(RED, RED, true, true));
-                        break;
-                    case Grid::GridType::SNAKEHEAD2:
-                        Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
-                        break;
-                    case Grid::GridType::SNAKEBODY1:
-                        Console::writeWithColor("  ", ConsoleColor(GREEN, GREEN, true, true));
-                        break;
-                    case Grid::GridType::SNAKEBODY2:
-                        Console::writeWithColor("  ", ConsoleColor(CYAN, CYAN, true, true));
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (threadWork) {
-                printf("\n");
-            }
-        }
+        drawMapContent();
+        drawGameInfo();
         sleepByFPS();
     }
+}
+
+void GameCtrl::drawMapContent() const {
+    Console::setCursor();
+    auto rows = map->getRowCount();
+    auto cols = map->getColCount();
+    for (Map::size_type i = 0; i < rows; ++i) {
+        for (Map::size_type j = 0; j < cols; ++j) {
+            switch (map->getGrid(Point(i, j)).getType()) {
+                case Grid::GridType::EMPTY:
+                    Console::writeWithColor("  ", ConsoleColor(BLACK, BLACK));
+                    break;
+                case Grid::GridType::WALL:
+                    Console::writeWithColor("  ", ConsoleColor(WHITE, WHITE, true, true));
+                    break;
+                case Grid::GridType::FOOD:
+                    Console::writeWithColor("  ", ConsoleColor(YELLOW, YELLOW, true, true));
+                    break;
+                case Grid::GridType::SNAKEHEAD1:
+                    Console::writeWithColor("  ", ConsoleColor(RED, RED, true, true));
+                    break;
+                case Grid::GridType::SNAKEHEAD2:
+                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
+                    break;
+                case Grid::GridType::SNAKEBODY1:
+                    Console::writeWithColor("  ", ConsoleColor(GREEN, GREEN, true, true));
+                    break;
+                case Grid::GridType::SNAKEBODY2:
+                    Console::writeWithColor("  ", ConsoleColor(CYAN, CYAN, true, true));
+                    break;
+                default:
+                    break;
+            }
+        }
+        Console::write("\n");
+    }
+}
+
+void GameCtrl::drawGameInfo() const {
+    Console::setCursor(0, mapRowCnt + 1);
+    Console::writeWithColor("Control:\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("         Up  Left  Down  Right\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("Snake1:  W   A     S     D\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("Snake2:  I   J     K     L\n", ConsoleColor(WHITE, BLACK, true, false));
 }
 
 void GameCtrl::keyboard() {

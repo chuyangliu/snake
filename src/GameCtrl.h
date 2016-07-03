@@ -157,9 +157,19 @@ private:
 
     /*
     Callback for draw thread.
-    Draw the map content.
+    Draw the game elements.
     */
     void draw() const;
+
+    /*
+    Draw the map content.
+    */
+    void drawMapContent() const;
+
+    /*
+    Draw the game info.
+    */
+    void drawGameInfo() const;
 
     /*
     Callback for keyboard thread.
