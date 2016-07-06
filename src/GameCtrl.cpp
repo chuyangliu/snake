@@ -43,6 +43,8 @@ void GameCtrl::initMap() {
     map = std::make_shared<Map>(mapRowCnt, mapColCnt);
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
+    } else {
+
     }
 }
 
@@ -114,9 +116,9 @@ void GameCtrl::sleepByFPS() const {
 
 void GameCtrl::draw() const {
     Console::clear();
+    drawGameInfo();
     while (threadWork) {
         drawMapContent();
-        drawGameInfo();
         sleepByFPS();
     }
 }

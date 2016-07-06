@@ -12,7 +12,7 @@ int main() {
     game->setFPS(59.0);
 
     // Set whether to make the snake automove. Default is true
-    game->setAutoMoveSnake(false);
+    game->setAutoMoveSnake(true);
 
     // Set interval time(ms) for automove. Default is 200.
     // If setAutoMoveSnake(false), this interval is useless.

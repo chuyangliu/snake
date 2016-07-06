@@ -83,11 +83,11 @@ private:
     void setDefaultWalls();
 
     /*
-    Generate a food position on the map.
+    Get a food position on the map
     WARNING: if there is no space for food,
              this will be an endless loop.
 
     @return the new food position
     */
-    Point generateFoodPos() const;
+    Point getFoodPos() const;
 };

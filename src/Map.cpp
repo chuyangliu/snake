@@ -63,11 +63,11 @@ void Map::createFood() {
     if (isFilledWithBody()) {
         return;
     }
-    food = generateFoodPos();
+    food = getFoodPos();
     content[food.getX()][food.getY()].setType(Grid::GridType::FOOD);
 }
 
-Point Map::generateFoodPos() const {
+Point Map::getFoodPos() const {
     auto rows = getRowCount(), cols = getColCount();
     Point::attr_type r, c;
 
