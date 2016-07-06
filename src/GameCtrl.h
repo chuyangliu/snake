@@ -191,7 +191,7 @@ private:
     @param s the snake to move
     @param d the direction to move
     */
-    void keyboardMove(Snake &s, const Snake::Direction &d);
+    void keyboardMove(Snake &s, const Direction &d);
 
     /*
     Callback for food thread.

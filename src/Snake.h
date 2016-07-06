@@ -1,20 +1,11 @@
 #pragma once
 
 #include "Map.h"
-#include <list>
 #include <memory>
 
 class Snake {
 public:
     typedef Map::size_type size_type;
-
-    enum Direction {
-        NONE,
-        LEFT,
-        UP,
-        RIGHT,
-        DOWN 
-    };
 
     Snake();
     ~Snake();

@@ -30,7 +30,8 @@ int GameCtrl::run() {
         initSnakes();
         startThreads();
         while (1) {
-            
+            // Test food generate
+            //map->createFood();
         }
         return 0;
     } catch (std::exception &e) {
@@ -44,7 +45,9 @@ void GameCtrl::initMap() {
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
     } else {
-
+        //map->getGrid(Point(2, 1)).setType(Grid::GridType::WALL);
+        //map->getGrid(Point(2, 2)).setType(Grid::GridType::WALL);
+        //map->getGrid(Point(2, 3)).setType(Grid::GridType::WALL);
     }
 }
 
@@ -172,28 +175,28 @@ void GameCtrl::keyboard() {
         if (Console::kbhit()) {  // When keyboard is hit
             switch (Console::getch()) {
                 case 'w':
-                    keyboardMove(snake1, Snake::Direction::UP);
+                    keyboardMove(snake1, Direction::UP);
                     break;
                 case 'a':
-                    keyboardMove(snake1, Snake::Direction::LEFT);
+                    keyboardMove(snake1, Direction::LEFT);
                     break;
                 case 's':
-                    keyboardMove(snake1, Snake::Direction::DOWN);
+                    keyboardMove(snake1, Direction::DOWN);
                     break;
                 case 'd':
-                    keyboardMove(snake1, Snake::Direction::RIGHT);
+                    keyboardMove(snake1, Direction::RIGHT);
                     break;
                 case 'i':
-                    keyboardMove(snake2, Snake::Direction::UP);
+                    keyboardMove(snake2, Direction::UP);
                     break;
                 case 'j':
-                    keyboardMove(snake2, Snake::Direction::LEFT);
+                    keyboardMove(snake2, Direction::LEFT);
                     break;
                 case 'k':
-                    keyboardMove(snake2, Snake::Direction::DOWN);
+                    keyboardMove(snake2, Direction::DOWN);
                     break;
                 case 'l':
-                    keyboardMove(snake2, Snake::Direction::RIGHT);
+                    keyboardMove(snake2, Direction::RIGHT);
                     break;
                 default:
                     break;
@@ -203,7 +206,7 @@ void GameCtrl::keyboard() {
     }
 }
 
-void GameCtrl::keyboardMove(Snake &s, const Snake::Direction &d) {
+void GameCtrl::keyboardMove(Snake &s, const Direction &d) {
     if (autoMoveSnake && s.getDirection() == d) {
         moveSnake(s);  // Accelerate the movements
     }

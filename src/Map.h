@@ -2,6 +2,7 @@
 
 #include "Grid.h"
 #include <vector>
+#include <list>
 
 /*
 A map of the game
@@ -71,6 +72,17 @@ public:
     Return the count of the columns.
     */
     size_type getColCount() const;
+
+    /*
+    Find the shortest path from the start
+    point to the end point.
+
+    @param from the start point
+    @param to the end point
+    @param path the result will be stored as a list of Direction
+                in this field
+    */
+    void findMinPath(const Point &from, const Point &to, std::list<Direction> &path);
 
 private:
     Point food = Point::INVALID;

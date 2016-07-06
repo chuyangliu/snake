@@ -101,3 +101,7 @@ Map::size_type Map::getColCount() const {
 const Point& Map::getFood() const {
     return food;
 }
+
+void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &path) {
+    // TODO A*
+}

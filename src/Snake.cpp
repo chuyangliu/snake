@@ -37,7 +37,7 @@ void Snake::setBodyType(const Grid::GridType &bodyType_) {
     bodyType = bodyType_;
 }
 
-Snake::Direction Snake::getDirection() const {
+Direction Snake::getDirection() const {
     return direc;
 }
 
