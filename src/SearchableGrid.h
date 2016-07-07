@@ -19,10 +19,18 @@ public:
     void setG(const value_type g_);
     void setH(const value_type h_);
     void setParent(const Direction &p_);
+    void setLocation(const Point &p);
     value_type getG() const;
     value_type getH() const;
     value_type getF() const;  // f = g + h
     Direction getParent() const;
+    Point getLocation() const;
+
+    // Operators (Compare by f value)
+    friend bool operator<(const SearchableGrid &a, const SearchableGrid &b);
+    friend bool operator>(const SearchableGrid &a, const SearchableGrid &b);
+    friend bool operator<=(const SearchableGrid &a, const SearchableGrid &b);
+    friend bool operator>=(const SearchableGrid &a, const SearchableGrid &b);
 
 private:
     // the cost from the start grid to this grid
@@ -33,4 +41,7 @@ private:
 
     // The parent direction
     Direction parent = NONE;
+
+    // The location of this grid on the map
+    Point loc = Point::INVALID;
 };

@@ -18,6 +18,10 @@ void SearchableGrid::setParent(const Direction &p_) {
     parent = p_;
 }
 
+void SearchableGrid::setLocation(const Point &p) {
+    loc = p;
+}
+
 SearchableGrid::value_type SearchableGrid::getG() const {
     return g;
 
@@ -33,4 +37,24 @@ SearchableGrid::value_type SearchableGrid::getF() const {
 
 Direction SearchableGrid::getParent() const {
     return parent;
+}
+
+Point SearchableGrid::getLocation() const {
+    return loc;
+}
+
+bool operator<(const SearchableGrid &a, const SearchableGrid &b) {
+    return a.getF() < b.getF();
+}
+
+bool operator>(const SearchableGrid &a, const SearchableGrid &b) {
+    return a.getF() > b.getF();
+}
+
+bool operator<=(const SearchableGrid &a, const SearchableGrid &b) {
+    return a.getF() <= b.getF();
+}
+
+bool operator>=(const SearchableGrid &a, const SearchableGrid &b) {
+    return a.getF() >= b.getF();
 }

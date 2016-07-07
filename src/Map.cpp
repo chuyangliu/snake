@@ -1,16 +1,30 @@
 #include "Map.h"
 #include "GameCtrl.h"
+#include <queue>
+#include <set>
+
+using std::priority_queue;
+using std::set;
 
 Map::Map(const size_type &rowCnt_, const size_type &colCnt_)
     : content(rowCnt_, std::vector<SearchableGrid>(colCnt_)) {
-    setDefaultWalls();
+    init();
 }
 
 Map::~Map() {
 }
 
-void Map::setDefaultWalls() {
+void Map::init() {
     auto rows = getRowCount(), cols = getColCount();
+    
+    // Set locations of each grid
+    for (size_type i = 0; i < rows; ++i) {
+        for (size_type j = 0; j < cols; ++j) {
+            content[i][j].setLocation(Point(i, j));
+        }
+    }
+
+    // Set default walls
     for (size_type i = 0; i < rows; ++i) {
         if (i == 0 || i == rows - 1) {  // The first and last rows
             for (size_type j = 0; j < cols; ++j) {

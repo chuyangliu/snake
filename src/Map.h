@@ -91,9 +91,9 @@ private:
     content_type content;  // The elements on the map
 
     /*
-    Set default walls on the map.
+    Initialize map content.
     */
-    void setDefaultWalls();
+    void init();
 
     /*
     Get a food position on the map
