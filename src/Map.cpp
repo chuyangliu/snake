@@ -2,7 +2,7 @@
 #include "GameCtrl.h"
 
 Map::Map(const size_type &rowCnt_, const size_type &colCnt_)
-    : content(rowCnt_, std::vector<Grid>(colCnt_)) {
+    : content(rowCnt_, std::vector<SearchableGrid>(colCnt_)) {
     setDefaultWalls();
 }
 
@@ -31,7 +31,7 @@ const Grid& Map::getGrid(const Point &p) const {
     return content[p.getX()][p.getY()];
 }
 
-bool Map::isBodyOrBoundary(const Point &p) const {
+bool Map::isUnsafe(const Point &p) const {
     return getGrid(p).getType() == Grid::GridType::WALL
         || getGrid(p).getType() == Grid::GridType::SNAKEHEAD1
         || getGrid(p).getType() == Grid::GridType::SNAKEHEAD2
@@ -104,4 +104,5 @@ const Point& Map::getFood() const {
 
 void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &path) {
     // TODO A*
+    
 }

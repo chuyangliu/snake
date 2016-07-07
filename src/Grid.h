@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Point.h"
-
 // The direction of the game map
 enum Direction {
     NONE,
@@ -27,14 +25,13 @@ public:
     };
 
     // Constructor and destructor
-    Grid(GridType type_ = EMPTY);
-    ~Grid();
+    Grid();
+    virtual ~Grid();
 
     // Getters and setters
     GridType getType() const;
     void setType(GridType type_);
 
 private:
-    GridType type;
-    //Point p;
+    GridType type = EMPTY;
 };

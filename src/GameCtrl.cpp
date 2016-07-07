@@ -165,9 +165,9 @@ void GameCtrl::drawMapContent() const {
 void GameCtrl::drawGameInfo() const {
     Console::setCursor(0, mapRowCnt + 1);
     Console::writeWithColor("Control:\n", ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor("         Up  Left  Down  Right\n", ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor("Snake1:  W   A     S     D\n", ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor("Snake2:  I   J     K     L\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("           Up  Left  Down  Right\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("Snake 1 :  W   A     S     D\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("Snake 2 :  I   J     K     L\n", ConsoleColor(WHITE, BLACK, true, false));
 }
 
 void GameCtrl::keyboard() {

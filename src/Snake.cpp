@@ -96,7 +96,7 @@ void Snake::move() {
         map->removeFood();
     }
 
-    if (map->isBodyOrBoundary(newHead)) {
+    if (map->isUnsafe(newHead)) {
         dead = true;
     }
 

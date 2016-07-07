@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Grid.h"
+#include "SearchableGrid.h"
 #include <vector>
 #include <list>
 
@@ -9,7 +9,7 @@ A map of the game
 */
 class Map {
 public:
-    typedef std::vector<std::vector<Grid>> content_type;
+    typedef std::vector<std::vector<SearchableGrid>> content_type;
     typedef content_type::size_type size_type;
 
     Map(const size_type &rowCnt_ = 20, const size_type &colCnt_ = 20);
@@ -23,12 +23,12 @@ public:
     const Grid& getGrid(const Point &p) const;
 
     /*
-    Check if the grid at the point is a snake body/head
-    or map boundary.
+    Check if the grid at the point is an unsafe grid.
+    Unsafe grid type: snake body, snake head, wall
 
     @param p the point to check
     */
-    bool isBodyOrBoundary(const Point &p) const;
+    bool isUnsafe(const Point &p) const;
 
     /*
     Check if the point is inside the map
@@ -76,6 +76,7 @@ public:
     /*
     Find the shortest path from the start
     point to the end point.
+    Algorithm reference: https://en.wikipedia.org/wiki/A*_search_algorithm
 
     @param from the start point
     @param to the end point
