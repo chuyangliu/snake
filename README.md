@@ -6,7 +6,7 @@ A classic snake game
 
 Windows:
 
-	Using VS 2015 or g++ compiler.
+	Compile and run with VS 2015 or g++.
 	
 Linux:
 
