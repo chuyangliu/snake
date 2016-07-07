@@ -1,5 +1,17 @@
 #pragma once
 
+#include <vector>
+#include <string>
+
+// Direction of the game
+enum Direction {
+    NONE,
+    LEFT,
+    UP,
+    RIGHT,
+    DOWN
+};
+
 /*
 A Point consists of x coordinate and 
 y coordinate attributes.
@@ -33,6 +45,29 @@ public:
     @param p the point to calculate
     */
     static unsigned hash(const Point &p);
+
+    /*
+    Calculate adjacent(left, top, right, down) points.
+
+    @param res the adjacent points will be stored in this field.
+    Precondition: this field must be a vector of length 4.
+    */
+    void setAdjPoints(std::vector<Point> &res) const;
+
+    /*
+    Get the direction from this point to another.
+
+    @param p the other point
+    @return the direction from this point to point p.
+    If the two points are not adjacent or are the same, return NONE.
+    */
+    Direction getDirectionTo(const Point &p) const;
+
+    /*
+    @return the string that describe the content
+            of the object.
+    */
+    std::string toString() const;
 
 private:
     attr_type x;

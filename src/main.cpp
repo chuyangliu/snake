@@ -21,5 +21,8 @@ int main() {
     // Set whether to enable the second snake. Default is false
     game->setEnableSecondSnake(true);
 
+    // Set whether to run the test program. Default is false
+    game->setRunTest(false);
+
     return game->run();
 }

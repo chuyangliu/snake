@@ -14,7 +14,7 @@ void SearchableGrid::setH(const value_type h_) {
     h = h_;
 }
 
-void SearchableGrid::setParent(const Direction &p_) {
+void SearchableGrid::setParent(const Point &p_) {
     parent = p_;
 }
 
@@ -35,7 +35,7 @@ SearchableGrid::value_type SearchableGrid::getF() const {
     return g + h;
 }
 
-Direction SearchableGrid::getParent() const {
+Point SearchableGrid::getParent() const {
     return parent;
 }
 

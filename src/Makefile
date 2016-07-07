@@ -1,5 +1,5 @@
 # Objects
-OBJS = main.o Console.o GameCtrl.o Grid.o SearchableGrid.o Map.o Point.o Snake.o
+OBJS = main.o Console.o GameCtrl.o Grid.o SearchableGrid.o Map.o Point.o Snake.o Convert.o
 
 # Compiler
 CC = g++ -std=c++11
@@ -33,6 +33,9 @@ Snake.o: Snake.cpp
 
 SearchableGrid.o: SearchableGrid.cpp
 	$(CC) -c SearchableGrid.cpp
+
+Convert.o: Convert.cpp
+	$(CC) -c Convert.cpp
 
 clean:
 	rm Snake ${OBJS}

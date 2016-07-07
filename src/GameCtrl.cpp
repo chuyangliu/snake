@@ -1,5 +1,6 @@
 #include "GameCtrl.h"
 #include "Console.h"
+#include "Convert.h"
 #include <exception>
 #include <cstdio>
 #include <chrono>
@@ -31,8 +32,7 @@ int GameCtrl::run() {
         initSnakes();
         startThreads();
         while (1) {
-            // Test food generate
-            //map->createFood();
+            
         }
         return 0;
     } catch (std::exception &e) {
@@ -76,9 +76,8 @@ void GameCtrl::exitGame(const std::string &msg) {
     sleepFor(100);  // Wait draw thread to finish last drawing
     Console::setCursor(0, mapRowCnt + 6);
     Console::writeWithColor(getScoreStr(), ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor(msg, ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor(msg + "\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
-    Console::setCursor(0, mapRowCnt + 8);
     mutexExit.unlock();
     exit(0);
 }
@@ -234,21 +233,78 @@ void GameCtrl::autoMove() {
     }
 }
 
+void GameCtrl::test() {
+    sleepFor(500);  // Wait map to draw
+
+    // Test food generate
+    //while (1) {
+    //    map->createFood();
+    //    sleepFor(1);
+    //}
+
+    // Test search algoritm (Better to set the map size to 20*20)
+
+    // Add some walls
+    for (int i = 0; i < 14; ++i) {
+        map->getGrid(Point(i, 10)).setType(Grid::GridType::WALL);
+    }
+    for (int i = 6; i < 10; ++i) {
+        map->getGrid(Point(7, i)).setType(Grid::GridType::WALL);
+    }
+    for (int i = 7; i < 20; ++i) {
+        map->getGrid(Point(i, 13)).setType(Grid::GridType::WALL);
+    }
+
+    // Begin test
+    Point from(1, 1), to(18, 18);
+    std::list<Direction> path;
+    map->setShowSearchDetails(true);
+    map->findMinPath(from, to, path);
+    std::string res = "Path from " + from.toString() +  " to " + to.toString() + ": \n";
+    for (const auto &d : path) {
+        switch (d) {
+            case LEFT:
+                res += "L ";
+                break;
+            case UP:
+                res += "U ";
+                break;
+            case RIGHT:
+                res += "R ";
+                break;
+            case DOWN:
+                res += "D ";
+                break;
+            case NONE:
+            default:
+                res += "NONE ";
+                break;
+        }
+    }
+    res += "\nPath length: " + Convert::toString(path.size());
+    exitGame(res);
+}
+
 void GameCtrl::startThreads() {
     // Detach each thread make each 
     // thread don't need to be joined
     drawThread = std::thread(&GameCtrl::draw, this);
     drawThread.detach();
 
-    foodThread = std::thread(&GameCtrl::createFood, this);
-    foodThread.detach();
-
     keyboardThread = std::thread(&GameCtrl::keyboard, this);
     keyboardThread.detach();
 
-    if (autoMoveSnake) {
-        autoMoveThread = std::thread(&GameCtrl::autoMove, this);
-        autoMoveThread.detach();
+    if (runTest) {
+        testThread = std::thread(&GameCtrl::test, this);
+        testThread.detach();
+    } else {
+        foodThread = std::thread(&GameCtrl::createFood, this);
+        foodThread.detach();
+
+        if (autoMoveSnake) {
+            autoMoveThread = std::thread(&GameCtrl::autoMove, this);
+            autoMoveThread.detach();
+        }
     }
 }
 
@@ -270,6 +326,10 @@ void GameCtrl::setEnableSecondSnake(const bool &enable) {
 
 void GameCtrl::setAutoMoveInterval(const long &ms) {
     autoMoveInterval = ms;
+}
+
+void GameCtrl::setRunTest(const bool &b) {
+    runTest = b;
 }
 
 void GameCtrl::setMapRow(const Map::size_type &n) {

@@ -18,12 +18,12 @@ public:
     // Getters and setters
     void setG(const value_type g_);
     void setH(const value_type h_);
-    void setParent(const Direction &p_);
+    void setParent(const Point &p_);
     void setLocation(const Point &p);
     value_type getG() const;
     value_type getH() const;
     value_type getF() const;  // f = g + h
-    Direction getParent() const;
+    Point getParent() const;
     Point getLocation() const;
 
     // Operators (Compare by f value)
@@ -39,8 +39,8 @@ private:
     // the cost from this grid to the goal grid (Heuristic value)
     value_type h = 0;
 
-    // The parent direction
-    Direction parent = NONE;
+    // The parent point
+    Point parent = Point::INVALID;
 
     // The location of this grid on the map
     Point loc = Point::INVALID;

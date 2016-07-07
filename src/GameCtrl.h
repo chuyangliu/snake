@@ -69,6 +69,11 @@ public:
     void setEnableSecondSnake(const bool &enable);
 
     /*
+    Set whether to run the test thread.
+    */
+    void setRunTest(const bool &b);
+
+    /*
     Set map row count.
     */
     void setMapRow(const Map::size_type &n);
@@ -99,6 +104,7 @@ private:
     bool autoMoveSnake = true;
     long autoMoveInterval = 200;
     bool enableSecondSnake = false;
+    bool runTest = false;
 
     // Game objects
     Snake snake1;
@@ -111,6 +117,7 @@ private:
     std::thread keyboardThread;  // Thread to receive keyboard instructions
     std::thread foodThread;      // Thread to create food
     std::thread autoMoveThread;  // Thread to auto move the snake
+    std::thread testThread;      // Thread to test different features.
 
     // Mutex variables
     std::mutex mutexMove;  // Mutex for moveSnake()
@@ -205,4 +212,10 @@ private:
     Auto move the snake on the map.
     */
     void autoMove();
+
+    /*
+    Call back for test thread.
+    Test different features
+    */
+    void test();
 };

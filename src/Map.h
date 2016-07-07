@@ -1,7 +1,6 @@
 #pragma once
 
 #include "SearchableGrid.h"
-#include <vector>
 #include <list>
 #include <queue>
 #include <unordered_set>
@@ -79,6 +78,11 @@ public:
     size_type getColCount() const;
 
     /*
+    Set whether to show the details of the search algorithm.
+    */
+    void setShowSearchDetails(const bool &b);
+    
+    /*
     Find the shortest path from the start
     point to the end point.
     Algorithm reference: https://en.wikipedia.org/wiki/A*_search_algorithm
@@ -96,6 +100,8 @@ private:
 
     content_type content;  // The elements on the map
 
+    bool showSearchDetails = false;
+
     /*
     Compute the H(Heuristic) value from the start
     point to the end point.
@@ -105,6 +111,18 @@ private:
     @return the heuristic value
     */
     SearchableGrid::value_type computeH(const Point &from, const Point &to) const;
+
+    /*
+    Construct the move path from the start
+    point to the end point.
+
+    @param from the start point
+    @param to the end point
+    @param path the result will be stored as a list of Direction
+                in this field. If there is no path between the two
+                points, the size of this field will be zero.
+    */
+    void constructPath(const Point &from, const Point &to, std::list<Direction> &path) const;
 
     /*
     Initialize map content.

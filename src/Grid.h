@@ -1,14 +1,5 @@
 #pragma once
 
-// The direction of the game map
-enum Direction {
-    NONE,
-    LEFT,
-    UP,
-    RIGHT,
-    DOWN
-};
-
 /*
 A Grid on the game map.
 */

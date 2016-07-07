@@ -1,8 +1,10 @@
 #include "Map.h"
 #include "GameCtrl.h"
 
+using std::vector;
+
 Map::Map(const size_type &rowCnt_, const size_type &colCnt_)
-    : content(rowCnt_, std::vector<SearchableGrid>(colCnt_)) {
+    : content(rowCnt_, vector<SearchableGrid>(colCnt_)) {
     init();
 }
 
@@ -111,7 +113,16 @@ const Point& Map::getFood() const {
     return food;
 }
 
+void Map::setShowSearchDetails(const bool &b) {
+    showSearchDetails = b;
+}
+
 void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &path) {
+    // Check validity
+    if (!isInside(from) || !isInside(to)) {
+        return;
+    }
+
     // Initialize g value of the grid
     auto rows = getRowCount(), cols = getColCount();
     for (size_type i = 0; i < rows; ++i) {
@@ -120,11 +131,21 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         }
     }
 
-    // Create open list and close list
+    // Create open list
     min_heap openList;
-    hash_table closeList;
 
-    // Add first search grid
+    // Create close list
+    // The first param is the number
+    // of buckets in the hash table 
+    hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
+
+    // Create local variables in the loop
+    // to save allocation time
+    const SearchableGrid *curGrid = nullptr;
+    Point curPoint;
+    vector<Point> adjPoints(4, Point::INVALID);
+
+    // Add first search node
     SearchableGrid &start = getGrid(from);
     start.setG(0);
     start.setH(0);
@@ -132,28 +153,58 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
 
     // Begin searching
     while (!openList.empty()) {
-        SearchableGrid grid;
 
-        do {  // Loop until get a grid that is not in the close list
-            grid = openList.top();
+        // Loop until the open list is empty or finding
+        // a node that is not in the close list.
+        do {
+            curGrid = &(openList.top());
+            curPoint = curGrid->getLocation();
             openList.pop();
-        } while (!openList.empty()
-                 && closeList.find(grid.getLocation()) != closeList.end());
+        } while (!openList.empty() && closeList.find(curPoint) != closeList.end());
 
-        if (openList.empty()
-            && closeList.find(grid.getLocation()) != closeList.end()) {
-            break;  // No path found
-        }
-
-        if (grid.getLocation() == to) {  // Find the destination
-            // TODO Construct path
+        // If all the nodes on the map is in the close list,
+        // then there is no available path between the two
+        // nodes. The function will be ended.
+        if (openList.empty() && closeList.find(curPoint) != closeList.end()) {
             break;
         }
 
-        closeList.insert(grid.getLocation());  // Add to close list
+        // Check if it is needed to show
+        // the search details
+        if (showSearchDetails) {
+            getGrid(curPoint).setType(Grid::GridType::FOOD);
+            GameCtrl::getInstance()->sleepFor(25);
+        }
 
-        // TODO Traverse adjacent grids
+        // If the destination location is found.
+        // Construct path and return.
+        if (curPoint == to) {
+            constructPath(from, to, path);
+            break;
+        }
 
+        // Add current node to close list
+        closeList.insert(curPoint);
+
+        // Traverse adjacent nodes
+        curPoint.setAdjPoints(adjPoints);
+        for (const auto &adjPoint : adjPoints) {
+            // If the adjacent node is safe and
+            // not in the close list, then try to
+            // update the g value.
+            if (!isUnsafe(adjPoint) && closeList.find(adjPoint) == closeList.end()) {
+                SearchableGrid &adjGrid = getGrid(adjPoint);
+                // If shorter path exists,
+                // update g, h, parent field and add 
+                // the adjacent grid to the open list
+                if (curGrid->getG() + 1 < adjGrid.getG()) {
+                    adjGrid.setParent(curPoint);
+                    adjGrid.setG(curGrid->getG() + 1);
+                    adjGrid.setH(computeH(adjGrid.getLocation(), to));
+                    openList.push(adjGrid);
+                }
+            }
+        }
     }
 }
 
@@ -161,5 +212,15 @@ SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) con
     // Manhatten distance
     Point::attr_type dx = abs(from.getX() - to.getX());
     Point::attr_type dy = abs(from.getY() - to.getY());
-    return dx + dy;
+    //return dx + dy;
+    return 0;
+}
+
+void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) const {
+    Point tmp = to, parent;
+    while (tmp != from) {
+        parent = getGrid(tmp).getParent();
+        path.push_front(parent.getDirectionTo(tmp));
+        tmp = parent;
+    }
 }
