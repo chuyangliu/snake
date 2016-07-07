@@ -3,6 +3,9 @@
 #include "SearchableGrid.h"
 #include <vector>
 #include <list>
+#include <queue>
+#include <unordered_set>
+#include <functional>
 
 /*
 A map of the game
@@ -11,6 +14,8 @@ class Map {
 public:
     typedef std::vector<std::vector<SearchableGrid>> content_type;
     typedef content_type::size_type size_type;
+    typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::greater<SearchableGrid>> min_heap;
+    typedef std::unordered_set<Point, decltype(Point::hash)*> hash_table;
 
     Map(const size_type &rowCnt_ = 20, const size_type &colCnt_ = 20);
     ~Map();
@@ -19,8 +24,8 @@ public:
     Return the grid at the point.
     Two versions for const and non-const object.
     */
-    Grid& getGrid(const Point &p);
-    const Grid& getGrid(const Point &p) const;
+    SearchableGrid& getGrid(const Point &p);
+    const SearchableGrid& getGrid(const Point &p) const;
 
     /*
     Check if the grid at the point is an unsafe grid.
@@ -81,7 +86,8 @@ public:
     @param from the start point
     @param to the end point
     @param path the result will be stored as a list of Direction
-                in this field
+                in this field. If there is no path between the two
+                points, the size of this field will be zero.
     */
     void findMinPath(const Point &from, const Point &to, std::list<Direction> &path);
 
@@ -89,6 +95,16 @@ private:
     Point food = Point::INVALID;
 
     content_type content;  // The elements on the map
+
+    /*
+    Compute the H(Heuristic) value from the start
+    point to the end point.
+
+    @param from the start point
+    @param to the end point
+    @return the heuristic value
+    */
+    SearchableGrid::value_type computeH(const Point &from, const Point &to) const;
 
     /*
     Initialize map content.

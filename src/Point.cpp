@@ -1,4 +1,5 @@
 #include "Point.h"
+#include <functional>
 
 const Point Point::INVALID = Point(-1, -1);
 
@@ -36,4 +37,9 @@ bool operator==(const Point &a, const Point &b) {
 
 bool operator!=(const Point &a, const Point &b) {
     return !(a == b);
+}
+
+unsigned Point::hash(const Point &p) {
+    std::hash<attr_type> h;
+    return h(p.x) ^ h(p.y);
 }

@@ -11,6 +11,7 @@
 const std::string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game! Press any key to continue...";
 const std::string GameCtrl::MSG_LOSE = "Sorry! You lose! Press any key to continue...";
 const std::string GameCtrl::MSG_WIN = "Congratulations! You Win! Press any key to continue...";
+const SearchableGrid::value_type GameCtrl::INF = 2147483647;
 
 GameCtrl* GameCtrl::getInstance() {
     // According to C++11, static field constructor is thread-safe

@@ -26,6 +26,14 @@ public:
     friend bool operator==(const Point &a, const Point &b);
     friend bool operator!=(const Point &a, const Point &b);
 
+    /*
+    Hash function that calculate the hash
+    value for the point.
+
+    @param p the point to calculate
+    */
+    static unsigned hash(const Point &p);
+
 private:
     attr_type x;
     attr_type y;

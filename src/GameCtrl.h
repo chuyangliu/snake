@@ -15,6 +15,7 @@ public:
     static const std::string MSG_BAD_ALLOC;
     static const std::string MSG_LOSE;
     static const std::string MSG_WIN;
+    static const SearchableGrid::value_type INF;
 
     ~GameCtrl();
 

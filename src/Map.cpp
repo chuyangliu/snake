@@ -1,10 +1,5 @@
 #include "Map.h"
 #include "GameCtrl.h"
-#include <queue>
-#include <set>
-
-using std::priority_queue;
-using std::set;
 
 Map::Map(const size_type &rowCnt_, const size_type &colCnt_)
     : content(rowCnt_, std::vector<SearchableGrid>(colCnt_)) {
@@ -37,11 +32,11 @@ void Map::init() {
     }
 }
 
-Grid& Map::getGrid(const Point &p) {
+SearchableGrid& Map::getGrid(const Point &p) {
     return content[p.getX()][p.getY()];
 }
 
-const Grid& Map::getGrid(const Point &p) const {
+const SearchableGrid& Map::getGrid(const Point &p) const {
     return content[p.getX()][p.getY()];
 }
 
@@ -117,6 +112,54 @@ const Point& Map::getFood() const {
 }
 
 void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &path) {
-    // TODO A*
-    
+    // Initialize g value of the grid
+    auto rows = getRowCount(), cols = getColCount();
+    for (size_type i = 0; i < rows; ++i) {
+        for (size_type j = 0; j < cols; ++j) {
+            content[i][j].setG(GameCtrl::INF);
+        }
+    }
+
+    // Create open list and close list
+    min_heap openList;
+    hash_table closeList;
+
+    // Add first search grid
+    SearchableGrid &start = getGrid(from);
+    start.setG(0);
+    start.setH(0);
+    openList.push(start);
+
+    // Begin searching
+    while (!openList.empty()) {
+        SearchableGrid grid;
+
+        do {  // Loop until get a grid that is not in the close list
+            grid = openList.top();
+            openList.pop();
+        } while (!openList.empty()
+                 && closeList.find(grid.getLocation()) != closeList.end());
+
+        if (openList.empty()
+            && closeList.find(grid.getLocation()) != closeList.end()) {
+            break;  // No path found
+        }
+
+        if (grid.getLocation() == to) {  // Find the destination
+            // TODO Construct path
+            break;
+        }
+
+        closeList.insert(grid.getLocation());  // Add to close list
+
+        // TODO Traverse adjacent grids
+
+    }
+}
+
+SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
+    // Manhatten distance
+    Point::attr_type dx = abs(from.getX() - to.getX());
+    Point::attr_type dy = abs(from.getY() - to.getY());
+    return dx + dy;
 }
