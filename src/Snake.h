@@ -58,6 +58,13 @@ public:
     */
     size_type size() const;
 
+    /*
+    Start snake AI to decide the next move direction.
+    After calling this method, the direc field will be set
+    to the next move direction.
+    */
+    void decideNextDirection();
+
 private:
     bool dead = false;
 

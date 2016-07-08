@@ -70,6 +70,11 @@ public:
     void setEnableSecondSnake(const bool &enable);
 
     /*
+    Set whether to enable snake AI.
+    */
+    void setEnableAI(const bool &enable);
+
+    /*
     Set whether to run the test thread.
     */
     void setRunTest(const bool &b);
@@ -105,7 +110,9 @@ private:
     bool autoMoveSnake = true;
     long autoMoveInterval = 200;
     bool enableSecondSnake = false;
+    bool enableAI = false;
     bool runTest = false;
+
     bool pauseMove = false;
 
     // Game objects

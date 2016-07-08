@@ -247,6 +247,12 @@ void GameCtrl::createFood() {
 void GameCtrl::autoMove() {
     while (threadWork) {
         if (!pauseMove) {
+            if (enableAI) {
+                snake1.decideNextDirection();
+                if (enableSecondSnake) {
+                    snake2.decideNextDirection();
+                }
+            }
             moveSnake(snake1);
             moveSnake(snake2);
         }
@@ -355,6 +361,10 @@ void GameCtrl::setMapColumn(const Map::size_type &n) {
     } else {
         mapColCnt = n;
     }
+}
+
+void GameCtrl::setEnableAI(const bool &enable) {
+    enableAI = enable;
 }
 
 int GameCtrl::random(const int min, const int max) {

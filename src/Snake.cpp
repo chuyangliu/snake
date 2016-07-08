@@ -1,6 +1,9 @@
 #include "Snake.h"
 #include "GameCtrl.h"
 
+using std::vector;
+using std::list;
+
 Snake::Snake() {
 }
 
@@ -101,4 +104,23 @@ void Snake::move() {
     }
 
     map->getGrid(newHead).setType(headType);
+}
+
+void Snake::decideNextDirection() {
+    // TODO AI
+    auto head = getHead();
+    list<Direction> path;
+    map->findMinPath(getHead(), map->getFood(), path);
+    if (path.empty()) {
+        vector<Point> adjPoints(4, Point::INVALID);
+        head.setAdjPoints(adjPoints);
+        for (const auto &p : adjPoints) {
+            if (!map->isUnsafe(p)) {
+                direc = head.getDirectionTo(p);
+                break;
+            }
+        }
+    } else {
+        direc = *(path.begin());
+    }
 }
