@@ -148,7 +148,7 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
     // Add first search node
     SearchableGrid &start = getGrid(from);
     start.setG(0);
-    start.setH(0);
+    start.setH(computeH(curPoint, to));
     openList.push(start);
 
     // Begin searching
@@ -173,7 +173,7 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         // the search details
         if (showSearchDetails) {
             getGrid(curPoint).setType(Grid::GridType::FOOD);
-            GameCtrl::getInstance()->sleepFor(25);
+            GameCtrl::getInstance()->sleepFor(10);
         }
 
         // If the destination location is found.
@@ -212,8 +212,8 @@ SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) con
     // Manhatten distance
     Point::attr_type dx = abs(from.getX() - to.getX());
     Point::attr_type dy = abs(from.getY() - to.getY());
-    //return dx + dy;
-    return 0;
+    return dx + dy;
+    //return 0;
 }
 
 void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) const {

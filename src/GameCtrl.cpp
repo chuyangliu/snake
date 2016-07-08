@@ -12,6 +12,7 @@
 const std::string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game! Press any key to continue...";
 const std::string GameCtrl::MSG_LOSE = "Sorry! You lose! Press any key to continue...";
 const std::string GameCtrl::MSG_WIN = "Congratulations! You Win! Press any key to continue...";
+const std::string GameCtrl::MSG_ESC = "Game ended! Press any key to continue...";
 const SearchableGrid::value_type GameCtrl::INF = 2147483647;
 
 GameCtrl* GameCtrl::getInstance() {
@@ -46,9 +47,22 @@ void GameCtrl::initMap() {
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
     } else {
-        //map->getGrid(Point(2, 1)).setType(Grid::GridType::WALL);
-        //map->getGrid(Point(2, 2)).setType(Grid::GridType::WALL);
-        //map->getGrid(Point(2, 3)).setType(Grid::GridType::WALL);
+        //addWalls();
+    }
+}
+
+void GameCtrl::addWalls() {
+    for (int i = 0; i < 14; ++i) {
+        map->getGrid(Point(i, 7)).setType(Grid::GridType::WALL);
+    }
+    for (int i = 4; i < 7; ++i) {
+        map->getGrid(Point(7, i)).setType(Grid::GridType::WALL);
+    }
+    for (int i = 7; i < 20; ++i) {
+        map->getGrid(Point(i, 13)).setType(Grid::GridType::WALL);
+    }
+    for (int i = 10; i < 13; ++i) {
+        map->getGrid(Point(7, i)).setType(Grid::GridType::WALL);
     }
 }
 
@@ -74,8 +88,7 @@ void GameCtrl::exitGame(const std::string &msg) {
     mutexExit.lock();
     stopThreads();
     sleepFor(100);  // Wait draw thread to finish last drawing
-    Console::setCursor(0, mapRowCnt + 6);
-    Console::writeWithColor(getScoreStr(), ConsoleColor(WHITE, BLACK, true, false));
+    Console::setCursor(0, mapRowCnt + 9);
     Console::writeWithColor(msg + "\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
     mutexExit.unlock();
@@ -101,14 +114,6 @@ void GameCtrl::moveSnake(Snake &s) {
     }
 }
 
-std::string GameCtrl::getScoreStr() const {
-    std::stringstream s;
-    std::string score;
-    s << (snake1.size() + snake2.size());
-    s >> score;
-    return "Score: " + score + "\n";
-}
-
 void GameCtrl::sleepFor(const long ms) const {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
@@ -119,9 +124,9 @@ void GameCtrl::sleepByFPS() const {
 
 void GameCtrl::draw() const {
     Console::clear();
-    drawGameInfo();
     while (threadWork) {
         drawMapContent();
+        drawGameInfo();
         sleepByFPS();
     }
 }
@@ -165,9 +170,13 @@ void GameCtrl::drawMapContent() const {
 void GameCtrl::drawGameInfo() const {
     Console::setCursor(0, mapRowCnt + 1);
     Console::writeWithColor("Control:\n", ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor("           Up  Left  Down  Right\n", ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor("Snake 1 :  W   A     S     D\n", ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor("Snake 2 :  I   J     K     L\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("         Up  Left  Down  Right\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("Snake1:  W   A     S     D\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("Snake2:  I   J     K     L\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor(" Space:  Toggle auto moving snake\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("   Esc:  Exit game\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor("\nScore: " + Convert::toString(snake1.size() + snake2.size()) + "\n",
+                            ConsoleColor(WHITE, BLACK, true, false));
 }
 
 void GameCtrl::keyboard() {
@@ -198,12 +207,22 @@ void GameCtrl::keyboard() {
                 case 'l':
                     keyboardMove(snake2, Direction::RIGHT);
                     break;
+                case ' ':
+                    toggleAutoMove();
+                    break;
+                case 27:  // Esc
+                    exitGame(MSG_ESC);
+                    break;
                 default:
                     break;
             }
         }
         sleepByFPS();
     }
+}
+
+void GameCtrl::toggleAutoMove() {
+    pauseMove = !pauseMove;
 }
 
 void GameCtrl::keyboardMove(Snake &s, const Direction &d) {
@@ -227,8 +246,10 @@ void GameCtrl::createFood() {
 
 void GameCtrl::autoMove() {
     while (threadWork) {
-        moveSnake(snake1);
-        moveSnake(snake2);
+        if (!pauseMove) {
+            moveSnake(snake1);
+            moveSnake(snake2);
+        }
         sleepFor(autoMoveInterval);
     }
 }
@@ -243,19 +264,7 @@ void GameCtrl::test() {
     //}
 
     // Test search algoritm (Better to set the map size to 20*20)
-
-    // Add some walls
-    for (int i = 0; i < 14; ++i) {
-        map->getGrid(Point(i, 10)).setType(Grid::GridType::WALL);
-    }
-    for (int i = 6; i < 10; ++i) {
-        map->getGrid(Point(7, i)).setType(Grid::GridType::WALL);
-    }
-    for (int i = 7; i < 20; ++i) {
-        map->getGrid(Point(i, 13)).setType(Grid::GridType::WALL);
-    }
-
-    // Begin test
+    addWalls();
     Point from(1, 1), to(18, 18);
     std::list<Direction> path;
     map->setShowSearchDetails(true);

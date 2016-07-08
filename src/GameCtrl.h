@@ -15,6 +15,7 @@ public:
     static const std::string MSG_BAD_ALLOC;
     static const std::string MSG_LOSE;
     static const std::string MSG_WIN;
+    static const std::string MSG_ESC;
     static const SearchableGrid::value_type INF;
 
     ~GameCtrl();
@@ -105,6 +106,7 @@ private:
     long autoMoveInterval = 200;
     bool enableSecondSnake = false;
     bool runTest = false;
+    bool pauseMove = false;
 
     // Game objects
     Snake snake1;
@@ -139,6 +141,11 @@ private:
     void initMap();
 
     /*
+    Add new walls on the map.
+    */
+    void addWalls();
+
+    /*
     Initialize the snakes of the game.
     */
     void initSnakes();
@@ -152,14 +159,6 @@ private:
     @param s the snake to move
     */
     void moveSnake(Snake &s);
-
-    /*
-    Return a string contain the current score info.
-    The score is equals to the number of bodies on the map.
-
-    @return the score string
-    */
-    std::string getScoreStr() const;
 
     /*
     Start all threads.
@@ -200,6 +199,11 @@ private:
     @param d the direction to move
     */
     void keyboardMove(Snake &s, const Direction &d);
+
+    /*
+    Toggle the auto move thread.
+    */
+    void toggleAutoMove();
 
     /*
     Callback for food thread.
