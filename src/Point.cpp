@@ -1,5 +1,6 @@
 #include "Point.h"
 #include "Convert.h"
+#include "GameCtrl.h"
 
 const Point Point::INVALID = Point(-1, -1);
 
@@ -50,6 +51,12 @@ void Point::setAdjPoints(std::vector<Point> &res) const {
     for (int i = 0; i < 4; ++i) {
         res[i].setX(x + dx[i]);
         res[i].setY(y + dy[i]);
+    }
+    for (unsigned i = 1; i < res.size(); ++i) {
+        auto random = GameCtrl::getInstance()->random(0, i);
+        Point tmp = res[i];
+        res[i] = res[random];
+        res[random] = tmp;
     }
 }
 

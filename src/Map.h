@@ -28,7 +28,7 @@ public:
 
     /*
     Check if the grid at the point is an unsafe grid.
-    Unsafe grid type: snake body, snake head, wall
+    Unsafe grid type: snake body, snake head, snake tail, wall
 
     @param p the point to check
     */
@@ -109,6 +109,14 @@ private:
     content_type content;  // The elements on the map
 
     bool showSearchDetails = false;
+
+    /*
+    Check if the grid at the point must be ignored by the search algorithm
+    Unsearched grid type: snake body, snake head, snake tail, wall, food
+
+    @param p the point to check
+    */
+    bool isUnsearch(const Point &p) const;
 
     /*
     Compute the H(Heuristic) value from the start

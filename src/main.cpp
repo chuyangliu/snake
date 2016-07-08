@@ -5,8 +5,8 @@ int main() {
 
     // Set map's size. Default is 20*20
     // The minimum size is 5*6 
-    game->setMapRow(10);
-    game->setMapColumn(10);
+    game->setMapRow(7);
+    game->setMapColumn(7);
 
     // Set FPS. Default is 60.0
     game->setFPS(59.0);
@@ -16,7 +16,7 @@ int main() {
 
     // Set interval time(ms) for automove. Default is 200 ms.
     // If setAutoMoveSnake(false), this code is useless.
-    game->setAutoMoveInterval(50);
+    game->setAutoMoveInterval(200);
 
     // Set whether to enable the second snake. Default is false
     game->setEnableSecondSnake(false);

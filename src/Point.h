@@ -47,10 +47,11 @@ public:
     static unsigned hash(const Point &p);
 
     /*
-    Calculate adjacent(left, top, right, down) points.
+    Calculate adjacent points and randomly rearrange
+    the result.
 
     @param res the adjacent points will be stored in this field.
-    Precondition: this field must be a vector of length 4.
+               Precondition: this field must be a vector of length 4.
     */
     void setAdjPoints(std::vector<Point> &res) const;
 

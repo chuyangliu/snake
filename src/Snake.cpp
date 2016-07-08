@@ -126,7 +126,14 @@ void Snake::move(const std::list<Direction> &path) {
 }
 
 void Snake::findMinPathToFood(std::list<Direction> &path) {
-    map->findMinPath(getHead(), map->getFood(), path);
+    // To search the path to food, first set the food grid type to EMPTY
+    // and then start searching because the original type of the food
+    // grid is a FOOD which is ignored by the search algorithm.
+    // After searching, restore the grid type of the food.
+    auto food = map->getFood();
+    map->getGrid(food).setType(Grid::GridType::EMPTY);
+    map->findMinPath(getHead(), food, path);
+    map->getGrid(food).setType(Grid::GridType::FOOD);
 }
 
 void Snake::findMinPathToTail(std::list<Direction> &path) {
@@ -158,6 +165,10 @@ void Snake::decideNextDirection() {
     // check if there is path to the tail of the temp snake. If there is no path
     // to tail after eating the food, it means that this path is dangerous and
     // this path will not be chosen.
+    // Notice that only if the length of the path to tail is more than
+    // 1 can the snake move to its tail because that the length equals
+    // 1 means that the head is adjacent to the tail, which will make 
+    // the snake die after moving towards the tail.
     tmpSnake.findMinPathToFood(pathToFood);
     if (!pathToFood.empty()) {
         tmpSnake.move(pathToFood);

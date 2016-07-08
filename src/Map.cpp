@@ -47,7 +47,20 @@ bool Map::isUnsafe(const Point &p) const {
         || getGrid(p).getType() == Grid::GridType::SNAKEHEAD1
         || getGrid(p).getType() == Grid::GridType::SNAKEHEAD2
         || getGrid(p).getType() == Grid::GridType::SNAKEBODY1
-        || getGrid(p).getType() == Grid::GridType::SNAKEBODY2;
+        || getGrid(p).getType() == Grid::GridType::SNAKEBODY2
+        || getGrid(p).getType() == Grid::GridType::SNAKETAIL1
+        || getGrid(p).getType() == Grid::GridType::SNAKETAIL2;
+}
+
+bool Map::isUnsearch(const Point &p) const {
+    return getGrid(p).getType() == Grid::GridType::WALL
+        || getGrid(p).getType() == Grid::GridType::SNAKEHEAD1
+        || getGrid(p).getType() == Grid::GridType::SNAKEHEAD2
+        || getGrid(p).getType() == Grid::GridType::SNAKEBODY1
+        || getGrid(p).getType() == Grid::GridType::SNAKEBODY2
+        || getGrid(p).getType() == Grid::GridType::SNAKETAIL1
+        || getGrid(p).getType() == Grid::GridType::SNAKETAIL2
+        || getGrid(p).getType() == Grid::GridType::FOOD;
 }
 
 bool Map::isInside(const Point &p) const {
@@ -189,14 +202,13 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         // Traverse adjacent nodes
         curPoint.setAdjPoints(adjPoints);
         for (const auto &adjPoint : adjPoints) {
-            // If the adjacent node is safe and
-            // not in the close list, then try to
-            // update the g value.
-            if (!isUnsafe(adjPoint) && closeList.find(adjPoint) == closeList.end()) {
+            // If the adjacent node is safe and not in the close list,
+            // then try to update the g value.
+            if (!isUnsearch(adjPoint) && closeList.find(adjPoint) == closeList.end()) {
                 SearchableGrid &adjGrid = getGrid(adjPoint);
-                // If shorter path exists,
-                // update g, h, parent field and add 
-                // the adjacent grid to the open list
+                // If shorter path exists, update g, h, parent field and add 
+                // the adjacent grid to the open list. The cost of moving from
+                // one grid to its adjacent grid is set to 1.
                 if (curGrid->getG() + 1 < adjGrid.getG()) {
                     adjGrid.setParent(curPoint);
                     adjGrid.setG(curGrid->getG() + 1);
