@@ -52,17 +52,11 @@ void GameCtrl::initMap() {
 }
 
 void GameCtrl::addWalls() {
-    for (int i = 0; i < 14; ++i) {
-        map->getGrid(Point(i, 7)).setType(Grid::GridType::WALL);
+    for (unsigned i = 0; i < mapRowCnt / 2 + 1; ++i) {
+        map->getGrid(Point(i, mapColCnt / 2 - 1)).setType(Grid::GridType::WALL);
     }
-    for (int i = 4; i < 7; ++i) {
-        map->getGrid(Point(7, i)).setType(Grid::GridType::WALL);
-    }
-    for (int i = 7; i < 20; ++i) {
-        map->getGrid(Point(i, 13)).setType(Grid::GridType::WALL);
-    }
-    for (int i = 10; i < 13; ++i) {
-        map->getGrid(Point(7, i)).setType(Grid::GridType::WALL);
+    for (unsigned i = mapRowCnt / 2 - 1; i < mapRowCnt - 1; ++i) {
+        map->getGrid(Point(i, mapColCnt / 2 + 1)).setType(Grid::GridType::WALL);
     }
 }
 
@@ -280,9 +274,9 @@ void GameCtrl::test() {
     //    sleepFor(1);
     //}
 
-    // Test search algoritm (Better to set the map size to 20*20)
+    // Test search algoritm
     addWalls();
-    Point from(1, 1), to(18, 18);
+    Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
     std::list<Direction> path;
     map->setShowSearchDetails(true);
     map->findMinPath(from, to, path);

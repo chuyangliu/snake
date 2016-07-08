@@ -181,6 +181,7 @@ void Snake::decideNextDirection() {
 
     // Step2:
     // If no suitable path is found, make the snake move to its tail.
+    // TODO Find longest path.
     this->findMinPathToTail(pathToTail);
     if (pathToTail.size() > 1) {
         this->setDirection(*(pathToTail.begin()));
