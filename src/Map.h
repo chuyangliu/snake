@@ -95,6 +95,14 @@ public:
     */
     void findMinPath(const Point &from, const Point &to, std::list<Direction> &path);
 
+    /*
+    Calculate the manhatten distance between two points.
+
+    @param from the start point
+    @param to the end point
+    */
+    static unsigned getManhattenDistance(const Point &from, const Point &to);
+
 private:
     Point food = Point::INVALID;
 

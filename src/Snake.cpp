@@ -3,6 +3,7 @@
 
 using std::vector;
 using std::list;
+using std::shared_ptr;
 
 Snake::Snake() {
 }
@@ -19,7 +20,11 @@ bool Snake::addBody(const Point &p) {
         if (body.size() == 0) {  // Insert a head
             map->getGrid(p).setType(headType);
         } else {  // Insert a body
-            map->getGrid(p).setType(bodyType);
+            if (body.size() > 1) {  // At least two body
+                auto oldTail = getTail();
+                map->getGrid(oldTail).setType(bodyType);
+            }
+            map->getGrid(p).setType(tailType);
         }
         body.push_back(p);
         return true;
@@ -32,12 +37,16 @@ void Snake::setDirection(const Direction &d) {
     direc = d;
 }
 
-void Snake::setHeadType(const Grid::GridType &headType_) {
-    headType = headType_;
+void Snake::setHeadType(const Grid::GridType &type) {
+    headType = type;
 }
 
-void Snake::setBodyType(const Grid::GridType &bodyType_) {
-    bodyType = bodyType_;
+void Snake::setBodyType(const Grid::GridType &type) {
+    bodyType = type;
+}
+
+void Snake::setTailType(const Grid::GridType &type) {
+    tailType = type;
 }
 
 Direction Snake::getDirection() const {
@@ -65,6 +74,9 @@ void Snake::removeTail() {
         map->getGrid(getTail()).setType(Grid::GridType::EMPTY);
     }
     body.pop_back();
+    if (body.size() > 1) {  // At least two body
+        map->getGrid(getTail()).setType(tailType);
+    }
 }
 
 Point Snake::getDisplacement(const Direction &d) {
@@ -93,34 +105,91 @@ void Snake::move() {
     Point newHead = getHead() + getDisplacement(direc);
     body.push_front(newHead);
 
+    if (map->isUnsafe(newHead)) {
+        dead = true;
+    }
+
     if (map->getGrid(newHead).getType() != Grid::GridType::FOOD) {
         removeTail();
     } else {
         map->removeFood();
     }
 
-    if (map->isUnsafe(newHead)) {
-        dead = true;
-    }
-
     map->getGrid(newHead).setType(headType);
 }
 
-void Snake::decideNextDirection() {
-    // TODO AI
-    auto head = getHead();
-    list<Direction> path;
+void Snake::move(const std::list<Direction> &path) {
+    for (const auto &d : path) {
+        setDirection(d);
+        move();
+    }
+}
+
+void Snake::findMinPathToFood(std::list<Direction> &path) {
     map->findMinPath(getHead(), map->getFood(), path);
-    if (path.empty()) {
-        vector<Point> adjPoints(4, Point::INVALID);
-        head.setAdjPoints(adjPoints);
-        for (const auto &p : adjPoints) {
-            if (!map->isUnsafe(p)) {
+}
+
+void Snake::findMinPathToTail(std::list<Direction> &path) {
+    // To search the path to tail, first set the tail's type to EMPTY
+    // and then start searching because the original type of the tail
+    // grid is a SNAKEBODY which is ignored by the search algorithm.
+    // After searching, restore the grid type of the tail.
+    auto tail = getTail();
+    auto originType = map->getGrid(tail).getType();
+    map->getGrid(tail).setType(Grid::GridType::EMPTY);
+    map->findMinPath(getHead(), tail, path);
+    map->getGrid(tail).setType(originType);
+}
+
+void Snake::decideNextDirection() {
+    if (isDead() || !map) {
+        return;
+    }
+
+    // Copy a temp snake with a temp map
+    // Create two search path (food and tail)
+    Snake tmpSnake(*this);
+    shared_ptr<Map> tmpMap = std::make_shared<Map>(*map);
+    tmpSnake.setMap(tmpMap);
+    list<Direction> pathToFood, pathToTail;
+
+    // Step1:
+    // If a path to food is found, move the temp snake to eat the food and to 
+    // check if there is path to the tail of the temp snake. If there is no path
+    // to tail after eating the food, it means that this path is dangerous and
+    // this path will not be chosen.
+    tmpSnake.findMinPathToFood(pathToFood);
+    if (!pathToFood.empty()) {
+        tmpSnake.move(pathToFood);
+        tmpSnake.findMinPathToTail(pathToTail);
+        if (pathToTail.size() > 1) {
+            this->setDirection(*(pathToFood.begin()));
+            return;
+        }
+    }
+
+    // Step2:
+    // If no suitable path is found, make the snake move to its tail.
+    this->findMinPathToTail(pathToTail);
+    if (pathToTail.size() > 1) {
+        this->setDirection(*(pathToTail.begin()));
+        return;
+    }
+
+    // Step3:
+    // If no available path is found in step 1 and 2, then find a point
+    // that is the farthest from the food.
+    auto head = getHead();
+    unsigned maxDist = 0;
+    vector<Point> adjPoints(4, Point::INVALID);
+    head.setAdjPoints(adjPoints);
+    for (const auto &p : adjPoints) {
+        if (!map->isUnsafe(p)) {
+            unsigned d = Map::getManhattenDistance(p, map->getFood());
+            if (d > maxDist) {
+                maxDist = d;
                 direc = head.getDirectionTo(p);
-                break;
             }
         }
-    } else {
-        direc = *(path.begin());
     }
 }

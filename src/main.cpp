@@ -5,8 +5,8 @@ int main() {
 
     // Set map's size. Default is 20*20
     // The minimum size is 5*6 
-    game->setMapRow(20);
-    game->setMapColumn(20);
+    game->setMapRow(10);
+    game->setMapColumn(10);
 
     // Set FPS. Default is 60.0
     game->setFPS(59.0);

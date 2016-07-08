@@ -69,6 +69,7 @@ void GameCtrl::addWalls() {
 void GameCtrl::initSnakes() {
     snake1.setHeadType(Grid::GridType::SNAKEHEAD1);
     snake1.setBodyType(Grid::GridType::SNAKEBODY1);
+    snake1.setTailType(Grid::GridType::SNAKETAIL1);
     snake1.setMap(map);
     snake1.addBody(Point(1, 3));
     snake1.addBody(Point(1, 2));
@@ -77,6 +78,7 @@ void GameCtrl::initSnakes() {
     if (enableSecondSnake) {
         snake2.setHeadType(Grid::GridType::SNAKEHEAD2);
         snake2.setBodyType(Grid::GridType::SNAKEBODY2);
+        snake2.setTailType(Grid::GridType::SNAKETAIL2);
         snake2.setMap(map);
         snake2.addBody(Point(3, 3));
         snake2.addBody(Point(3, 2));
@@ -150,14 +152,20 @@ void GameCtrl::drawMapContent() const {
                 case Grid::GridType::SNAKEHEAD1:
                     Console::writeWithColor("  ", ConsoleColor(RED, RED, true, true));
                     break;
-                case Grid::GridType::SNAKEHEAD2:
-                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
-                    break;
                 case Grid::GridType::SNAKEBODY1:
                     Console::writeWithColor("  ", ConsoleColor(GREEN, GREEN, true, true));
                     break;
+                case Grid::GridType::SNAKETAIL1:
+                    Console::writeWithColor("  ", ConsoleColor(RED, RED, false, false));
+                    break;
+                case Grid::GridType::SNAKEHEAD2:
+                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
+                    break;
                 case Grid::GridType::SNAKEBODY2:
                     Console::writeWithColor("  ", ConsoleColor(CYAN, CYAN, true, true));
+                    break;
+                case Grid::GridType::SNAKETAIL2:
+                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, false, false));
                     break;
                 default:
                     break;
@@ -247,14 +255,17 @@ void GameCtrl::createFood() {
 void GameCtrl::autoMove() {
     while (threadWork) {
         if (!pauseMove) {
+
             if (enableAI) {
                 snake1.decideNextDirection();
-                if (enableSecondSnake) {
-                    snake2.decideNextDirection();
-                }
             }
             moveSnake(snake1);
+
+            if (enableAI && enableSecondSnake) {
+                snake2.decideNextDirection();
+            }
             moveSnake(snake2);
+
         }
         sleepFor(autoMoveInterval);
     }

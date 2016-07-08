@@ -11,9 +11,16 @@ public:
     ~Snake();
 
     /*
-    Move at current diection.
+    Move at current direction.
     */
     void move();
+
+    /*
+    Move steps specified by a list of direcition.
+
+    @param path the move path
+    */
+    void move(const std::list<Direction> &path);
 
     /*
     Check whether the snake is dead.
@@ -46,12 +53,17 @@ public:
     /*
     Set the head type of the snake.
     */
-    void setHeadType(const Grid::GridType &headType_);
+    void setHeadType(const Grid::GridType &type);
 
     /*
     Set the body type of the snake.
     */
-    void setBodyType(const Grid::GridType &bodyType_);
+    void setBodyType(const Grid::GridType &type);
+
+    /*
+    Set the tail type of the snake.
+    */
+    void setTailType(const Grid::GridType &type);
 
     /*
     Return the snake bodies size.
@@ -76,6 +88,25 @@ private:
 
     Grid::GridType headType;
     Grid::GridType bodyType;
+    Grid::GridType tailType;
+
+    /*
+    Find the shortest path from snake's head to the food.
+
+    @param path the result will be stored in this field.
+                If there is no available path, the length
+                of this field will be zero.
+    */
+    void findMinPathToFood(std::list<Direction> &path);
+
+    /*
+    Find the shortest path from snake's head to the tail.
+
+    @param path the result will be stored in this field.
+    If there is no available path, the length
+    of this field will be zero.
+    */
+    void findMinPathToTail(std::list<Direction> &path);
 
     /*
     Remove the tail of the snake.

@@ -12,7 +12,9 @@ public:
         SNAKEBODY1,
         SNAKEBODY2,
         SNAKEHEAD1,
-        SNAKEHEAD2
+        SNAKEHEAD2,
+        SNAKETAIL1,
+        SNAKETAIL2
     };
 
     // Constructor and destructor

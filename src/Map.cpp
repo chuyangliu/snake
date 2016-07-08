@@ -209,18 +209,22 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
 }
 
 SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
-    // Manhatten distance
-    Point::attr_type dx = abs(from.getX() - to.getX());
-    Point::attr_type dy = abs(from.getY() - to.getY());
-    return dx + dy;
+    return getManhattenDistance(from, to);
     //return 0;
 }
 
 void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) const {
+    path.clear();
     Point tmp = to, parent;
     while (tmp != from) {
         parent = getGrid(tmp).getParent();
         path.push_front(parent.getDirectionTo(tmp));
         tmp = parent;
     }
+}
+
+unsigned Map::getManhattenDistance(const Point &from, const Point &to) {
+    Point::attr_type dx = abs(from.getX() - to.getX());
+    Point::attr_type dy = abs(from.getY() - to.getY());
+    return dx + dy;
 }
