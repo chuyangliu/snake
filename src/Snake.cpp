@@ -136,7 +136,7 @@ void Snake::findMaxPathToTail(std::list<Direction> &path) {
 }
 
 void Snake::decideNextDirection() {
-    if (isDead() || !map) {
+    if (isDead() || !map || !map->hasFood()) {
         return;
     }
 

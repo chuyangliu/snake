@@ -5,3 +5,7 @@ std::string Convert::toString(int data) {
     sprintf(str, "%d", data);
     return std::string(str);
 }
+
+std::string Convert::toString(const char *str) {
+    return std::string(str);
+}

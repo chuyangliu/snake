@@ -9,10 +9,12 @@
 #include <Windows.h>
 #endif
 
-const std::string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game! Press any key to continue...";
-const std::string GameCtrl::MSG_LOSE = "Sorry! You lose! Press any key to continue...";
-const std::string GameCtrl::MSG_WIN = "Congratulations! You Win! Press any key to continue...";
-const std::string GameCtrl::MSG_ESC = "Game ended! Press any key to continue...";
+using std::string;
+
+const string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game! Press any key to continue...";
+const string GameCtrl::MSG_LOSE = "Sorry! You lose! Press any key to continue...";
+const string GameCtrl::MSG_WIN = "Congratulations! You Win! Press any key to continue...";
+const string GameCtrl::MSG_ESC = "Game ended! Press any key to continue...";
 const SearchableGrid::value_type GameCtrl::INF = 2147483647;
 
 GameCtrl* GameCtrl::getInstance() {
@@ -29,6 +31,7 @@ GameCtrl::~GameCtrl() {
 
 int GameCtrl::run() {
     try {
+        Console::clear();
         initMap();
         initSnakes();
         startThreads();
@@ -37,12 +40,20 @@ int GameCtrl::run() {
         }
         return 0;
     } catch (std::exception &e) {
-        exitGame(e.what());
+        exitGame("Error: " + Convert::toString(e.what()) + "\nPress any key to continue...");
         return -1;
     }
 }
 
 void GameCtrl::initMap() {
+    // Check validity
+    if (mapRowCnt < 4 || mapColCnt < 4) {
+        string msg = "Map size is at least 4*4. Current is "
+            + Convert::toString(mapRowCnt) + "*" + Convert::toString(mapColCnt);
+        throw std::range_error(msg.c_str());
+    }
+    
+    // Initialize
     map = std::make_shared<Map>(mapRowCnt, mapColCnt);
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
@@ -84,14 +95,15 @@ void GameCtrl::initSnakes() {
         snake2.setBodyType(Grid::GridType::SNAKEBODY2);
         snake2.setTailType(Grid::GridType::SNAKETAIL2);
         snake2.setMap(map);
-        snake2.addBody(Point(3, 3));
-        snake2.addBody(Point(3, 2));
-        snake2.addBody(Point(3, 1));
+        snake2.addBody(Point(2, 3));
+        snake2.addBody(Point(2, 2));
+        snake2.addBody(Point(2, 1));
     }
 }
 
 void GameCtrl::exitGame(const std::string &msg) {
     mutexExit.lock();
+    sleepFor(100);  // Wait draw thread to finish last drawing
     stopThreads();
     sleepFor(100);  // Wait draw thread to finish last drawing
     Console::setCursor(0, mapRowCnt + 9);
@@ -129,7 +141,6 @@ void GameCtrl::sleepByFPS() const {
 }
 
 void GameCtrl::draw() const {
-    Console::clear();
     while (threadWork) {
         drawMapContent();
         drawGameInfo();
@@ -313,7 +324,6 @@ void GameCtrl::test() {
         }
     }
     res += "\nPath length: " + Convert::toString(path.size());
-    sleepFor(200);  // Wait draw thread finish
     exitGame(res);
 }
 
@@ -365,19 +375,11 @@ void GameCtrl::setRunTest(const bool &b) {
 }
 
 void GameCtrl::setMapRow(const Map::size_type &n) {
-    if (n < 5) {
-        mapRowCnt = 5;
-    } else {
-        mapRowCnt = n;
-    }
+    mapRowCnt = n;
 }
 
 void GameCtrl::setMapColumn(const Map::size_type &n) {
-    if (n < 6) {
-        mapColCnt = 6;
-    } else {
-        mapColCnt = n;
-    }
+    mapColCnt = n;
 }
 
 void GameCtrl::setEnableAI(const bool &enable) {

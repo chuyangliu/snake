@@ -74,8 +74,12 @@ bool Map::isFilledWithBody() const {
     for (size_type i = 1; i < rows - 1; ++i) {
         for (size_type j = 1; j < cols - 1; ++j) {
             auto type = content[i][j].getType();
-            if (!(type == Grid::GridType::SNAKEBODY1
-                || type == Grid::GridType::SNAKEHEAD1)) {
+            if (!(type == Grid::GridType::SNAKEHEAD1
+                || type == Grid::GridType::SNAKEBODY1
+                || type == Grid::GridType::SNAKETAIL1
+                || type == Grid::GridType::SNAKEHEAD2
+                || type == Grid::GridType::SNAKEBODY2
+                || type == Grid::GridType::SNAKETAIL2)) {
                 return false;
             }
         }
