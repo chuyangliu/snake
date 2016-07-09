@@ -14,6 +14,7 @@ public:
     typedef std::vector<std::vector<SearchableGrid>> content_type;
     typedef content_type::size_type size_type;
     typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::greater<SearchableGrid>> min_heap;
+    typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::less<SearchableGrid>> max_heap;
     typedef std::unordered_set<Point, decltype(Point::hash)*> hash_table;
 
     Map(const size_type &rowCnt_ = 20, const size_type &colCnt_ = 20);
@@ -85,7 +86,8 @@ public:
     /*
     Find the shortest path from the start
     point to the end point.
-    Algorithm reference: https://en.wikipedia.org/wiki/A*_search_algorithm
+    Algorithm reference:
+    1. https://en.wikipedia.org/wiki/A*_search_algorithm
 
     @param from the start point
     @param to the end point
@@ -94,6 +96,21 @@ public:
                 points, the size of this field will be zero.
     */
     void findMinPath(const Point &from, const Point &to, std::list<Direction> &path);
+
+    /*
+    Find the longest path from the start
+    point to the end point.
+    Algorithm reference:
+    1. https://en.wikipedia.org/wiki/A*_search_algorithm
+    2. https://en.wikipedia.org/wiki/Longest_path_problem
+
+    @param from the start point
+    @param to the end point
+    @param path the result will be stored as a list of Direction
+                in this field. If there is no path between the two
+                points, the size of this field will be zero.
+    */
+    void findMaxPath(const Point &from, const Point &to, std::list<Direction> &path);
 
     /*
     Calculate the manhatten distance between two points.
@@ -138,7 +155,17 @@ private:
                 in this field. If there is no path between the two
                 points, the size of this field will be zero.
     */
-    void constructPath(const Point &from, const Point &to, std::list<Direction> &path) const;
+    void constructPath(const Point &from, const Point &to, std::list<Direction> &path);
+
+    /*
+    Show a visited node on the map. This method is designed for
+    showing search details. It first checks if showSearchDetails
+    field is true.
+
+    @param n the point of the node
+    @param type the new type of the grid at the point n
+    */
+    void showVisitedNode(const Point &n, const Grid::GridType &type);
 
     /*
     Initialize map content.

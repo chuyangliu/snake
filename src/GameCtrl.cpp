@@ -58,9 +58,19 @@ void GameCtrl::addWalls() {
     for (unsigned i = mapRowCnt / 2 - 1; i < mapRowCnt - 1; ++i) {
         map->getGrid(Point(i, mapColCnt / 2 + 1)).setType(Grid::GridType::WALL);
     }
+    for (unsigned i = mapColCnt / 4; i <= mapColCnt / 2 - 1; ++i) {
+        map->getGrid(Point(mapRowCnt / 2 + 1, i)).setType(Grid::GridType::WALL);
+    }
+    for (unsigned i = mapColCnt / 2 + 1; i < 3 * mapColCnt / 4; ++i) {
+        map->getGrid(Point(mapRowCnt / 2 - 1, i)).setType(Grid::GridType::WALL);
+    }
 }
 
 void GameCtrl::initSnakes() {
+    if (runTest) {
+        return;
+    }
+
     snake1.setHeadType(Grid::GridType::SNAKEHEAD1);
     snake1.setBodyType(Grid::GridType::SNAKEBODY1);
     snake1.setTailType(Grid::GridType::SNAKETAIL1);
@@ -279,7 +289,8 @@ void GameCtrl::test() {
     Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
     std::list<Direction> path;
     map->setShowSearchDetails(true);
-    map->findMinPath(from, to, path);
+    //map->findMinPath(from, to, path);
+    map->findMaxPath(from, to, path);
     std::string res = "Path from " + from.toString() +  " to " + to.toString() + ": \n";
     for (const auto &d : path) {
         switch (d) {

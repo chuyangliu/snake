@@ -5,8 +5,8 @@ int main() {
 
     // Set map's size. Default is 20*20
     // The minimum size is 5*6 
-    game->setMapRow(7);
-    game->setMapColumn(7);
+    game->setMapRow(20);
+    game->setMapColumn(20);
 
     // Set FPS. Default is 60.0
     game->setFPS(59.0);
@@ -26,7 +26,7 @@ int main() {
     game->setEnableAI(true);
 
     // Set whether to run the test program. Default is false
-    game->setRunTest(false);
+    game->setRunTest(true);
 
     return game->run();
 }
