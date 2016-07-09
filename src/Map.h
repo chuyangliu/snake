@@ -84,6 +84,14 @@ public:
     void setShowSearchDetails(const bool &b);
     
     /*
+    Calculate the manhatten distance between two points.
+
+    @param from the start point
+    @param to the end point
+    */
+    static unsigned getManhattenDist(const Point &from, const Point &to);
+
+    /*
     Find the shortest path from the start
     point to the end point.
     Algorithm reference:
@@ -112,14 +120,6 @@ public:
     */
     void findMaxPath(const Point &from, const Point &to, std::list<Direction> &path);
 
-    /*
-    Calculate the manhatten distance between two points.
-
-    @param from the start point
-    @param to the end point
-    */
-    static unsigned getManhattenDistance(const Point &from, const Point &to);
-
 private:
     Point food = Point::INVALID;
 
@@ -134,6 +134,18 @@ private:
     @param p the point to check
     */
     bool isUnsearch(const Point &p) const;
+
+    /*
+    DFS algorithm to find the longest(approximately) path.
+
+    @param n current search point
+    @param goal the goal point
+    @param tot current path length
+    @param max current maximum path length
+    @param closeList stores the points that have been visited
+    */
+    void dfs(const Point &n, const Point &goal, const long tot,
+             long &max, Map::hash_table &closeList);
 
     /*
     Compute the H(Heuristic) value from the start

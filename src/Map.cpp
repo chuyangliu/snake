@@ -130,7 +130,7 @@ void Map::setShowSearchDetails(const bool &b) {
     showSearchDetails = b;
 }
 
-unsigned Map::getManhattenDistance(const Point &from, const Point &to) {
+unsigned Map::getManhattenDist(const Point &from, const Point &to) {
     Point::attr_type dx = abs(from.getX() - to.getX());
     Point::attr_type dy = abs(from.getY() - to.getY());
     return dx + dy;
@@ -144,7 +144,7 @@ void Map::showVisitedNode(const Point &n, const Grid::GridType &type) {
 }
 
 SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
-    return getManhattenDistance(from, to);
+    return getManhattenDist(from, to);
     //return 0;
 }
 
@@ -253,7 +253,8 @@ void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &
         return;
     }
 
-    // Initialize g value of the grid
+    // BFS + A* version
+    /*// Initialize g value of the grid
     auto rows = getRowCount(), cols = getColCount();
     for (size_type i = 0; i < rows; ++i) {
         for (size_type j = 0; j < cols; ++j) {
@@ -329,6 +330,38 @@ void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &
                     adjGrid.setH(computeH(adjGrid.getLocation(), to));
                     openList.push(adjGrid);
                 }
+            }
+        }
+    }*/
+
+    // DFS version
+    // Create close list
+    // The first param is the number
+    // of buckets in the hash table 
+    hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
+    long tot = 0, max = -1;
+
+    closeList.insert(from);
+    dfs(from, to, tot, max, closeList);
+    constructPath(from, to, path);
+}
+
+void Map::dfs(const Point &n, const Point &goal, const long tot,
+         long &max, Map::hash_table &closeList) {
+    showVisitedNode(n, Grid::GridType::SNAKEBODY1);
+    if (n == goal) {
+        if (tot > max) {
+            max = tot;  // Update max length
+        }
+    } else {
+        vector<Point> adjPoints(4, Point::INVALID);
+        n.setAdjPoints(adjPoints);
+        for (const auto &adjPoint : adjPoints) {
+            if (!isUnsearch(adjPoint) && closeList.find(adjPoint) == closeList.end()) {  // Not visited
+                closeList.insert(adjPoint);
+                getGrid(adjPoint).setParent(n);  // Record path
+                dfs(adjPoint, goal, tot + 1, max, closeList);
+                closeList.erase(adjPoint);
             }
         }
     }

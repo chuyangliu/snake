@@ -26,7 +26,7 @@ int main() {
     game->setEnableAI(true);
 
     // Set whether to run the test program. Default is false
-    game->setRunTest(false);
+    game->setRunTest(true);
 
     return game->run();
 }

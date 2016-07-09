@@ -201,7 +201,7 @@ void Snake::decideNextDirection() {
     head.setAdjPoints(adjPoints);
     for (const auto &p : adjPoints) {
         if (!map->isUnsafe(p)) {
-            unsigned d = Map::getManhattenDistance(p, map->getFood());
+            unsigned d = Map::getManhattenDist(p, map->getFood());
             if (d > maxDist) {
                 maxDist = d;
                 direc = head.getDirectionTo(p);
