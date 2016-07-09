@@ -159,10 +159,15 @@ void Snake::decideNextDirection() {
     tmpSnake.findMinPathToFood(pathToFood);
     if (!pathToFood.empty()) {
         tmpSnake.move(pathToFood);
-        tmpSnake.findMinPathToTail(pathToTail);
-        if (pathToTail.size() > 1) {
+        if (tmpMap->isFilledWithBody()) {  // Check if the map is full
             this->setDirection(*(pathToFood.begin()));
             return;
+        } else {
+            tmpSnake.findMinPathToTail(pathToTail);
+            if (pathToTail.size() > 1) {  // Check path to tail
+                this->setDirection(*(pathToFood.begin()));
+                return;
+            }
         }
     }
 
