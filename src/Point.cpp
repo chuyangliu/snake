@@ -76,6 +76,23 @@ Direction Point::getDirectionTo(const Point &p) const  {
     }
 }
 
+Point Point::getAdjacentPoint(const Direction &d) const {
+    int dx = 0, dy = 0;
+    switch (d) {
+        case LEFT:
+            dx = 0; dy = -1; break;
+        case UP:
+            dx = -1; dy = 0; break;
+        case RIGHT:
+            dx = 0; dy = 1; break;
+        case DOWN:
+            dx = 1; dy = 0; break;
+        default:
+            break;
+    }
+    return Point(x + dx, y + dy);
+}
+
 std::string Point::toString() const {
     return "(" + Convert::toString(x) + ", " + Convert::toString(y) + ")";
 }

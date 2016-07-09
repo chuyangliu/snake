@@ -5,8 +5,8 @@ int main() {
 
     // Set map's size. Default is 20*20
     // The minimum size is 5*6 
-    game->setMapRow(20);
-    game->setMapColumn(20);
+    game->setMapRow(6);
+    game->setMapColumn(6);
 
     // Set FPS. Default is 60.0
     game->setFPS(59.0);
@@ -23,7 +23,7 @@ int main() {
 
     // Set whether to enable the snake AI. Default is false
     // If setAutoMoveSnake(false), this code is useless.
-    game->setEnableAI(true);
+    game->setEnableAI(false);
 
     // Set whether to run the test program. Default is false
     game->setRunTest(true);

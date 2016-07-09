@@ -65,6 +65,13 @@ public:
     Direction getDirectionTo(const Point &p) const;
 
     /*
+    Get the adjacent point in a given direction.
+
+    @param d the adjacent direction
+    */
+    Point getAdjacentPoint(const Direction &d) const;
+
+    /*
     @return the string that describe the content
             of the object.
     */

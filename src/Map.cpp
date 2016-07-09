@@ -143,21 +143,15 @@ void Map::showVisitedNode(const Point &n, const Grid::GridType &type) {
     }
 }
 
-SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
-    return getManhattenDist(from, to);
-    //return 0;
-}
-
-void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) {
-    path.clear();
-    Point tmp = to, parent;
-    while (tmp != from) {
-        showVisitedNode(tmp, Grid::GridType::SNAKEHEAD1);  // Search details
-        parent = getGrid(tmp).getParent();
-        path.push_front(parent.getDirectionTo(tmp));
-        tmp = parent;
+void Map::showPath(const Point &start, const std::list<Direction> &path) {
+    if (showSearchDetails) {
+        Point tmp = start;
+        for (const auto &d : path) {
+            showVisitedNode(tmp, Grid::GridType::SNAKEHEAD1);
+            tmp = tmp.getAdjacentPoint(d);
+        }
+        showVisitedNode(tmp, Grid::GridType::SNAKEHEAD1);
     }
-    showVisitedNode(tmp, Grid::GridType::SNAKEHEAD1);  // Search details
 }
 
 void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &path) {
@@ -178,12 +172,10 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
     min_heap openList;
 
     // Create close list
-    // The first param is the number
-    // of buckets in the hash table 
+    // The first param is the number of buckets in the hash table 
     hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
 
-    // Create local variables in the loop
-    // to save allocation time
+    // Create local variables in the loop to save allocation time
     const SearchableGrid *curGrid = nullptr;
     Point curPoint;
     vector<Point> adjPoints(4, Point::INVALID);
@@ -212,14 +204,14 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
             break;
         }
 
-        // Check if it is needed to show
-        // the search details
+        // Show search details
         showVisitedNode(curPoint, Grid::GridType::SNAKEBODY1);
 
         // If the destination location is found.
         // Construct path and return.
         if (curPoint == to) {
             constructPath(from, to, path);
+            showPath(from, path);  // Show search details
             break;
         }
 
@@ -253,116 +245,58 @@ void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &
         return;
     }
 
-    // BFS + A* version
-    /*// Initialize g value of the grid
-    auto rows = getRowCount(), cols = getColCount();
-    for (size_type i = 0; i < rows; ++i) {
-        for (size_type j = 0; j < cols; ++j) {
-            content[i][j].setG(-GameCtrl::INF);
-        }
-    }
-
-    // Create open list
-    max_heap openList;
-
     // Create close list
-    // The first param is the number
-    // of buckets in the hash table 
+    // The first param is the number of buckets in the hash table 
     hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
+    closeList.insert(from);
 
-    // Create local variables in the loop
-    // to save allocation time
-    const SearchableGrid *curGrid = nullptr;
-    Point curPoint;
-    vector<Point> adjPoints(4, Point::INVALID);
-
-    // Add first search node
-    SearchableGrid &start = getGrid(from);
-    start.setG(0);
-    start.setH(computeH(curPoint, to));
-    openList.push(start);
-
-    // Begin searching
-    while (!openList.empty()) {
-
-        // Loop until the open list is empty or finding
-        // a node that is not in the close list.
-        do {
-            curGrid = &(openList.top());
-            curPoint = curGrid->getLocation();
-            openList.pop();
-        } while (!openList.empty() && closeList.find(curPoint) != closeList.end());
-
-        // If all the nodes on the map is in the close list,
-        // then there is no available path between the two
-        // nodes. The function will be ended.
-        if (openList.empty() && closeList.find(curPoint) != closeList.end()) {
-            break;
-        }
-
-        // Check if it is needed to show
-        // the search details
-        showVisitedNode(curPoint, Grid::GridType::SNAKEBODY1);
-
-        // If the destination location is found.
-        // Construct path and return.
-        if (curPoint == to) {
-            constructPath(from, to, path);
-            break;
-        }
-
-        // Add current node to close list
-        closeList.insert(curPoint);
-
-        // Traverse adjacent nodes
-        curPoint.setAdjPoints(adjPoints);
-        for (const auto &adjPoint : adjPoints) {
-            // If the adjacent node is safe and not in the close list,
-            // then try to update the g value.
-            if (!isUnsearch(adjPoint) && closeList.find(adjPoint) == closeList.end()) {
-                SearchableGrid &adjGrid = getGrid(adjPoint);
-                // If longer path exists, update g, h, parent field and add 
-                // the adjacent grid to the open list. The cost of moving from
-                // one grid to its adjacent grid is set to 1.
-                if (curGrid->getG() + 1 > adjGrid.getG()) {
-                    adjGrid.setParent(curPoint);
-                    adjGrid.setG(curGrid->getG() + 1);
-                    adjGrid.setH(computeH(adjGrid.getLocation(), to));
-                    openList.push(adjGrid);
-                }
-            }
-        }
-    }*/
-
-    // DFS version
-    // Create close list
-    // The first param is the number
-    // of buckets in the hash table 
-    hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
+    // Initialize variables
     long tot = 0, max = -1;
 
-    closeList.insert(from);
-    dfs(from, to, tot, max, closeList);
-    constructPath(from, to, path);
+    // Begin searching
+    dfs(from, from, to, tot, max, closeList, path);
+
+    // Show search details
+    showPath(from, path);
 }
 
-void Map::dfs(const Point &n, const Point &goal, const long tot,
-         long &max, Map::hash_table &closeList) {
-    showVisitedNode(n, Grid::GridType::SNAKEBODY1);
-    if (n == goal) {
+void Map::dfs(const Point &n,
+              const Point &from,
+              const Point &to,
+              const long tot,
+              long &max,
+              Map::hash_table &closeList,
+              std::list<Direction> &path) {
+    if (n == to) {
         if (tot > max) {
             max = tot;  // Update max length
+            constructPath(from, to, path);  // Update path
         }
     } else {
         vector<Point> adjPoints(4, Point::INVALID);
         n.setAdjPoints(adjPoints);
-        for (const auto &adjPoint : adjPoints) {
-            if (!isUnsearch(adjPoint) && closeList.find(adjPoint) == closeList.end()) {  // Not visited
-                closeList.insert(adjPoint);
-                getGrid(adjPoint).setParent(n);  // Record path
-                dfs(adjPoint, goal, tot + 1, max, closeList);
-                closeList.erase(adjPoint);
+        for (const auto &adj : adjPoints) {
+            if (!isUnsearch(adj) && closeList.find(adj) == closeList.end()) {  // Not visited
+                closeList.insert(adj);
+                getGrid(adj).setParent(n);
+                dfs(adj, from, to, tot + 1, max, closeList, path);
+                closeList.erase(adj);
             }
         }
+    }
+}
+
+SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
+    return getManhattenDist(from, to);
+    //return 0;  // Return 0 if not use the heuristic value
+}
+
+void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) {
+    path.clear();
+    Point tmp = to, parent;
+    while (tmp != Point::INVALID && tmp != from) {
+        parent = getGrid(tmp).getParent();
+        path.push_front(parent.getDirectionTo(tmp));
+        tmp = parent;
     }
 }

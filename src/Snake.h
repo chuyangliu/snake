@@ -133,14 +133,6 @@ private:
     void removeTail();
 
     /*
-    Get a displacement of a direction.
-
-    @param d the move direction
-    @return the displacement stored in a Point object
-    */
-    static Point getDisplacement(const Direction &d);
-
-    /*
     Return the head position.
     */
     const Point& getHead() const;

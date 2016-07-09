@@ -2,6 +2,7 @@
 
 #include "SearchableGrid.h"
 #include <list>
+#include <vector>
 #include <queue>
 #include <unordered_set>
 #include <functional>
@@ -14,7 +15,6 @@ public:
     typedef std::vector<std::vector<SearchableGrid>> content_type;
     typedef content_type::size_type size_type;
     typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::greater<SearchableGrid>> min_heap;
-    typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::less<SearchableGrid>> max_heap;
     typedef std::unordered_set<Point, decltype(Point::hash)*> hash_table;
 
     Map(const size_type &rowCnt_ = 20, const size_type &colCnt_ = 20);
@@ -95,7 +95,8 @@ public:
     Find the shortest path from the start
     point to the end point.
     Algorithm reference:
-    1. https://en.wikipedia.org/wiki/A*_search_algorithm
+    1. https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+    2. https://en.wikipedia.org/wiki/A*_search_algorithm
 
     @param from the start point
     @param to the end point
@@ -109,8 +110,8 @@ public:
     Find the longest(approximately) path from the start
     point to the end point.
     Algorithm reference:
-    1. https://en.wikipedia.org/wiki/A*_search_algorithm
-    2. https://en.wikipedia.org/wiki/Longest_path_problem
+    1. https://en.wikipedia.org/wiki/Longest_path_problem
+    2. https://en.wikipedia.org/wiki/Depth-first_search
 
     @param from the start point
     @param to the end point
@@ -139,13 +140,20 @@ private:
     DFS algorithm to find the longest(approximately) path.
 
     @param n current search point
-    @param goal the goal point
+    @param from the start point
+    @param to the end point
     @param tot current path length
     @param max current maximum path length
     @param closeList stores the points that have been visited
+    @param path the result will be stored in this field
     */
-    void dfs(const Point &n, const Point &goal, const long tot,
-             long &max, Map::hash_table &closeList);
+    void dfs(const Point &n,
+             const Point &from,
+             const Point &to,
+             const long tot,
+             long &max,
+             Map::hash_table &closeList,
+             std::list<Direction> &path);
 
     /*
     Compute the H(Heuristic) value from the start
@@ -178,6 +186,16 @@ private:
     @param type the new type of the grid at the point n
     */
     void showVisitedNode(const Point &n, const Grid::GridType &type);
+
+    /*
+    Show the path on the map. This method is designed for
+    showing search details. It first checks if showSearchDetails
+    field is true.
+
+    @param start the start point
+    @param path the path to show
+    */
+    void showPath(const Point &start, const std::list<Direction> &path);
 
     /*
     Initialize map content.

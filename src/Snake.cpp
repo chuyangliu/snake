@@ -79,30 +79,13 @@ void Snake::removeTail() {
     }
 }
 
-Point Snake::getDisplacement(const Direction &d) {
-    int dx = 0, dy = 0;
-    switch (d) {
-        case LEFT:
-            dx = 0; dy = -1; break;
-        case UP:
-            dx = -1; dy = 0; break;
-        case RIGHT:
-            dx = 0; dy = 1; break;
-        case DOWN:
-            dx = 1; dy = 0; break;
-        default:
-            return Point(0, 0);
-    }
-    return Point(dx, dy);
-}
-
 void Snake::move() {
     if (isDead() || direc == NONE || !map) {
         return;
     }
 
     map->getGrid(getHead()).setType(bodyType);
-    Point newHead = getHead() + getDisplacement(direc);
+    Point newHead = getHead().getAdjacentPoint(direc);
     body.push_front(newHead);
 
     if (map->isUnsafe(newHead)) {

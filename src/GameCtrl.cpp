@@ -58,7 +58,7 @@ void GameCtrl::addWalls() {
     for (unsigned i = mapRowCnt / 2 - 1; i < mapRowCnt - 1; ++i) {
         map->getGrid(Point(i, mapColCnt / 2 + 1)).setType(Grid::GridType::WALL);
     }
-    for (unsigned i = mapColCnt / 4; i <= mapColCnt / 2 - 1; ++i) {
+    for (unsigned i = mapColCnt / 4 + 1; i <= mapColCnt / 2 - 1; ++i) {
         map->getGrid(Point(mapRowCnt / 2 + 1, i)).setType(Grid::GridType::WALL);
     }
     for (unsigned i = mapColCnt / 2 + 1; i < 3 * mapColCnt / 4; ++i) {
@@ -285,7 +285,7 @@ void GameCtrl::test() {
     //}
 
     // Test search algoritm
-    addWalls();
+    //addWalls();
     Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
     std::list<Direction> path;
     map->setShowSearchDetails(true);
@@ -313,6 +313,7 @@ void GameCtrl::test() {
         }
     }
     res += "\nPath length: " + Convert::toString(path.size());
+    sleepFor(200);  // Wait draw thread finish
     exitGame(res);
 }
 
