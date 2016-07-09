@@ -16,7 +16,7 @@ int main() {
 
     // Set interval time(ms) for automove. Default is 200 ms.
     // If setAutoMoveSnake(false), this code is useless.
-    game->setAutoMoveInterval(200);
+    game->setAutoMoveInterval(50);
 
     // Set whether to enable the second snake. Default is false
     game->setEnableSecondSnake(false);
@@ -26,7 +26,7 @@ int main() {
     game->setEnableAI(true);
 
     // Set whether to run the test program. Default is false
-    game->setRunTest(true);
+    game->setRunTest(false);
 
     return game->run();
 }

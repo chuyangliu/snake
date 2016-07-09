@@ -125,27 +125,31 @@ void Snake::move(const std::list<Direction> &path) {
     }
 }
 
+void Snake::findPathTo(const int type, const Point &to, std::list<Direction> &path) {
+    // To search the path to goal, first set the goal grid type to EMPTY
+    // and then start searching because the original type of the goal
+    // grid may be a FOOD or another type which is ignored by the search algorithm.
+    // After searching, restore the goal grid type.
+    auto originType = map->getGrid(to).getType();
+    map->getGrid(to).setType(Grid::GridType::EMPTY);
+    if (type == 0) {  // Search shortest path
+        map->findMinPath(getHead(), to, path);
+    } else if (type == 1) {  // Search longest path
+        map->findMaxPath(getHead(), to, path);
+    }
+    map->getGrid(to).setType(originType);
+}
+
 void Snake::findMinPathToFood(std::list<Direction> &path) {
-    // To search the path to food, first set the food grid type to EMPTY
-    // and then start searching because the original type of the food
-    // grid is a FOOD which is ignored by the search algorithm.
-    // After searching, restore the grid type of the food.
-    auto food = map->getFood();
-    map->getGrid(food).setType(Grid::GridType::EMPTY);
-    map->findMinPath(getHead(), food, path);
-    map->getGrid(food).setType(Grid::GridType::FOOD);
+    findPathTo(0, map->getFood(), path);
 }
 
 void Snake::findMinPathToTail(std::list<Direction> &path) {
-    // To search the path to tail, first set the tail's type to EMPTY
-    // and then start searching because the original type of the tail
-    // grid is a SNAKEBODY which is ignored by the search algorithm.
-    // After searching, restore the grid type of the tail.
-    auto tail = getTail();
-    auto originType = map->getGrid(tail).getType();
-    map->getGrid(tail).setType(Grid::GridType::EMPTY);
-    map->findMinPath(getHead(), tail, path);
-    map->getGrid(tail).setType(originType);
+    findPathTo(0, getTail(), path);
+}
+
+void Snake::findMaxPathToTail(std::list<Direction> &path) {
+    findPathTo(1, getTail(), path);
 }
 
 void Snake::decideNextDirection() {
@@ -180,9 +184,9 @@ void Snake::decideNextDirection() {
     }
 
     // Step2:
-    // If no suitable path is found, make the snake move to its tail.
-    // TODO Find longest path.
-    this->findMinPathToTail(pathToTail);
+    // If no suitable path is found, make the snake move to its tail
+    // along the longest way.
+    this->findMaxPathToTail(pathToTail);
     if (pathToTail.size() > 1) {
         this->setDirection(*(pathToTail.begin()));
         return;

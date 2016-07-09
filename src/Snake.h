@@ -103,10 +103,29 @@ private:
     Find the shortest path from snake's head to the tail.
 
     @param path the result will be stored in this field.
-    If there is no available path, the length
-    of this field will be zero.
+                If there is no available path, the length
+                of this field will be zero.
     */
     void findMinPathToTail(std::list<Direction> &path);
+
+    /*
+    Find the longest(approximately) path from snake's head to the tail.
+
+    @param path the result will be stored in this field
+                If there is no available path, the length
+                of this field will be zero.
+    */
+    void findMaxPathToTail(std::list<Direction> &path);
+
+    /*
+    Find a path from the snake's head to the goal point.
+
+    @param type if type is 0, find the shortest path,
+                else if type is 1, find the longest path.
+    @param to the goal point
+    @param path the result will be stored in this field
+    */
+    void findPathTo(const int type, const Point &to, std::list<Direction> &path);
 
     /*
     Remove the tail of the snake.

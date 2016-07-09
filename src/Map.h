@@ -98,7 +98,7 @@ public:
     void findMinPath(const Point &from, const Point &to, std::list<Direction> &path);
 
     /*
-    Find the longest path from the start
+    Find the longest(approximately) path from the start
     point to the end point.
     Algorithm reference:
     1. https://en.wikipedia.org/wiki/A*_search_algorithm
