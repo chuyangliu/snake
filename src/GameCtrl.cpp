@@ -14,8 +14,8 @@ const string GameCtrl::MSG_BAD_ALLOC = "Oops! Not enough memory to run the game!
 const string GameCtrl::MSG_LOSE = "Sorry! You lose! Press any key to continue...";
 const string GameCtrl::MSG_WIN = "Congratulations! You Win! Press any key to continue...";
 const string GameCtrl::MSG_ESC = "Game ended! Press any key to continue...";
+const string GameCtrl::MAP_INFO_FILENAME = "movements.txt";
 const SearchableGrid::value_type GameCtrl::INF = 2147483647;
-const std::string GameCtrl::MAP_INFO_FILENAME = "movements.txt";
 
 GameCtrl* GameCtrl::getInstance() {
     // According to C++11, static field constructor is thread-safe
@@ -35,6 +35,7 @@ int GameCtrl::run() {
         init();
         startThreads();
 
+        // Main thread waits
         while (1) {
 
         }
@@ -459,7 +460,6 @@ void GameCtrl::writeMapToFile() const {
     if (!movementFile) {
         return;
     }
-
     auto rows = map->getRowCount();
     auto cols = map->getColCount();
     for (Map::size_type i = 0; i < rows; ++i) {

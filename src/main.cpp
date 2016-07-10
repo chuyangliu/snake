@@ -16,7 +16,7 @@ int main() {
 
     // Set interval time(ms) for automove. Default is 200 ms.
     // If setAutoMoveSnake(false), this code is useless.
-    game->setAutoMoveInterval(50);
+    game->setAutoMoveInterval(200);
 
     // Set whether to enable the second snake. Default is false
     game->setEnableSecondSnake(false);
@@ -29,9 +29,10 @@ int main() {
     game->setRunTest(false);
 
     // Set whether to write the map content to the file. Default is false
-    // If set this attribute to true, then after each snake's movement,
-    // the game map content will be written to a file named "movements.txt".
-    // PS: This is designed for debugging.
+    // If set this attribute to true, the game map content will be written
+    // to a file named "movements.txt" after each snake's movement.
+    // PS: This is designed for debugging. Open this method may make the
+    // snake move slower.
     game->setWriteToFile(true);
 
     return game->run();
