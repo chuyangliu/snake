@@ -157,5 +157,13 @@ void Snake::decideNextDirection() {
 ## Todos
 
 1. Optimize longest path algorithm.
+
+   In AI algorithm, longest path needs to be found. Current algorithm uses DFS to enumerate all possible path and select the longest one. However, this is too slow when the map size becomes larger. Need some refinement to find approximately longest path.
+
 2. Optimize AI algorithm.
+
+   Current AI algorithm is not the best. There are many situations in which the snake will kill itself after moving. There is only a few chances that the snake can fill in all the map area.
+
 3. Use GUI library instead of console to run the program.
+
+   This program uses different console output color to show the game. The effect is constrained by console properities. So using a GUI library such as OpenGL to show the game will be better. 
