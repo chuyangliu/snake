@@ -2,7 +2,7 @@
 
 A classic snake game in console(terminal) window. 
 
-You can use this program to do:
+## This program can be used to
 
 1. Play classic snake game. (You can control two snakes at the same time!)
 2. See how an intelligent computer snake eat the food. (Also, you can see two AI snake running at the same time!)
@@ -84,73 +84,6 @@ int main() {
     game->setWriteToFile(false);
 
     return game->run();
-}
-```
-
-## AI algorithm(Not the best)
-
-```c++
-void Snake::decideNextDirection() {
-    if (isDead() || !map || !map->hasFood()) {
-        return;
-    }
-
-    // Copy a temp snake with a temp map
-    // Create two search path (food and tail)
-    Snake tmpSnake(*this);
-    shared_ptr<Map> tmpMap = std::make_shared<Map>(*map);
-    tmpSnake.setMap(tmpMap);
-    list<Direction> pathToFood, pathToTail;
-
-    // Step1:
-    // If a path to food is found, move the temp snake to eat the food and to 
-    // check if there is path to the tail of the temp snake. If there is no path
-    // to tail after eating the food, it means that this path is dangerous and
-    // this path will not be chosen.
-    // Notice that only if the length of the path to tail is more than
-    // 1 can the snake move to its tail because that the length equals
-    // 1 means that the head is adjacent to the tail, which will make 
-    // the snake die after moving towards the tail.
-    tmpSnake.findMinPathToFood(pathToFood);
-    if (!pathToFood.empty()) {
-        tmpSnake.move(pathToFood);
-        if (tmpMap->isFilledWithBody()) {  // Check if the map is full
-            this->setDirection(*(pathToFood.begin()));
-            return;
-        } else {
-            tmpSnake.findMinPathToTail(pathToTail);
-            if (pathToTail.size() > 1) {  // Check path to tail
-                this->setDirection(*(pathToFood.begin()));
-                return;
-            }
-        }
-    }
-
-    // Step2:
-    // If no suitable path is found, make the snake move to its tail
-    // along the longest way.
-    this->findMaxPathToTail(pathToTail);
-    if (pathToTail.size() > 1) {
-        this->setDirection(*(pathToTail.begin()));
-        return;
-    }
-
-    // Step3:
-    // If no available path is found in step 1 and 2, then find a point
-    // that is the farthest from the food.
-    auto head = getHead();
-    unsigned maxDist = 0;
-    vector<Point> adjPoints(4, Point::INVALID);
-    head.setAdjPoints(adjPoints);
-    for (const auto &p : adjPoints) {
-        if (!map->isUnsafe(p)) {
-            unsigned d = Map::getManhattenDist(p, map->getFood());
-            if (d > maxDist) {
-                maxDist = d;
-                direc = head.getDirectionTo(p);
-            }
-        }
-    }
 }
 ```
 
