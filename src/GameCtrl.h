@@ -181,6 +181,11 @@ private:
     void initSnakes();
 
     /*
+    Initialize the output files of the game.
+    */
+    void initFiles();
+
+    /*
     Move snake and check if the game is over.
     Notice this is a thread-safe method. Make sure to call 
     this method instead of snake.move() because snake.move()

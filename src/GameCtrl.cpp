@@ -51,10 +51,7 @@ void GameCtrl::init() {
     initMap();
     initSnakes();
     if (writeToFile) {
-        movementFile = fopen(MAP_INFO_FILENAME.c_str(), "w");
-        if (!movementFile) {
-            throw std::runtime_error("Fail to open file: " + MAP_INFO_FILENAME);
-        }
+        initFiles();
     }
 }
 
@@ -111,6 +108,19 @@ void GameCtrl::initSnakes() {
         snake2.addBody(Point(2, 3));
         snake2.addBody(Point(2, 2));
         snake2.addBody(Point(2, 1));
+    }
+}
+
+void GameCtrl::initFiles() {
+    movementFile = fopen(MAP_INFO_FILENAME.c_str(), "w");
+    if (!movementFile) {
+        throw std::runtime_error("Fail to open file: " + MAP_INFO_FILENAME);
+    } else {
+        // Write content description to the file
+        string str = "Content description:\n";
+        str += "#: wall\nH: snake head\nB: snake body\nT: snake tail\nF: food\n\n";
+        str += "Movements:\n\n";
+        fwrite(str.c_str(), sizeof(char), str.length(), movementFile);
     }
 }
 
