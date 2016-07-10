@@ -459,13 +459,6 @@ void GameCtrl::setWriteToFile(const bool &b) {
     writeToFile = b;
 }
 
-int GameCtrl::random(const int min, const int max) {
-    static bool setSeed = true;
-    if (setSeed) srand(static_cast<unsigned>(time(NULL)));
-    setSeed = false;
-    return rand() % (max - min + 1) + min;
-}
-
 void GameCtrl::writeMapToFile() const {
     if (!movementFile) {
         return;

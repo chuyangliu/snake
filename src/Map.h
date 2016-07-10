@@ -129,6 +129,41 @@ private:
     bool showSearchDetails = false;
 
     /*
+    Return a random number in [min, max]
+    */
+    static int random(const int min, const int max);
+
+    /*
+    Sort the points by the distance between each point and the goal
+    in descending order.
+
+    @param points the points array to sort
+    @param goal the goal point
+    */
+    static void sortByDist(std::vector<Point> &points, const Point &goal);
+
+    /*
+    Randomly rearrage the elements in the vector.
+
+    @param points the vector to rearrage
+    */
+    static void randomChange(std::vector<Point> &points);
+
+    /*
+    Initialize map content.
+    */
+    void init();
+
+    /*
+    Get a food position on the map
+    WARNING: if there is no space for food,
+    this will be an endless loop.
+
+    @return the new food position
+    */
+    Point getFoodPos() const;
+
+    /*
     Check if the grid at the point must be ignored by the search algorithm
     Unsearched grid type: snake body, snake head, snake tail, wall, food
 
@@ -196,18 +231,4 @@ private:
     @param path the path to show
     */
     void showPath(const Point &start, const std::list<Direction> &path);
-
-    /*
-    Initialize map content.
-    */
-    void init();
-
-    /*
-    Get a food position on the map
-    WARNING: if there is no space for food,
-             this will be an endless loop.
-
-    @return the new food position
-    */
-    Point getFoodPos() const;
 };

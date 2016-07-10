@@ -163,7 +163,7 @@ void Snake::decideNextDirection() {
             this->setDirection(*(pathToFood.begin()));
             return;
         } else {
-            tmpSnake.findMinPathToTail(pathToTail);
+            tmpSnake.findMaxPathToTail(pathToTail);
             if (pathToTail.size() > 1) {  // Check path to tail
                 this->setDirection(*(pathToFood.begin()));
                 return;

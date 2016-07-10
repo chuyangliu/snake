@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "GameCtrl.h"
+#include <algorithm>
 
 using std::vector;
 
@@ -100,8 +101,8 @@ Point Map::getFoodPos() const {
     Point::attr_type r, c;
 
     do {
-        r = GameCtrl::getInstance()->random(1, rows - 2);
-        c = GameCtrl::getInstance()->random(1, cols - 2);
+        r = Map::random(1, rows - 2);
+        c = Map::random(1, cols - 2);
     } while (content[r][c].getType() != Grid::GridType::EMPTY);
     
     return Point(r, c);
@@ -224,6 +225,7 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
 
         // Traverse adjacent nodes
         curPoint.setAdjPoints(adjPoints);
+        randomChange(adjPoints);
         for (const auto &adjPoint : adjPoints) {
             // If the adjacent node is safe and not in the close list,
             // then try to update the g value.
@@ -279,20 +281,21 @@ void Map::dfs(const Point &n,
     } else {
         vector<Point> adjPoints(4, Point::INVALID);
         n.setAdjPoints(adjPoints);
-        for (const auto &adj : adjPoints) {
-            if (!isUnsearch(adj) && closeList.find(adj) == closeList.end()) {  // Not visited
+        sortByDist(adjPoints, to);
+        for (const auto &adj : adjPoints) {  // Start with the farthest point
+            if (!isUnsearch(adj) && closeList.find(adj) == closeList.end()) {
                 closeList.insert(adj);
                 getGrid(adj).setParent(n);
                 dfs(adj, from, to, tot + 1, max, closeList, path);
-                closeList.erase(adj);
+                //closeList.erase(adj);  // Backtrack
             }
         }
     }
 }
 
 SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
-    //return getManhattenDist(from, to);
-    return 0;  // Return 0 if not use the heuristic value
+    return getManhattenDist(from, to);
+    //return 0;  // Return 0 if not use the heuristic value
 }
 
 void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) {
@@ -303,4 +306,28 @@ void Map::constructPath(const Point &from, const Point &to, std::list<Direction>
         path.push_front(parent.getDirectionTo(tmp));
         tmp = parent;
     }
+}
+
+void Map::sortByDist(std::vector<Point> &points, const Point &goal) {
+    std::sort(points.begin(), points.end(), [&](const Point &a, const Point &b) {
+        unsigned d1 = Map::getManhattenDist(a, goal);
+        unsigned d2 = Map::getManhattenDist(b, goal);
+        return d1 > d2;
+    });
+}
+
+void Map::randomChange(std::vector<Point> &points) {
+    for (unsigned i = 1; i < points.size(); ++i) {
+        auto random = Map::random(0, i);
+        Point tmp = points[i];
+        points[i] = points[random];
+        points[random] = tmp;
+    }
+ }
+
+int Map::random(const int min, const int max) {
+    static bool setSeed = true;
+    if (setSeed) srand(static_cast<unsigned>(time(NULL)));
+    setSeed = false;
+    return rand() % (max - min + 1) + min;
 }

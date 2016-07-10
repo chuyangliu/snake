@@ -5,8 +5,8 @@ int main() {
 
     // Set map's size. Default is 20*20
     // The minimum size is 4*4.
-    game->setMapRow(20);
-    game->setMapColumn(20);
+    game->setMapRow(8);
+    game->setMapColumn(8);
 
     // Set FPS. Default is 60.0
     game->setFPS(59.0);
@@ -19,7 +19,7 @@ int main() {
     game->setAutoMoveInterval(50);
 
     // Set whether to enable the second snake. Default is false
-    game->setEnableSecondSnake(true);
+    game->setEnableSecondSnake(false);
 
     // Set whether to enable the snake AI. Default is false
     // If setAutoMoveSnake(false), this code is useless.
@@ -33,7 +33,7 @@ int main() {
     // to a file named "movements.txt" after each snake's movement.
     // PS: This is designed for debugging. Open this method may make the
     // snake move slower.
-    game->setWriteToFile(false);
+    game->setWriteToFile(true);
 
     return game->run();
 }

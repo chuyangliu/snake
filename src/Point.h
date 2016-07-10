@@ -47,8 +47,7 @@ public:
     static unsigned hash(const Point &p);
 
     /*
-    Calculate adjacent points and randomly rearrange
-    the result.
+    Calculate adjacent points
 
     @param res the adjacent points will be stored in this field.
                Precondition: this field must be a vector of length 4.

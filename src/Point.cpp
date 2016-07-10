@@ -52,12 +52,6 @@ void Point::setAdjPoints(std::vector<Point> &res) const {
         res[i].setX(x + dx[i]);
         res[i].setY(y + dy[i]);
     }
-    for (unsigned i = 1; i < res.size(); ++i) {
-        auto random = GameCtrl::getInstance()->random(0, i);
-        Point tmp = res[i];
-        res[i] = res[random];
-        res[random] = tmp;
-    }
 }
 
 Direction Point::getDirectionTo(const Point &p) const  {

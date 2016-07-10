@@ -104,11 +104,6 @@ public:
     void setWriteToFile(const bool &b);
 
     /*
-    Return a random number in [min, max]
-    */
-    int random(const int min, const int max);
-
-    /*
     Sleep current thread.
     This is a cross-platform method.
 
