@@ -12,24 +12,24 @@ A classic snake game in console(terminal) window.
 
 AI:
 
-1. Single snake(Windows)
+1. Single snake
 
    ![](img/img_AI_1.gif)
    
-2. Double snake(Ubuntu 14.04)
+2. Double snake(experimental)
 
    ![](img/img_AI_2.gif)
    
 Algorithm test:
 
-1. A* algorithm(Ubuntu 14.04)
-
-   ![](img/img_Astar.gif)
-   
-2. BFS algorithm(Ubuntu 14.04)
+1. BFS
 
    ![](img/img_BFS.gif)
-   
+
+2. BFS + A*
+
+   ![](img/img_Astar.gif)
+
 ## Compile and Run
 
 Windows:

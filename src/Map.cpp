@@ -294,8 +294,8 @@ void Map::dfs(const Point &n,
 }
 
 SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
-    return getManhattenDist(from, to);
-    //return 0;  // Return 0 if not use the heuristic value
+    //return getManhattenDist(from, to);
+    return 0;  // Return 0 if not use the heuristic value
 }
 
 void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) {
