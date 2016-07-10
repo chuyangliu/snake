@@ -4,7 +4,6 @@
 #include <exception>
 #include <cstdio>
 #include <chrono>
-#include <sstream>
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -16,6 +15,7 @@ const string GameCtrl::MSG_LOSE = "Sorry! You lose! Press any key to continue...
 const string GameCtrl::MSG_WIN = "Congratulations! You Win! Press any key to continue...";
 const string GameCtrl::MSG_ESC = "Game ended! Press any key to continue...";
 const SearchableGrid::value_type GameCtrl::INF = 2147483647;
+const std::string GameCtrl::MAP_INFO_FILENAME = "movements.txt";
 
 GameCtrl* GameCtrl::getInstance() {
     // According to C++11, static field constructor is thread-safe
@@ -32,16 +32,28 @@ GameCtrl::~GameCtrl() {
 int GameCtrl::run() {
     try {
         Console::clear();
-        initMap();
-        initSnakes();
+        init();
         startThreads();
+
         while (1) {
-            
+
         }
+
         return 0;
-    } catch (std::exception &e) {
-        exitGame("Error: " + Convert::toString(e.what()) + "\nPress any key to continue...");
+    } catch (const std::exception &e) {
+        exitGameWithError(e.what());
         return -1;
+    }
+}
+
+void GameCtrl::init() {
+    initMap();
+    initSnakes();
+    if (writeToFile) {
+        movementFile = fopen(MAP_INFO_FILENAME.c_str(), "w");
+        if (!movementFile) {
+            throw std::runtime_error("Fail to open file: " + MAP_INFO_FILENAME);
+        }
     }
 }
 
@@ -103,14 +115,29 @@ void GameCtrl::initSnakes() {
 
 void GameCtrl::exitGame(const std::string &msg) {
     mutexExit.lock();
-    sleepFor(100);  // Wait draw thread to finish last drawing
+
+    // Stop threads
+    sleepFor(100);
     stopThreads();
-    sleepFor(100);  // Wait draw thread to finish last drawing
+    sleepFor(100);
+
+    // Close movement file if exists
+    if (movementFile) {
+        fclose(movementFile);
+        movementFile = nullptr;
+    }
+
+    // Print message
     Console::setCursor(0, mapRowCnt + 9);
     Console::writeWithColor(msg + "\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::getch();
+
     mutexExit.unlock();
     exit(0);
+}
+
+void GameCtrl::exitGameWithError(const std::string &msg) {
+    exitGame("Error: " + msg + "\nPress any key to continue...");
 }
 
 void GameCtrl::moveSnake(Snake &s) {
@@ -127,8 +154,16 @@ void GameCtrl::moveSnake(Snake &s) {
         mutexMove.unlock();
         exitGame(MSG_LOSE);
     } else {
-        s.move();
-        mutexMove.unlock();
+        try {
+            s.move();
+            if (writeToFile) {
+                writeMapToFile();
+            }
+            mutexMove.unlock();
+        } catch (const std::exception &e) {
+            mutexMove.unlock();
+            throw;  // Rethrow the exception
+        }
     }
 }
 
@@ -140,11 +175,15 @@ void GameCtrl::sleepByFPS() const {
     sleepFor(static_cast<long>((1.0 / fps) * 1000));
 }
 
-void GameCtrl::draw() const {
-    while (threadWork) {
-        drawMapContent();
-        drawGameInfo();
-        sleepByFPS();
+void GameCtrl::draw() {
+    try {
+        while (threadWork) {
+            drawMapContent();
+            drawGameInfo();
+            sleepByFPS();
+        }
+    } catch (const std::exception &e) {
+        exitGameWithError(e.what());
     }
 }
 
@@ -203,44 +242,48 @@ void GameCtrl::drawGameInfo() const {
 }
 
 void GameCtrl::keyboard() {
-    while (threadWork) {
-        if (Console::kbhit()) {  // When keyboard is hit
-            switch (Console::getch()) {
-                case 'w':
-                    keyboardMove(snake1, Direction::UP);
-                    break;
-                case 'a':
-                    keyboardMove(snake1, Direction::LEFT);
-                    break;
-                case 's':
-                    keyboardMove(snake1, Direction::DOWN);
-                    break;
-                case 'd':
-                    keyboardMove(snake1, Direction::RIGHT);
-                    break;
-                case 'i':
-                    keyboardMove(snake2, Direction::UP);
-                    break;
-                case 'j':
-                    keyboardMove(snake2, Direction::LEFT);
-                    break;
-                case 'k':
-                    keyboardMove(snake2, Direction::DOWN);
-                    break;
-                case 'l':
-                    keyboardMove(snake2, Direction::RIGHT);
-                    break;
-                case ' ':
-                    toggleAutoMove();
-                    break;
-                case 27:  // Esc
-                    exitGame(MSG_ESC);
-                    break;
-                default:
-                    break;
+    try {
+        while (threadWork) {
+            if (Console::kbhit()) {  // When keyboard is hit
+                switch (Console::getch()) {
+                    case 'w':
+                        keyboardMove(snake1, Direction::UP);
+                        break;
+                    case 'a':
+                        keyboardMove(snake1, Direction::LEFT);
+                        break;
+                    case 's':
+                        keyboardMove(snake1, Direction::DOWN);
+                        break;
+                    case 'd':
+                        keyboardMove(snake1, Direction::RIGHT);
+                        break;
+                    case 'i':
+                        keyboardMove(snake2, Direction::UP);
+                        break;
+                    case 'j':
+                        keyboardMove(snake2, Direction::LEFT);
+                        break;
+                    case 'k':
+                        keyboardMove(snake2, Direction::DOWN);
+                        break;
+                    case 'l':
+                        keyboardMove(snake2, Direction::RIGHT);
+                        break;
+                    case ' ':
+                        toggleAutoMove();
+                        break;
+                    case 27:  // Esc
+                        exitGame(MSG_ESC);
+                        break;
+                    default:
+                        break;
+                }
             }
+            sleepByFPS();
         }
-        sleepByFPS();
+    } catch (const std::exception &e) {
+        exitGameWithError(e.what());
     }
 }
 
@@ -259,72 +302,87 @@ void GameCtrl::keyboardMove(Snake &s, const Direction &d) {
 }
 
 void GameCtrl::createFood() {
-    while (threadWork) {
-        if (!map->hasFood()) {
-            map->createFood();
+    try {
+        while (threadWork) {
+            if (!map->hasFood()) {
+                map->createFood();
+            }
+            sleepByFPS();
         }
-        sleepByFPS();
+    } catch (const std::exception &e) {
+        exitGameWithError(e.what());
     }
 }
 
 void GameCtrl::autoMove() {
-    while (threadWork) {
-        if (!pauseMove) {
+    try {
+        while (threadWork) {
+            if (!pauseMove) {
 
-            if (enableAI) {
-                snake1.decideNextDirection();
+                if (enableAI) {
+                    snake1.decideNextDirection();
+                }
+                moveSnake(snake1);
+
+                if (enableAI && enableSecondSnake) {
+                    snake2.decideNextDirection();
+                }
+
+                if (enableSecondSnake) {
+                    moveSnake(snake2);
+                }
+
             }
-            moveSnake(snake1);
-
-            if (enableAI && enableSecondSnake) {
-                snake2.decideNextDirection();
-            }
-            moveSnake(snake2);
-
+            sleepFor(autoMoveInterval);
         }
-        sleepFor(autoMoveInterval);
+    } catch (const std::exception &e) {
+        exitGameWithError(e.what());
     }
 }
 
 void GameCtrl::test() {
-    sleepFor(500);  // Wait map to draw
+    try {
+        sleepFor(500);  // Wait map to draw
 
-    // Test food generate
-    //while (1) {
-    //    map->createFood();
-    //    sleepFor(1);
-    //}
+        // Test food generate
+        //while (1) {
+        //    map->createFood();
+        //    sleepFor(1);
+        //}
 
-    // Test search algoritm
-    //addWalls();
-    Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
-    std::list<Direction> path;
-    map->setShowSearchDetails(true);
-    //map->findMinPath(from, to, path);
-    map->findMaxPath(from, to, path);
-    std::string res = "Path from " + from.toString() +  " to " + to.toString() + ": \n";
-    for (const auto &d : path) {
-        switch (d) {
-            case LEFT:
-                res += "L ";
-                break;
-            case UP:
-                res += "U ";
-                break;
-            case RIGHT:
-                res += "R ";
-                break;
-            case DOWN:
-                res += "D ";
-                break;
-            case NONE:
-            default:
-                res += "NONE ";
-                break;
+        // Test search algoritm
+        //addWalls();
+        Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
+        std::list<Direction> path;
+        map->setShowSearchDetails(true);
+        //map->findMinPath(from, to, path);
+        map->findMaxPath(from, to, path);
+        std::string res = "Path from " + from.toString() + " to " + to.toString() + ": \n";
+        for (const auto &d : path) {
+            switch (d) {
+                case LEFT:
+                    res += "L ";
+                    break;
+                case UP:
+                    res += "U ";
+                    break;
+                case RIGHT:
+                    res += "R ";
+                    break;
+                case DOWN:
+                    res += "D ";
+                    break;
+                case NONE:
+                default:
+                    res += "NONE ";
+                    break;
+            }
         }
+        res += "\nPath length: " + Convert::toString(path.size());
+        exitGame(res);
+    } catch (const std::exception &e) {
+        exitGameWithError(e.what());
     }
-    res += "\nPath length: " + Convert::toString(path.size());
-    exitGame(res);
 }
 
 void GameCtrl::startThreads() {
@@ -386,9 +444,59 @@ void GameCtrl::setEnableAI(const bool &enable) {
     enableAI = enable;
 }
 
+void GameCtrl::setWriteToFile(const bool &b) {
+    writeToFile = b;
+}
+
 int GameCtrl::random(const int min, const int max) {
     static bool setSeed = true;
     if (setSeed) srand(static_cast<unsigned>(time(NULL)));
     setSeed = false;
     return rand() % (max - min + 1) + min;
+}
+
+void GameCtrl::writeMapToFile() const {
+    if (!movementFile) {
+        return;
+    }
+
+    auto rows = map->getRowCount();
+    auto cols = map->getColCount();
+    for (Map::size_type i = 0; i < rows; ++i) {
+        for (Map::size_type j = 0; j < cols; ++j) {
+            switch (map->getGrid(Point(i, j)).getType()) {
+                case Grid::GridType::EMPTY:
+                    fwrite("  ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::WALL:
+                    fwrite("# ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::FOOD:
+                    fwrite("F ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::SNAKEHEAD1:
+                    fwrite("H ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::SNAKEBODY1:
+                    fwrite("B ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::SNAKETAIL1:
+                    fwrite("T ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::SNAKEHEAD2:
+                    fwrite("H ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::SNAKEBODY2:
+                    fwrite("B ", sizeof(char), 2, movementFile);
+                    break;
+                case Grid::GridType::SNAKETAIL2:
+                    fwrite("T ", sizeof(char), 2, movementFile);
+                    break;
+                default:
+                    break;
+            }
+        }
+        fwrite("\n", sizeof(char), 1, movementFile);
+    }
+    fwrite("\n", sizeof(char), 1, movementFile);
 }

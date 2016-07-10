@@ -17,6 +17,7 @@ public:
     static const std::string MSG_WIN;
     static const std::string MSG_ESC;
     static const SearchableGrid::value_type INF;
+    static const std::string MAP_INFO_FILENAME;
 
     ~GameCtrl();
 
@@ -46,6 +47,14 @@ public:
     @param msg the message to be printed
     */
     void exitGame(const std::string &msg);
+
+    /*
+    Print a error message and exit the game.
+    This is a thread-safe method.
+
+    @param msg the error message
+    */
+    void exitGameWithError(const std::string &msg);
 
     /*
     Set fps value.
@@ -90,6 +99,11 @@ public:
     void setMapColumn(const Map::size_type &n);
 
     /*
+    Set whether to write the map content to the file
+    */
+    void setWriteToFile(const bool &b);
+
+    /*
     Return a random number in [min, max]
     */
     int random(const int min, const int max);
@@ -112,6 +126,7 @@ private:
     bool enableSecondSnake = false;
     bool enableAI = false;
     bool runTest = false;
+    bool writeToFile = false;
 
     bool pauseMove = false;
 
@@ -132,6 +147,9 @@ private:
     std::mutex mutexMove;  // Mutex for moveSnake()
     std::mutex mutexExit;  // Mutex for exitGame()
 
+    // File pointer
+    FILE *movementFile = nullptr;  // File to save snake movements
+
     /*
     Private constructor for singleton.
     */
@@ -141,6 +159,11 @@ private:
     Sleep for a time calculated by FPS value.
     */
     void sleepByFPS() const;
+
+    /*
+    Initialize game configuration.
+    */
+    void init();
 
     /*
     Initialize the map of the game.
@@ -158,10 +181,10 @@ private:
     void initSnakes();
 
     /*
-    Move snake and check game over.
-    This is a thread-safe method.
-    Call this method instead of snake->move() because
-    snake->move() cannot check game over and is not thread-safe.
+    Move snake and check if the game is over.
+    Notice this is a thread-safe method. Make sure to call 
+    this method instead of snake.move() because snake.move()
+    is not thread-safe.
 
     @param s the snake to move
     */
@@ -181,7 +204,7 @@ private:
     Callback for draw thread.
     Draw the game elements.
     */
-    void draw() const;
+    void draw();
 
     /*
     Draw the map content.
@@ -229,4 +252,9 @@ private:
     Test different features
     */
     void test();
+
+    /*
+    Write the map content to movement file.
+    */
+    void writeMapToFile() const;
 };

@@ -5,8 +5,8 @@ int main() {
 
     // Set map's size. Default is 20*20
     // The minimum size is 4*4.
-    game->setMapRow(10);
-    game->setMapColumn(10);
+    game->setMapRow(6);
+    game->setMapColumn(6);
 
     // Set FPS. Default is 60.0
     game->setFPS(59.0);
@@ -27,6 +27,12 @@ int main() {
 
     // Set whether to run the test program. Default is false
     game->setRunTest(false);
+
+    // Set whether to write the map content to the file. Default is false
+    // If set this attribute to true, then after each snake's movement,
+    // the game map content will be written to a file named "movements.txt".
+    // PS: This is designed for debugging.
+    game->setWriteToFile(true);
 
     return game->run();
 }
