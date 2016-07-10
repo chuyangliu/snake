@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #elif _WIN32
-#include <Windows.h>
 #include <conio.h>
 #endif
 
@@ -17,7 +16,7 @@ foreIntensified(foreIntensified_), backIntensified(backIntensified_) {
 
 #ifdef WIN32
 
-void Console::setColor(const ConsoleColor &consoleColor) {
+WORD Console::setColor(const ConsoleColor &consoleColor) {
     WORD color = 0;
     switch (consoleColor.foreColor) {
         case WHITE:
@@ -30,7 +29,7 @@ void Console::setColor(const ConsoleColor &consoleColor) {
             color |= FOREGROUND_BLUE; break;
         case YELLOW:
             color |= FOREGROUND_RED | FOREGROUND_GREEN; break;
-        case PURPLE:
+        case MAGENTA:
             color |= FOREGROUND_BLUE | FOREGROUND_RED; break;
         case CYAN:
             color |= FOREGROUND_BLUE | FOREGROUND_GREEN; break;
@@ -41,7 +40,6 @@ void Console::setColor(const ConsoleColor &consoleColor) {
     if (consoleColor.foreIntensified) {
         color |= FOREGROUND_INTENSITY;
     }
-
     switch (consoleColor.backColor) {
         case WHITE:
             color |= BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_BLUE; break;
@@ -53,7 +51,7 @@ void Console::setColor(const ConsoleColor &consoleColor) {
             color |= BACKGROUND_BLUE; break;
         case YELLOW:
             color |= BACKGROUND_RED | BACKGROUND_GREEN; break;
-        case PURPLE:
+        case MAGENTA:
             color |= BACKGROUND_BLUE | BACKGROUND_RED; break;
         case CYAN:
             color |= BACKGROUND_BLUE | BACKGROUND_GREEN; break;
@@ -65,8 +63,22 @@ void Console::setColor(const ConsoleColor &consoleColor) {
         color |= BACKGROUND_INTENSITY;
     }
 
+    // Get origin attribute
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(hStdout, &info);
+    WORD originAttr = info.wAttributes;
+
+    // Set new attribute
     HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hout, color);
+
+    // Return the origin attribute
+    return originAttr;
+}
+
+void Console::resetColor(const WORD &attr) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), attr);
 }
 
 #endif
@@ -81,7 +93,7 @@ void Console::setCursor(const int &x, const int &y) {
     coord.Y = y;
     SetConsoleCursorPosition(hout, coord);
 #else
-    // Other platform
+    // Other platforms
 #endif
 }
 
@@ -91,7 +103,7 @@ void Console::clear() {
 #elif _WIN32
     system("cls");
 #else
-    // Other platform
+    // Other platforms
 #endif
 }
 
@@ -113,7 +125,7 @@ void Console::writeWithColor(const std::string &str, const ConsoleColor &console
             back = 44; break;
         case YELLOW:
             back = 43; break;
-        case PURPLE:
+        case MAGENTA:
             back = 45; break;
         case CYAN:
             back = 46; break;
@@ -133,7 +145,7 @@ void Console::writeWithColor(const std::string &str, const ConsoleColor &console
             fore = 34; break;
         case YELLOW:
             fore = 33; break;
-        case PURPLE:
+        case MAGENTA:
             fore = 35; break;
         case CYAN:
             fore = 36; break;
@@ -143,15 +155,14 @@ void Console::writeWithColor(const std::string &str, const ConsoleColor &console
             break;
     }
     if (fore != -1 && back != -1) {
-        printf("\033[%d;%dm", fore, back);
-        printf("%s", str.c_str());
-        printf("\033[0m");  // Close all attributes
+        printf("\033[%d;%dm%s\033[0m", fore, back, str.c_str());
     }
 #elif _WIN32
-    setColor(consoleColor);
+    WORD originAttr = setColor(consoleColor);
     printf("%s", str.c_str());
+    resetColor(originAttr);  // Reset to origin output color
 #else
-    // Other platform
+    // Other platforms
 #endif
 }
 
@@ -169,7 +180,7 @@ char Console::getch() {
 #elif _WIN32
     return _getch();
 #else
-    // Other platform
+    // Other platforms
 #endif
 }
 
@@ -200,6 +211,6 @@ int Console::kbhit() {
 #elif _WIN32
     return _kbhit();
 #else
-    // Other platform
+    // Other platforms
 #endif
 }

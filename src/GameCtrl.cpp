@@ -171,16 +171,16 @@ void GameCtrl::drawMapContent() const {
                     Console::writeWithColor("  ", ConsoleColor(GREEN, GREEN, true, true));
                     break;
                 case Grid::GridType::SNAKETAIL1:
-                    Console::writeWithColor("  ", ConsoleColor(RED, RED, false, false));
+                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
                     break;
                 case Grid::GridType::SNAKEHEAD2:
-                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
+                    Console::writeWithColor("  ", ConsoleColor(MAGENTA, MAGENTA, true, true));
                     break;
                 case Grid::GridType::SNAKEBODY2:
                     Console::writeWithColor("  ", ConsoleColor(CYAN, CYAN, true, true));
                     break;
                 case Grid::GridType::SNAKETAIL2:
-                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, false, false));
+                    Console::writeWithColor("  ", ConsoleColor(BLUE, BLUE, true, true));
                     break;
                 default:
                     break;
