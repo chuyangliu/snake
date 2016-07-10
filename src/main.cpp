@@ -33,7 +33,7 @@ int main() {
     // to a file named "movements.txt" after each snake's movement.
     // PS: This is designed for debugging. Open this method may make the
     // snake move slower.
-    game->setWriteToFile(true);
+    game->setWriteToFile(false);
 
     return game->run();
 }
