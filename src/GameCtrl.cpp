@@ -362,12 +362,12 @@ void GameCtrl::test() {
         //}
 
         // Test search algoritm
-        //addWalls();
+        addWalls();
         Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
         std::list<Direction> path;
         map->setShowSearchDetails(true);
-        //map->findMinPath(from, to, path);
-        map->findMaxPath(from, to, path);
+        map->findMinPath(from, to, path);
+        //map->findMaxPath(from, to, path);
         std::string res = "Path from " + from.toString() + " to " + to.toString() + ": \n";
         for (const auto &d : path) {
             switch (d) {
