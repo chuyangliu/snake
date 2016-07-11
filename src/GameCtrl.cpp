@@ -446,6 +446,11 @@ void GameCtrl::writeMapToFile() const {
 
 void GameCtrl::test() {
     try {
+        // Check map size
+        if (mapRowCnt < 20 || mapColCnt < 40) {
+            throw std::range_error("Running testing program requires minimum map size 20*40.");
+        }
+
         // Add walls for testing
         // Codes below become more effective when the map size is 20*40
         for (int i = 10; i < 30; ++i) {
@@ -460,8 +465,8 @@ void GameCtrl::test() {
         Point from(9, 4), to(14, 31);
         std::list<Direction> path;
         map->setShowSearchDetails(true);
-        //map->findMinPath(from, to, path);
-        map->findMaxPath(from, to, path);
+        map->findMinPath(from, to, path);
+        //map->findMaxPath(from, to, path);
         std::string res = "Path from " + from.toString() + " to " + to.toString() + ": \n";
         for (const auto &d : path) {
             switch (d) {
