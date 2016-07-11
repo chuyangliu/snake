@@ -1,11 +1,13 @@
 # Snake
 
-A classic(AI) snake game written in C/C++.
+A snake game AI written in c/c++.
 
 ## This program can be used to
 
 1. Play classic snake game. (You can control two snakes at the same time!)
+
 2. See how an intelligent computer snake eat the food. (Also, you can see two AI snake running at the same time!)
+
 3. Run some test program for graph searching alogrithm such as BFS and DFS.
 	
 ## Demos
@@ -20,7 +22,9 @@ AI:
 
    ![](img/img_AI_2.gif)
    
-Algorithm test:
+Algorithm test
+
+(The green area is scanned by the search algorithm. The red area is the result path):
 
 1. BFS
 
@@ -107,6 +111,4 @@ int main() {
 
 ## References
 
-1. [A* algorithm](http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html)
-
-
+* [Introduction to A*](http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html)
