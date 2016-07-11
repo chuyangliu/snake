@@ -273,6 +273,10 @@ void Map::dfs(const Point &n,
               long &max,
               Map::hash_table &closeList,
               std::list<Direction> &path) {
+    // Show search details
+    showVisitedNode(n, Grid::GridType::SNAKEBODY1);
+
+    // Begin searching
     if (n == to) {
         if (tot > max) {
             max = tot;  // Update max length

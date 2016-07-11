@@ -68,22 +68,7 @@ void GameCtrl::initMap() {
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
     } else {
-        //addWalls();
-    }
-}
-
-void GameCtrl::addWalls() {
-    for (unsigned i = 0; i < mapRowCnt / 2 + 1; ++i) {
-        map->getGrid(Point(i, mapColCnt / 2 - 1)).setType(Grid::GridType::WALL);
-    }
-    for (unsigned i = mapRowCnt / 2 - 1; i < mapRowCnt - 1; ++i) {
-        map->getGrid(Point(i, mapColCnt / 2 + 1)).setType(Grid::GridType::WALL);
-    }
-    for (unsigned i = mapColCnt / 4 + 1; i <= mapColCnt / 2 - 1; ++i) {
-        map->getGrid(Point(mapRowCnt / 2 + 1, i)).setType(Grid::GridType::WALL);
-    }
-    for (unsigned i = mapColCnt / 2 + 1; i < 3 * mapColCnt / 4; ++i) {
-        map->getGrid(Point(mapRowCnt / 2 - 1, i)).setType(Grid::GridType::WALL);
+        // Add some extra walls
     }
 }
 
@@ -351,51 +336,6 @@ void GameCtrl::autoMove() {
     }
 }
 
-void GameCtrl::test() {
-    try {
-        sleepFor(500);  // Wait map to draw
-
-        // Test food generate
-        //while (1) {
-        //    map->createFood();
-        //    sleepFor(1);
-        //}
-
-        // Test search algoritm
-        addWalls();
-        Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
-        std::list<Direction> path;
-        map->setShowSearchDetails(true);
-        map->findMinPath(from, to, path);
-        //map->findMaxPath(from, to, path);
-        std::string res = "Path from " + from.toString() + " to " + to.toString() + ": \n";
-        for (const auto &d : path) {
-            switch (d) {
-                case LEFT:
-                    res += "L ";
-                    break;
-                case UP:
-                    res += "U ";
-                    break;
-                case RIGHT:
-                    res += "R ";
-                    break;
-                case DOWN:
-                    res += "D ";
-                    break;
-                case NONE:
-                default:
-                    res += "NONE ";
-                    break;
-            }
-        }
-        res += "\nPath length: " + Convert::toString(path.size());
-        exitGame(res);
-    } catch (const std::exception &e) {
-        exitGameWithError(e.what());
-    }
-}
-
 void GameCtrl::startThreads() {
     // Detach each thread make each 
     // thread don't need to be joined
@@ -502,4 +442,47 @@ void GameCtrl::writeMapToFile() const {
         fwrite("\n", sizeof(char), 1, movementFile);
     }
     fwrite("\n", sizeof(char), 1, movementFile);
+}
+
+void GameCtrl::test() {
+    try {
+        // Add walls for testing
+        // Codes below become more effective when the map size is 20*20
+        for (int i = 4; i < 15; ++i) {
+            map->getGrid(Point(i, 14)).setType(Grid::GridType::WALL);
+            map->getGrid(Point(14, i)).setType(Grid::GridType::WALL);
+        }
+
+        // Test search algoritm
+        Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
+        std::list<Direction> path;
+        map->setShowSearchDetails(true);
+        map->findMinPath(from, to, path);
+        //map->findMaxPath(from, to, path);
+        std::string res = "Path from " + from.toString() + " to " + to.toString() + ": \n";
+        for (const auto &d : path) {
+            switch (d) {
+                case LEFT:
+                    res += "L ";
+                    break;
+                case UP:
+                    res += "U ";
+                    break;
+                case RIGHT:
+                    res += "R ";
+                    break;
+                case DOWN:
+                    res += "D ";
+                    break;
+                case NONE:
+                default:
+                    res += "NONE ";
+                    break;
+            }
+        }
+        res += "\nPath length: " + Convert::toString(path.size());
+        exitGame(res);
+    } catch (const std::exception &e) {
+        exitGameWithError(e.what());
+    }
 }

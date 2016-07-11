@@ -166,11 +166,6 @@ private:
     void initMap();
 
     /*
-    Add new walls on the map.
-    */
-    void addWalls();
-
-    /*
     Initialize the snakes of the game.
     */
     void initSnakes();
