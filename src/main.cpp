@@ -6,7 +6,7 @@ int main() {
     // Set map's size. Default is 20*20
     // The minimum size is 4*4.
     game->setMapRow(20);
-    game->setMapColumn(20);
+    game->setMapColumn(40);
 
     // Set FPS. Default is 60.0
     game->setFPS(59.0);
@@ -26,7 +26,7 @@ int main() {
     game->setEnableAI(true);
 
     // Set whether to run the test program. Default is false
-    game->setRunTest(false);
+    game->setRunTest(true);
 
     // Set whether to write the map content to the file. Default is false
     // If set this attribute to true, the game map content will be written

@@ -447,18 +447,21 @@ void GameCtrl::writeMapToFile() const {
 void GameCtrl::test() {
     try {
         // Add walls for testing
-        // Codes below become more effective when the map size is 20*20
+        // Codes below become more effective when the map size is 20*40
+        for (int i = 10; i < 30; ++i) {
+            map->getGrid(Point(4, i)).setType(Grid::GridType::WALL);
+            map->getGrid(Point(15, i)).setType(Grid::GridType::WALL);
+        }
         for (int i = 4; i < 15; ++i) {
-            map->getGrid(Point(i, 14)).setType(Grid::GridType::WALL);
-            map->getGrid(Point(14, i)).setType(Grid::GridType::WALL);
+            map->getGrid(Point(i, 29)).setType(Grid::GridType::WALL);
         }
 
         // Test search algoritm
-        Point from(1, 1), to(mapRowCnt - 2, mapColCnt - 2);
+        Point from(9, 4), to(14, 31);
         std::list<Direction> path;
         map->setShowSearchDetails(true);
-        map->findMinPath(from, to, path);
-        //map->findMaxPath(from, to, path);
+        //map->findMinPath(from, to, path);
+        map->findMaxPath(from, to, path);
         std::string res = "Path from " + from.toString() + " to " + to.toString() + ": \n";
         for (const auto &d : path) {
             switch (d) {

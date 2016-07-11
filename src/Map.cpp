@@ -181,7 +181,7 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
     hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
 
     // Create local variables in the loop to save allocation time
-    const SearchableGrid *curGrid = nullptr;
+    SearchableGrid curGrid;
     Point curPoint;
     vector<Point> adjPoints(4, Point::INVALID);
 
@@ -197,8 +197,8 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         // Loop until the open list is empty or finding
         // a node that is not in the close list.
         do {
-            curGrid = &(openList.top());
-            curPoint = curGrid->getLocation();
+            curGrid = openList.top();
+            curPoint = curGrid.getLocation();
             openList.pop();
         } while (!openList.empty() && closeList.find(curPoint) != closeList.end());
 
@@ -234,9 +234,9 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
                 // If shorter path exists, update g, h, parent field and add 
                 // the adjacent grid to the open list. The cost of moving from
                 // one grid to its adjacent grid is set to 1.
-                if (curGrid->getG() + 1 < adjGrid.getG()) {
+                if (curGrid.getG() + 1 < adjGrid.getG()) {
                     adjGrid.setParent(curPoint);
-                    adjGrid.setG(curGrid->getG() + 1);
+                    adjGrid.setG(curGrid.getG() + 1);
                     adjGrid.setH(computeH(adjGrid.getLocation(), to));
                     openList.push(adjGrid);
                 }
