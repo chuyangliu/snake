@@ -104,3 +104,9 @@ int main() {
 3. Use GUI library instead of console to run the program.
 
    This program uses different console output color to show the game. The effect is constrained by console properities. So using a GUI library such as OpenGL to show the game will be better. 
+
+## References
+
+1. [A* algorithm](http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html)
+
+
