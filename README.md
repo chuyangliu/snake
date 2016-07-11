@@ -1,6 +1,6 @@
 # Snake
 
-A classic snake game in console(terminal) window. 
+A classic snake game written in C/C++.
 
 ## This program can be used to
 
