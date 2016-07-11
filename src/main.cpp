@@ -26,7 +26,7 @@ int main() {
     game->setEnableAI(true);
 
     // Set whether to run the test program. Default is false
-    game->setRunTest(true);
+    game->setRunTest(false);
 
     // Set whether to write the map content to the file. Default is false
     // If set this attribute to true, the game map content will be written
