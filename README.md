@@ -1,6 +1,6 @@
 # Snake
 
-A classic snake game written in C/C++.
+A classic(AI) snake game written in C/C++.
 
 ## This program can be used to
 
