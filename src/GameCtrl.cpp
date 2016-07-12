@@ -303,7 +303,6 @@ void GameCtrl::createFood() {
             if (!map->hasFood()) {
                 map->createFood();
             }
-            sleepByFPS();
         }
     } catch (const std::exception &e) {
         exitGameWithError(e.what());
