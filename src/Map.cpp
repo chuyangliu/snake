@@ -92,11 +92,11 @@ void Map::createFood() {
     if (isFilledWithBody()) {
         return;
     }
-    food = getFoodPos();
+    food = createFoodPos();
     content[food.getX()][food.getY()].setType(Grid::GridType::FOOD);
 }
 
-Point Map::getFoodPos() const {
+Point Map::createFoodPos() const {
     auto rows = getRowCount(), cols = getColCount();
     Point::attr_type r, c;
 
@@ -136,27 +136,67 @@ void Map::setShowSearchDetails(const bool &b) {
 }
 
 unsigned Map::getManhattenDist(const Point &from, const Point &to) {
-    Point::attr_type dx = abs(from.getX() - to.getX());
-    Point::attr_type dy = abs(from.getY() - to.getY());
+    auto dx = abs(from.getX() - to.getX());
+    auto dy = abs(from.getY() - to.getY());
     return dx + dy;
 }
 
-void Map::showVisitedNode(const Point &n, const Grid::GridType &type) {
+unsigned Map::getGeometricDist(const Point &from, const Point &to) {
+    auto dx = abs(from.getX() - to.getX());
+    auto dy = abs(from.getY() - to.getY());
+    return static_cast<unsigned>(sqrt(dx * dx + dy * dy));
+}
+
+void Map::showVisitedNodeIfNeeded(const Point &n, const Grid::GridType &type) {
     if (showSearchDetails) {
         getGrid(n).setType(type);
         GameCtrl::getInstance()->sleepFor(10);
     }
 }
 
-void Map::showPath(const Point &start, const std::list<Direction> &path) {
+void Map::showPathIfNeeded(const Point &start, const std::list<Direction> &path) {
     if (showSearchDetails) {
         Point tmp = start;
         for (const auto &d : path) {
-            showVisitedNode(tmp, Grid::GridType::SNAKEHEAD1);
+            showVisitedNodeIfNeeded(tmp, Grid::GridType::SNAKEHEAD1);
             tmp = tmp.getAdjacentPoint(d);
         }
-        showVisitedNode(tmp, Grid::GridType::SNAKEHEAD1);
+        showVisitedNodeIfNeeded(tmp, Grid::GridType::SNAKEHEAD1);
     }
+}
+
+void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) {
+    path.clear();
+    Point tmp = to, parent;
+    while (tmp != Point::INVALID && tmp != from) {
+        parent = getGrid(tmp).getParent();
+        path.push_front(parent.getDirectionTo(tmp));
+        tmp = parent;
+    }
+}
+
+void Map::sortByH2(std::vector<Point> &points, const Point &goal) {
+    std::sort(points.begin(), points.end(), [&](const Point &a, const Point &b) {
+        auto h1 = estimateH2(a, goal);
+        auto h2 = estimateH2(b, goal);
+        return h1 > h2;
+    });
+}
+
+void Map::randomChange(std::vector<Point> &points) {
+    for (unsigned i = 1; i < points.size(); ++i) {
+        auto random = Map::random(0, i);
+        Point tmp = points[i];
+        points[i] = points[random];
+        points[random] = tmp;
+    }
+ }
+
+int Map::random(const int min, const int max) {
+    static bool setSeed = true;
+    if (setSeed) srand(static_cast<unsigned>(time(NULL)));
+    setSeed = false;
+    return rand() % (max - min + 1) + min;
 }
 
 void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &path) {
@@ -188,7 +228,7 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
     // Add first search node
     SearchableGrid &start = getGrid(from);
     start.setG(0);
-    start.setH(computeH(curPoint, to));
+    start.setH(estimateH1(curPoint, to));
     openList.push(start);
 
     // Begin searching
@@ -210,13 +250,13 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         }
 
         // Show search details
-        showVisitedNode(curPoint, Grid::GridType::SNAKEBODY1);
+        showVisitedNodeIfNeeded(curPoint, Grid::GridType::SNAKEBODY1);
 
         // If the destination location is found.
         // Construct path and return.
         if (curPoint == to) {
             constructPath(from, to, path);
-            showPath(from, path);  // Show search details
+            showPathIfNeeded(from, path);  // Show search details
             break;
         }
 
@@ -237,7 +277,7 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
                 if (curGrid.getG() + 1 < adjGrid.getG()) {
                     adjGrid.setParent(curPoint);
                     adjGrid.setG(curGrid.getG() + 1);
-                    adjGrid.setH(computeH(adjGrid.getLocation(), to));
+                    adjGrid.setH(estimateH1(adjGrid.getLocation(), to));
                     openList.push(adjGrid);
                 }
             }
@@ -263,7 +303,7 @@ void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &
     dfs(from, from, to, tot, max, closeList, path);
 
     // Show search details
-    showPath(from, path);
+    showPathIfNeeded(from, path);
 }
 
 void Map::dfs(const Point &n,
@@ -274,7 +314,7 @@ void Map::dfs(const Point &n,
               Map::hash_table &closeList,
               std::list<Direction> &path) {
     // Show search details
-    showVisitedNode(n, Grid::GridType::SNAKEBODY1);
+    showVisitedNodeIfNeeded(n, Grid::GridType::SNAKEBODY1);
 
     // Begin searching
     if (n == to) {
@@ -285,7 +325,7 @@ void Map::dfs(const Point &n,
     } else {
         vector<Point> adjPoints(4, Point::INVALID);
         n.setAdjPoints(adjPoints);
-        sortByDist(adjPoints, to);
+        sortByH2(adjPoints, to);
         for (const auto &adj : adjPoints) {  // Start with the farthest point
             if (!isUnsearch(adj) && closeList.find(adj) == closeList.end()) {
                 closeList.insert(adj);
@@ -297,41 +337,14 @@ void Map::dfs(const Point &n,
     }
 }
 
-SearchableGrid::value_type Map::computeH(const Point &from, const Point &to) const {
-    return getManhattenDist(from, to);
-    //return 0;  // Return 0 if not use the heuristic value
+SearchableGrid::value_type Map::estimateH1(const Point &from, const Point &to) const {
+    auto m = getManhattenDist(from, to);
+    auto g = getGeometricDist(from, to);
+    return 1 * m + 1 * g;
 }
 
-void Map::constructPath(const Point &from, const Point &to, std::list<Direction> &path) {
-    path.clear();
-    Point tmp = to, parent;
-    while (tmp != Point::INVALID && tmp != from) {
-        parent = getGrid(tmp).getParent();
-        path.push_front(parent.getDirectionTo(tmp));
-        tmp = parent;
-    }
-}
-
-void Map::sortByDist(std::vector<Point> &points, const Point &goal) {
-    std::sort(points.begin(), points.end(), [&](const Point &a, const Point &b) {
-        unsigned d1 = Map::getManhattenDist(a, goal);
-        unsigned d2 = Map::getManhattenDist(b, goal);
-        return d1 > d2;
-    });
-}
-
-void Map::randomChange(std::vector<Point> &points) {
-    for (unsigned i = 1; i < points.size(); ++i) {
-        auto random = Map::random(0, i);
-        Point tmp = points[i];
-        points[i] = points[random];
-        points[random] = tmp;
-    }
- }
-
-int Map::random(const int min, const int max) {
-    static bool setSeed = true;
-    if (setSeed) srand(static_cast<unsigned>(time(NULL)));
-    setSeed = false;
-    return rand() % (max - min + 1) + min;
+SearchableGrid::value_type Map::estimateH2(const Point &from, const Point &to) const {
+    auto m = getManhattenDist(from, to);
+    auto g = getGeometricDist(from, to);
+    return 1 * m + 0 * g;
 }

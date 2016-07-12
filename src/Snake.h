@@ -16,7 +16,7 @@ public:
     void move();
 
     /*
-    Move steps specified by a list of direcition.
+    Move steps specified by a list of direction.
 
     @param path the move path
     */

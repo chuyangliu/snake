@@ -186,6 +186,11 @@ private:
     void moveSnake(Snake &s);
 
     /*
+    Write the map content to movement file.
+    */
+    void writeMapToFile() const;
+
+    /*
     Start all threads.
     */
     void startThreads();
@@ -249,7 +254,12 @@ private:
     void test();
 
     /*
-    Write the map content to movement file.
+    Test create map food program.
     */
-    void writeMapToFile() const;
+    void testCreateFood();
+
+    /*
+    Test graph search algorithms.
+    */
+    void testGraphSearch();
 };

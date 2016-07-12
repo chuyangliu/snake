@@ -82,14 +82,24 @@ public:
     Set whether to show the details of the search algorithm.
     */
     void setShowSearchDetails(const bool &b);
-    
+
     /*
     Calculate the manhatten distance between two points.
 
     @param from the start point
     @param to the end point
+    @return the manhatten distance between two points
     */
     static unsigned getManhattenDist(const Point &from, const Point &to);
+
+    /*
+    Calculate the geometric distance between two points.
+
+    @param from the start point
+    @param to the end point
+    @return the geometric distance between two points
+    */
+    static unsigned getGeometricDist(const Point &from, const Point &to);
 
     /*
     Find the shortest path from the start
@@ -134,15 +144,6 @@ private:
     static int random(const int min, const int max);
 
     /*
-    Sort the points by the distance between each point and the goal
-    in descending order.
-
-    @param points the points array to sort
-    @param goal the goal point
-    */
-    static void sortByDist(std::vector<Point> &points, const Point &goal);
-
-    /*
     Randomly rearrage the elements in the vector.
 
     @param points the vector to rearrage
@@ -161,7 +162,7 @@ private:
 
     @return the new food position
     */
-    Point getFoodPos() const;
+    Point createFoodPos() const;
 
     /*
     Check if the grid at the point must be ignored by the search algorithm
@@ -191,26 +192,45 @@ private:
              std::list<Direction> &path);
 
     /*
-    Compute the H(Heuristic) value from the start
-    point to the end point.
-
-    @param from the start point
-    @param to the end point
-    @return the heuristic value
-    */
-    SearchableGrid::value_type computeH(const Point &from, const Point &to) const;
-
-    /*
     Construct the move path from the start
     point to the end point.
 
     @param from the start point
     @param to the end point
     @param path the result will be stored as a list of Direction
-                in this field. If there is no path between the two
-                points, the size of this field will be zero.
+    in this field. If there is no path between the two
+    points, the size of this field will be zero.
     */
     void constructPath(const Point &from, const Point &to, std::list<Direction> &path);
+
+    /*
+    Compute the H(Heuristic) value from the start point to the end point.
+    This is the heuristic for shortest path search algorithm.
+
+    @param from the start point
+    @param to the end point
+    @return the heuristic value
+    */
+    SearchableGrid::value_type estimateH1(const Point &from, const Point &to) const;
+
+    /*
+    Compute the H(Heuristic) value from the start point to the end point.
+    This is the heuristic for longest path search algorithm.
+
+    @param from the start point
+    @param to the end point
+    @return the heuristic value
+    */
+    SearchableGrid::value_type estimateH2(const Point &from, const Point &to) const;
+
+    /*
+    Sort the points by the value calculated by estimateH2()
+    in descending order.
+
+    @param points the points array to sort
+    @param goal the goal point
+    */
+    void sortByH2(std::vector<Point> &points, const Point &goal);
 
     /*
     Show a visited node on the map. This method is designed for
@@ -220,7 +240,7 @@ private:
     @param n the point of the node
     @param type the new type of the grid at the point n
     */
-    void showVisitedNode(const Point &n, const Grid::GridType &type);
+    void showVisitedNodeIfNeeded(const Point &n, const Grid::GridType &type);
 
     /*
     Show the path on the map. This method is designed for
@@ -230,5 +250,5 @@ private:
     @param start the start point
     @param path the path to show
     */
-    void showPath(const Point &start, const std::list<Direction> &path);
+    void showPathIfNeeded(const Point &start, const std::list<Direction> &path);
 };
