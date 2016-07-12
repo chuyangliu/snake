@@ -1,4 +1,4 @@
-# Snake-AI
+# Snake-AI ([中文博客](http://blog.csdn.net/qq_22885773/article/details/51888925))
 
 A snake game AI written in c/c++.
 
