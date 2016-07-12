@@ -82,6 +82,7 @@ int main() {
     game->setEnableAI(true);
 
     // Set whether to run the test program. Default is false
+    // Set the map size to 20*40 before setting this to true.
     game->setRunTest(false);
 
     // Set whether to write the map content to the file. Default is false
