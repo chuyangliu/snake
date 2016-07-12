@@ -1,12 +1,12 @@
-# Snake
+# Snake-AI
 
 A snake game AI written in c/c++.
 
 ## This program can be used to
 
-1. Play classic snake game. (You can control two snakes at the same time!)
+1. Play classic snake game. (You can control two snakes at the same time)
 
-2. See how an intelligent computer snake eat the food. (Also, you can see two AI snake running at the same time!)
+2. Watch how an AI snake eat the food. (Also, you can see two AI snake running at the same time)
 
 3. Run some test program for graph searching alogrithm such as BFS and DFS.
 	
@@ -100,15 +100,15 @@ int main() {
 
 1. Optimize graph search algorithm
 
-   In the algorithm of AI, finding shortest and longest path is needed. To find shortest path effectively, A* algorithm is used. The heuristic value is only the manhatten distance which is not good enough because there are walls on the map that make the mahatten distance unreliable. To find longest path, DFS is used. Just as the gif in the demos shows, this algorithm is not the best. Though the longest path is an NP problem, there must be some other ways to find an approximately longest path.
+   In the algorithm of AI, finding shortest and longest path is needed. A* algorithm is used to find the two kinds of path. Perhaps the heuristic value could be enhanced. 
 
 2. Optimize AI algorithm.
 
-   Current AI algorithm is not the best. There are many situations in which the snake will kill itself after moving. There is only a few chances that the snake can fill in all the map area.
+   Current AI algorithm is not the best. There are some situations in which the snake will kill itself after moving.
 
 3. Use GUI library instead of console to run the program.
 
-   This program uses different console output color to show the game. The effect is constrained by console properities. So using a GUI library such as OpenGL to show the game will be better. 
+   This program uses different console output color to show the game, which weakens the effect. Using a GUI library such as OpenGL to show the game would be better. 
 
 ## References
 
