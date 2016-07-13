@@ -35,9 +35,7 @@ int GameCtrl::run() {
         init();
         startThreads();
 
-        // Main thread waits
         while (1) {
-
         }
 
         return 0;
@@ -56,14 +54,12 @@ void GameCtrl::init() {
 }
 
 void GameCtrl::initMap() {
-    // Check validity
     if (mapRowCnt < 4 || mapColCnt < 4) {
-        string msg = "Map size is at least 4*4. Current is "
+        string msg = "Map size is at least 4*4. Current size is "
             + Convert::toString(mapRowCnt) + "*" + Convert::toString(mapColCnt);
         throw std::range_error(msg.c_str());
     }
     
-    // Initialize
     map = std::make_shared<Map>(mapRowCnt, mapColCnt);
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
@@ -117,7 +113,7 @@ void GameCtrl::exitGame(const std::string &msg) {
     stopThreads();
     sleepFor(100);
 
-    // Close movement file if exists
+    // Close movement file
     if (movementFile) {
         fclose(movementFile);
         movementFile = nullptr;
@@ -142,7 +138,7 @@ void GameCtrl::moveSnake(Snake &s) {
         // Unlock must outside the exitGame()
         // because exitGame() will terminate the program
         // and there is no chance to unlock the mutex
-        // after exectuing exitGame().
+        // after calling exitGame().
         // Notice that exitGame() is a thread-safe method.
         mutexMove.unlock();
         exitGame(MSG_WIN);
@@ -231,7 +227,7 @@ void GameCtrl::drawGameInfo() const {
     Console::writeWithColor("         Up  Left  Down  Right\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::writeWithColor("Snake1:  W   A     S     D\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::writeWithColor("Snake2:  I   J     K     L\n", ConsoleColor(WHITE, BLACK, true, false));
-    Console::writeWithColor(" Space:  Toggle auto moving snake\n", ConsoleColor(WHITE, BLACK, true, false));
+    Console::writeWithColor(" Space:  Pause / Resume\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::writeWithColor("   Esc:  Exit game\n", ConsoleColor(WHITE, BLACK, true, false));
     Console::writeWithColor("\nScore: " + Convert::toString(snake1.size() + snake2.size()) + "\n",
                             ConsoleColor(WHITE, BLACK, true, false));
@@ -240,7 +236,7 @@ void GameCtrl::drawGameInfo() const {
 void GameCtrl::keyboard() {
     try {
         while (threadWork) {
-            if (Console::kbhit()) {  // When keyboard is hit
+            if (Console::kbhit()) {
                 switch (Console::getch()) {
                     case 'w':
                         keyboardMove(snake1, Direction::UP);
@@ -303,6 +299,7 @@ void GameCtrl::createFood() {
             if (!map->hasFood()) {
                 map->createFood();
             }
+            sleepByFPS();
         }
     } catch (const std::exception &e) {
         exitGameWithError(e.what());
@@ -313,20 +310,16 @@ void GameCtrl::autoMove() {
     try {
         while (threadWork) {
             if (!pauseMove) {
-
                 if (enableAI) {
                     snake1.decideNextDirection();
                 }
                 moveSnake(snake1);
-
-                if (enableAI && enableSecondSnake) {
-                    snake2.decideNextDirection();
-                }
-
                 if (enableSecondSnake) {
+                    if (enableAI) {
+                        snake2.decideNextDirection();
+                    }
                     moveSnake(snake2);
                 }
-
             }
             sleepFor(autoMoveInterval);
         }
@@ -336,8 +329,6 @@ void GameCtrl::autoMove() {
 }
 
 void GameCtrl::startThreads() {
-    // Detach each thread make each 
-    // thread don't need to be joined
     drawThread = std::thread(&GameCtrl::draw, this);
     drawThread.detach();
 
@@ -460,13 +451,12 @@ void GameCtrl::testCreateFood() {
 }
 
 void GameCtrl::testGraphSearch() {
-    // Check map size
+    // Require map size for testing: 20*40
     if (mapRowCnt < 20 || mapColCnt < 40) {
-        throw std::range_error("Running testing program requires minimum map size 20*40.");
+        throw std::range_error("Running testGraphSearch() requires minimum map size 20*40.");
     }
 
     // Add walls for testing
-    // Codes below become more effective when the map size is 20*40
     for (int i = 10; i < 30; ++i) {
         map->getGrid(Point(4, i)).setType(Grid::GridType::WALL);
         map->getGrid(Point(15, i)).setType(Grid::GridType::WALL);

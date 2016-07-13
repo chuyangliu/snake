@@ -17,7 +17,6 @@ public:
         SNAKETAIL2
     };
 
-    // Constructor and destructor
     Grid();
     virtual ~Grid();
 

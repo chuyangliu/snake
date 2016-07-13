@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 
-// Direction of the game
 enum Direction {
     NONE,
     LEFT,
@@ -13,17 +12,15 @@ enum Direction {
 };
 
 /*
-A Point consists of x coordinate and 
-y coordinate attributes.
+A Point consists of an x coordinate
+and a y coordinate
 */
 class Point {
 public:
     typedef long attr_type;
 
-    // Constants
     static const Point INVALID;
 
-    // Constructor and destructor
     Point(const attr_type &x_ = 0, const attr_type &y_ = 0);
     ~Point();
 
@@ -39,10 +36,10 @@ public:
     friend bool operator!=(const Point &a, const Point &b);
 
     /*
-    Hash function that calculates the hash
-    value for a point.
+    Hash function for a point
 
     @param p the point to calculate
+    @return the hash value of the point
     */
     static unsigned hash(const Point &p);
 
@@ -76,7 +73,7 @@ public:
 
     /*
     @return the string that describe the content
-            of the object.
+            of the point.
     */
     std::string toString() const;
 

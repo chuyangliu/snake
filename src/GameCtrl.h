@@ -1,17 +1,15 @@
 #pragma once
 
-#include <string>
+#include "Snake.h"
 #include <thread>
 #include <mutex>
-#include "Snake.h"
 
 /*
-A game controller to control the game.
-This is a singleton.
+Controller of the game.
+This is a singleton class.
 */
 class GameCtrl {
 public:
-    // Game exit messages
     static const std::string MSG_BAD_ALLOC;
     static const std::string MSG_LOSE;
     static const std::string MSG_WIN;
@@ -141,8 +139,8 @@ private:
     std::mutex mutexMove;  // Mutex for moveSnake()
     std::mutex mutexExit;  // Mutex for exitGame()
 
-    // File pointer
-    FILE *movementFile = nullptr;  // File to save snake movements
+    // File to save snake movements
+    FILE *movementFile = nullptr;
 
     /*
     Private constructor for singleton.
@@ -230,11 +228,6 @@ private:
     void keyboardMove(Snake &s, const Direction &d);
 
     /*
-    Toggle the auto move thread.
-    */
-    void toggleAutoMove();
-
-    /*
     Callback for food thread.
     Create food on the map if it doesn't exist.
     */
@@ -245,6 +238,11 @@ private:
     Auto move the snake on the map.
     */
     void autoMove();
+
+    /*
+    Toggle the auto move thread.
+    */
+    void toggleAutoMove();
 
     /*
     Call back for test thread.

@@ -1,6 +1,5 @@
 #include "Point.h"
 #include "Convert.h"
-#include "GameCtrl.h"
 
 const Point Point::INVALID = Point(-1, -1);
 
@@ -10,7 +9,6 @@ Point::Point(const attr_type &x_, const attr_type &y_)
 
 Point::~Point() {
 }
-
 
 Point::attr_type Point::getX() const {
     return x;

@@ -2,20 +2,16 @@
 
 #include "SearchableGrid.h"
 #include <list>
-#include <vector>
 #include <queue>
 #include <unordered_set>
 #include <functional>
 
-/*
-A map of the game
-*/
 class Map {
 public:
     typedef std::vector<std::vector<SearchableGrid>> content_type;
     typedef content_type::size_type size_type;
-    typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::greater<SearchableGrid>> min_heap;
     typedef std::unordered_set<Point, decltype(Point::hash)*> hash_table;
+    typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::greater<SearchableGrid>> min_heap;
 
     Map(const size_type &rowCnt_ = 20, const size_type &colCnt_ = 20);
     ~Map();
@@ -49,6 +45,14 @@ public:
     bool isFilledWithBody() const;
 
     /*
+    Get all empty points.
+
+    @param points the result points will be stored in
+                  this field.
+    */
+    void getEmptyPoints(std::vector<Point> &points) const;
+
+    /*
     Create a food on the map randomly.
     */
     void createFood();
@@ -79,7 +83,7 @@ public:
     size_type getColCount() const;
 
     /*
-    Set whether to show the details of the search algorithm.
+    Set whether to show the details of the search algorithms.
     */
     void setShowSearchDetails(const bool &b);
 
@@ -134,7 +138,7 @@ public:
 private:
     Point food = Point::INVALID;
 
-    content_type content;  // The elements on the map
+    content_type content;
 
     bool showSearchDetails = false;
 
@@ -144,7 +148,7 @@ private:
     static int random(const int min, const int max);
 
     /*
-    Randomly rearrage the elements in the vector.
+    Randomly rearrange the elements in the vector.
 
     @param points the vector to rearrage
     */
@@ -154,15 +158,6 @@ private:
     Initialize map content.
     */
     void init();
-
-    /*
-    Get a food position on the map
-    WARNING: if there is no space for food,
-    this will be an endless loop.
-
-    @return the new food position
-    */
-    Point createFoodPos() const;
 
     /*
     Check if the grid at the point must be ignored by the search algorithm
@@ -194,8 +189,8 @@ private:
     @param from the start point
     @param to the end point
     @param path the result will be stored as a list of Direction
-    in this field. If there is no path between the two
-    points, the size of this field will be zero.
+                in this field. If there is no path between the two
+                points, the size of this field will be zero.
     */
     void constructPath(const Point &from, const Point &to, std::list<Direction> &path);
 

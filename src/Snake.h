@@ -82,7 +82,7 @@ private:
 
     std::shared_ptr<Map> map;  // The map that the snake attaches to
 
-    Direction direc = NONE;  // Current snake move direcition
+    Direction direc = NONE;
 
     std::list<Point> body;
 
@@ -111,7 +111,7 @@ private:
     /*
     Find the longest(approximately) path from snake's head to the tail.
 
-    @param path the result will be stored in this field
+    @param path the result will be stored in this field.
                 If there is no available path, the length
                 of this field will be zero.
     */
@@ -123,7 +123,9 @@ private:
     @param type if type is 0, find the shortest path,
                 else if type is 1, find the longest path.
     @param to the goal point
-    @param path the result will be stored in this field
+    @param path the result will be stored in this field.
+                If there is no available path, the length
+                of this field will be zero.
     */
     void findPathTo(const int type, const Point &to, std::list<Direction> &path);
 

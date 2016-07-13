@@ -20,7 +20,7 @@ bool Snake::addBody(const Point &p) {
         if (body.size() == 0) {  // Insert a head
             map->getGrid(p).setType(headType);
         } else {  // Insert a body
-            if (body.size() > 1) {  // At least two body
+            if (body.size() > 1) {
                 auto oldTail = getTail();
                 map->getGrid(oldTail).setType(bodyType);
             }
@@ -74,7 +74,7 @@ void Snake::removeTail() {
         map->getGrid(getTail()).setType(Grid::GridType::EMPTY);
     }
     body.pop_back();
-    if (body.size() > 1) {  // At least two body
+    if (body.size() > 1) {
         map->getGrid(getTail()).setType(tailType);
     }
 }
@@ -90,12 +90,12 @@ void Snake::move() {
 
     if (map->isUnsafe(newHead)) {
         dead = true;
-    }
-
-    if (map->getGrid(newHead).getType() != Grid::GridType::FOOD) {
-        removeTail();
     } else {
-        map->removeFood();
+        if (map->getGrid(newHead).getType() != Grid::GridType::FOOD) {
+            removeTail();
+        } else {
+            map->removeFood();
+        }
     }
 
     map->getGrid(newHead).setType(headType);
@@ -115,9 +115,9 @@ void Snake::findPathTo(const int type, const Point &to, std::list<Direction> &pa
     // After searching, restore the goal grid type.
     auto originType = map->getGrid(to).getType();
     map->getGrid(to).setType(Grid::GridType::EMPTY);
-    if (type == 0) {  // Search shortest path
+    if (type == 0) {
         map->findMinPath(getHead(), to, path);
-    } else if (type == 1) {  // Search longest path
+    } else if (type == 1) {
         map->findMaxPath(getHead(), to, path);
     }
     map->getGrid(to).setType(originType);
@@ -136,22 +136,26 @@ void Snake::findMaxPathToTail(std::list<Direction> &path) {
 }
 
 void Snake::decideNextDirection() {
-    if (isDead() || !map || !map->hasFood()) {
+    if (isDead() || !map) {
+        return;
+    } else if (!map->hasFood()) {
+        direc = NONE;
         return;
     }
 
     // Copy a temp snake with a temp map
-    // Create two search path (food and tail)
     Snake tmpSnake(*this);
     shared_ptr<Map> tmpMap = std::make_shared<Map>(*map);
     tmpSnake.setMap(tmpMap);
+
+    // Create two search path
     list<Direction> pathToFood, pathToTail;
 
     // Step1:
     // If a path to food is found, move the temp snake to eat the food and to 
     // check if there is path to the tail of the temp snake. If there is no path
     // to tail after eating the food, it means that this path is dangerous and
-    // this path will not be chosen.
+    // will not be chosen.
     // Notice that only if the length of the path to tail is more than
     // 1 can the snake move to its tail because that the length equals
     // 1 means that the head is adjacent to the tail, which will make 
@@ -164,7 +168,7 @@ void Snake::decideNextDirection() {
             return;
         } else {
             tmpSnake.findMaxPathToTail(pathToTail);
-            if (pathToTail.size() > 1) {  // Check path to tail
+            if (pathToTail.size() > 1) {
                 this->setDirection(*(pathToFood.begin()));
                 return;
             }
@@ -172,8 +176,8 @@ void Snake::decideNextDirection() {
     }
 
     // Step2:
-    // If no suitable path is found, make the snake move to its tail
-    // along the longest way.
+    // If no suitable path is found in step1, make the snake move
+    // to its tail along the longest path.
     this->findMaxPathToTail(pathToTail);
     if (pathToTail.size() > 1) {
         this->setDirection(*(pathToTail.begin()));
@@ -181,8 +185,8 @@ void Snake::decideNextDirection() {
     }
 
     // Step3:
-    // If no available path is found in step 1 and 2, then find a point
-    // that is the farthest from the food.
+    // If no available path is found in step 1 and 2, then find a
+    // direction that is the farthest from the food.
     auto head = getHead();
     unsigned maxDist = 0;
     vector<Point> adjPoints(4, Point::INVALID);

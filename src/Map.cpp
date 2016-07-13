@@ -14,17 +14,14 @@ Map::~Map() {
 
 void Map::init() {
     auto rows = getRowCount(), cols = getColCount();
-    
-    // Set locations of each grid
     for (size_type i = 0; i < rows; ++i) {
         for (size_type j = 0; j < cols; ++j) {
             content[i][j].setLocation(Point(i, j));
         }
     }
-
-    // Set default walls
+    // Add default walls
     for (size_type i = 0; i < rows; ++i) {
-        if (i == 0 || i == rows - 1) {  // The first and last rows
+        if (i == 0 || i == rows - 1) {  // The first and last row
             for (size_type j = 0; j < cols; ++j) {
                 content[i][j].setType(Grid::GridType::WALL);
             }
@@ -88,24 +85,29 @@ bool Map::isFilledWithBody() const {
     return true;
 }
 
+void Map::getEmptyPoints(vector<Point> &points) const {
+    points.clear();
+    auto rows = getRowCount(), cols = getColCount();
+    for (size_type i = 1; i < rows - 1; ++i) {
+        for (size_type j = 1; j < cols - 1; ++j) {
+            if (content[i][j].getType()
+                == Grid::GridType::EMPTY) {
+                points.push_back(Point(i, j));
+            }
+        }
+    }
+}
+
 void Map::createFood() {
     if (isFilledWithBody()) {
         return;
     }
-    food = createFoodPos();
-    content[food.getX()][food.getY()].setType(Grid::GridType::FOOD);
-}
-
-Point Map::createFoodPos() const {
-    auto rows = getRowCount(), cols = getColCount();
-    Point::attr_type r, c;
-
-    do {
-        r = Map::random(1, rows - 2);
-        c = Map::random(1, cols - 2);
-    } while (content[r][c].getType() != Grid::GridType::EMPTY);
-    
-    return Point(r, c);
+    vector<Point> points;
+    getEmptyPoints(points);
+    if (!points.empty()) {
+        food = points[random(0, points.size() - 1)];
+        content[food.getX()][food.getY()].setType(Grid::GridType::FOOD);
+    }
 }
 
 void Map::removeFood() {
@@ -200,12 +202,11 @@ int Map::random(const int min, const int max) {
 }
 
 void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &path) {
-    // Check validity
     if (!isInside(from) || !isInside(to)) {
         return;
     }
 
-    // Initialize g value of each grid
+    // Initialize g value
     auto rows = getRowCount(), cols = getColCount();
     for (size_type i = 0; i < rows; ++i) {
         for (size_type j = 0; j < cols; ++j) {
@@ -253,11 +254,11 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         // Show search details if needed
         showVisitedNodeIfNeeded(curPoint, Grid::GridType::SNAKEBODY1);
 
-        // If the destination location is found,
+        // If the goal point is found,
         // construct the path and exit.
         if (curPoint == to) {
             constructPath(from, to, path);
-            showPathIfNeeded(from, path);  // Show search details if needed
+            showPathIfNeeded(from, path);
             break;
         }
 
@@ -272,11 +273,10 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         for (const auto &adjPoint : adjPoints) {
             if (!isUnsearch(adjPoint) && closeList.find(adjPoint) == closeList.end()) {
                 SearchableGrid &adjGrid = getGrid(adjPoint);
-                // If shorter path exists, update g, h, parent field and add 
-                // the adjacent grid to the open list. The cost of moving from
-                // one grid to its adjacent grid is set to 1.
+                // The cost of moving from one grid to its
+                // adjacent grid is set to 1.
                 if (curGrid.getG() + 1 < adjGrid.getG()) {
-                    adjGrid.setParent(curPoint);  // Record path
+                    adjGrid.setParent(curPoint);
                     adjGrid.setG(curGrid.getG() + 1);
                     adjGrid.setH(estimateH1(adjGrid.getLocation(), to));
                     openList.push(adjGrid);
@@ -287,7 +287,6 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
 }
 
 void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &path) {
-    // Check validity
     if (!isInside(from) || !isInside(to)) {
         return;
     }
@@ -299,8 +298,6 @@ void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &
 
     // Begin searching
     dfs(from, from, to, closeList, path);
-
-    // Show search details if needed
     showPathIfNeeded(from, path);
 }
 
