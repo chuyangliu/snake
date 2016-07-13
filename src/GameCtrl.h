@@ -122,7 +122,6 @@ private:
     bool enableAI = false;
     bool runTest = false;
     bool writeToFile = false;
-
     bool pauseMove = false;
 
     // Game objects

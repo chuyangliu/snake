@@ -39,36 +39,40 @@ public:
     friend bool operator!=(const Point &a, const Point &b);
 
     /*
-    Hash function that calculate the hash
-    value for the point.
+    Hash function that calculates the hash
+    value for a point.
 
     @param p the point to calculate
     */
     static unsigned hash(const Point &p);
 
     /*
-    Calculate adjacent points
-
-    @param res the adjacent points will be stored in this field.
-               Precondition: this field must be a vector of length 4.
-    */
-    void setAdjPoints(std::vector<Point> &res) const;
-
-    /*
     Get the direction from this point to another.
 
     @param p the other point
     @return the direction from this point to point p.
-    If the two points are not adjacent or are the same, return NONE.
+            If the two points are not adjacent or are
+            the same, return NONE.
     */
     Direction getDirectionTo(const Point &p) const;
 
     /*
-    Get the adjacent point in a given direction.
+    Get an adjacent point in a given direction.
 
     @param d the adjacent direction
+    @return the adjacent point in the given direction
     */
-    Point getAdjacentPoint(const Direction &d) const;
+    Point getOneAdjPoint(const Direction &d) const;
+
+    /*
+    Get all the adjacent points.
+    Avoid using return value to return the result 
+    in order to save cost.
+
+    @param res the adjacent points will be stored in this field.
+               Precondition: this field must be a vector of length 4.
+    */
+    void getAllAdjPoint(std::vector<Point> &res) const;
 
     /*
     @return the string that describe the content

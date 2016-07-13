@@ -156,9 +156,9 @@ void GameCtrl::moveSnake(Snake &s) {
                 writeMapToFile();
             }
             mutexMove.unlock();
-        } catch (const std::exception &e) {
+        } catch (const std::exception) {
             mutexMove.unlock();
-            throw;  // Rethrow the exception
+            throw;
         }
     }
 }

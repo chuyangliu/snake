@@ -45,7 +45,7 @@ unsigned Point::hash(const Point &p) {
     return h(p.x) ^ h(p.y);
 }
 
-void Point::setAdjPoints(std::vector<Point> &res) const {
+void Point::getAllAdjPoint(std::vector<Point> &res) const {
     int dx[] = {0, -1, 0, 1};
     int dy[] = {-1, 0, 1, 0};
     for (int i = 0; i < 4; ++i) {
@@ -70,7 +70,7 @@ Direction Point::getDirectionTo(const Point &p) const  {
     }
 }
 
-Point Point::getAdjacentPoint(const Direction &d) const {
+Point Point::getOneAdjPoint(const Direction &d) const {
     int dx = 0, dy = 0;
     switch (d) {
         case LEFT:

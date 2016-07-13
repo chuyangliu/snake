@@ -178,16 +178,12 @@ private:
     @param n current search point
     @param from the start point
     @param to the end point
-    @param tot current path length
-    @param max current maximum path length
     @param closeList stores the points that have been visited
     @param path the result will be stored in this field
     */
     void dfs(const Point &n,
              const Point &from,
              const Point &to,
-             const long tot,
-             long &max,
              Map::hash_table &closeList,
              std::list<Direction> &path);
 

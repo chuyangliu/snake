@@ -85,7 +85,7 @@ void Snake::move() {
     }
 
     map->getGrid(getHead()).setType(bodyType);
-    Point newHead = getHead().getAdjacentPoint(direc);
+    Point newHead = getHead().getOneAdjPoint(direc);
     body.push_front(newHead);
 
     if (map->isUnsafe(newHead)) {
@@ -186,7 +186,7 @@ void Snake::decideNextDirection() {
     auto head = getHead();
     unsigned maxDist = 0;
     vector<Point> adjPoints(4, Point::INVALID);
-    head.setAdjPoints(adjPoints);
+    head.getAllAdjPoint(adjPoints);
     for (const auto &p : adjPoints) {
         if (!map->isUnsafe(p)) {
             unsigned d = Map::getManhattenDist(p, map->getFood());
