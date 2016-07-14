@@ -10,9 +10,23 @@ class Map {
 public:
     typedef std::vector<std::vector<SearchableGrid>> content_type;
     typedef content_type::size_type size_type;
+
+    /*
+    Hash table declaration.
+    Constructor:
+    The first param is the number of buckets in the hash table
+    The second param is the hash function
+    */
     typedef std::unordered_set<Point, decltype(Point::hash)*> hash_table;
+
+    /*
+    Min-root heap declaration
+    */
     typedef std::priority_queue<SearchableGrid, std::vector<SearchableGrid>, std::greater<SearchableGrid>> min_heap;
 
+    /*
+    Initialize a map with row number and column number
+    */
     Map(const size_type &rowCnt_ = 20, const size_type &colCnt_ = 20);
     ~Map();
 
@@ -135,6 +149,17 @@ public:
     */
     void findMaxPath(const Point &from, const Point &to, std::list<Direction> &path);
 
+    /*
+    Create a maze on the map.
+    Precondition:
+    1. The rows number and columns number of the
+       map must be both odd number.
+    2. Minimum size is 5*5.
+
+    @param start the start point of the maze
+    */
+    void createMaze(const Point &start);
+
 private:
     Point food = Point::INVALID;
 
@@ -168,7 +193,7 @@ private:
     bool isUnsearch(const Point &p) const;
 
     /*
-    DFS algorithm to find the longest(approximately) path.
+    Use DFS to find the longest(approximately) path.
 
     @param n current search point
     @param from the start point
@@ -176,11 +201,20 @@ private:
     @param closeList stores the points that have been visited
     @param path the result will be stored in this field
     */
-    void dfsLongest(const Point &n,
+    void dfsFindLongest(const Point &n,
              const Point &from,
              const Point &to,
              Map::hash_table &closeList,
              std::list<Direction> &path);
+
+    /*
+    Use DFS to break the walls.
+    This method is used to generate a maze.
+
+    @param n the current search point
+    @param closeList stores the points that have been visited
+    */
+    void dfsBreakWalls(const Point &n, Map::hash_table &closeList);
 
     /*
     Construct the move path from the start
