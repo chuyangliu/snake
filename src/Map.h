@@ -176,7 +176,7 @@ private:
     @param closeList stores the points that have been visited
     @param path the result will be stored in this field
     */
-    void dfs(const Point &n,
+    void dfsLongest(const Point &n,
              const Point &from,
              const Point &to,
              Map::hash_table &closeList,

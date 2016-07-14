@@ -297,11 +297,11 @@ void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &
     hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
 
     // Begin searching
-    dfs(from, from, to, closeList, path);
+    dfsLongest(from, from, to, closeList, path);
     showPathIfNeeded(from, path);
 }
 
-void Map::dfs(const Point &n,
+void Map::dfsLongest(const Point &n,
               const Point &from,
               const Point &to,
               Map::hash_table &closeList,
@@ -324,7 +324,7 @@ void Map::dfs(const Point &n,
         for (const auto &adj : adjPoints) {
             if (!isUnsearch(adj) && closeList.find(adj) == closeList.end()) {
                 getGrid(adj).setParent(n);  // Record path
-                dfs(adj, from, to, closeList, path);
+                dfsLongest(adj, from, to, closeList, path);
             }
         }
     }
