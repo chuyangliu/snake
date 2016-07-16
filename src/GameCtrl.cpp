@@ -55,7 +55,7 @@ void GameCtrl::init() {
 
 void GameCtrl::initMap() {
     if (mapRowCnt < 4 || mapColCnt < 4) {
-        string msg = "Map size is at least 4*4. Current size is "
+        string msg = "GameCtrl.initMap(): Map size is at least 4*4. Current size is "
             + Convert::toString(mapRowCnt) + "*" + Convert::toString(mapColCnt);
         throw std::range_error(msg.c_str());
     }
@@ -64,7 +64,7 @@ void GameCtrl::initMap() {
     if (!map) {
         exitGame(MSG_BAD_ALLOC);
     } else {
-        // Add some extra walls
+        // Add some extra walls manully
     }
 }
 
@@ -95,7 +95,7 @@ void GameCtrl::initSnakes() {
 void GameCtrl::initFiles() {
     movementFile = fopen(MAP_INFO_FILENAME.c_str(), "w");
     if (!movementFile) {
-        throw std::runtime_error("Fail to open file: " + MAP_INFO_FILENAME);
+        throw std::runtime_error("GameCtrl.initFiles(): Fail to open file: " + MAP_INFO_FILENAME);
     } else {
         // Write content description to the file
         string str = "Content description:\n";
@@ -129,7 +129,7 @@ void GameCtrl::exitGame(const std::string &msg) {
 }
 
 void GameCtrl::exitGameWithError(const std::string &msg) {
-    exitGame("Error: " + msg + "\nPress any key to continue...");
+    exitGame("Exception: " + msg + "\nPress any key to continue...");
 }
 
 void GameCtrl::moveSnake(Snake &s) {
@@ -437,7 +437,8 @@ void GameCtrl::writeMapToFile() const {
 void GameCtrl::test() {
     try {
         //testCreateFood();
-        testGraphSearch();
+        //testGraphSearch();
+        testMaze();
     } catch (const std::exception &e) {
         exitGameWithError(e.what());
     }
@@ -453,7 +454,7 @@ void GameCtrl::testCreateFood() {
 void GameCtrl::testGraphSearch() {
     // Require map size for testing: 20*40
     if (mapRowCnt < 20 || mapColCnt < 40) {
-        throw std::range_error("Running testGraphSearch() requires minimum map size 20*40.");
+        throw std::range_error("GameCtrl.testGraphSearch(): Requires minimum map size 20*40.");
     }
 
     // Add walls for testing
@@ -489,4 +490,8 @@ void GameCtrl::testGraphSearch() {
     }
     res += "\nPath length: " + Convert::toString(path.size());
     exitGame(res);
+}
+
+void GameCtrl::testMaze() {
+    map->createMaze(Point(1, 1));
 }

@@ -259,4 +259,9 @@ private:
     Test graph search algorithms.
     */
     void testGraphSearch();
+
+    /*
+    Test maze algorithms.
+    */
+    void testMaze();
 };

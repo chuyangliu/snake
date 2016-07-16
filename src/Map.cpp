@@ -1,8 +1,10 @@
 #include "Map.h"
 #include "GameCtrl.h"
+#include "Convert.h"
 #include <algorithm>
 
 using std::vector;
+using std::string;
 
 Map::Map(const size_type &rowCnt_, const size_type &colCnt_)
     : content(rowCnt_, vector<SearchableGrid>(colCnt_)) {
@@ -214,13 +216,9 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
         }
     }
 
-    // Create open list
+    // Create open list and close list
     min_heap openList;
-
-    // Create close list
-    // The first param is the number of buckets in the hash table
-    // The second param is the hash function
-    hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
+    hash_table closeList(2 * rows * cols, Point::hash);
 
     // Create local variables in the loop to save allocation time
     SearchableGrid curGrid;
@@ -233,7 +231,6 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
     start.setH(estimateH1(start.getLocation(), to));
     openList.push(start);
 
-    // Begin searching
     while (!openList.empty()) {
 
         // Loop until the open list is empty or finding
@@ -251,25 +248,17 @@ void Map::findMinPath(const Point &from, const Point &to, std::list<Direction> &
             break;
         }
 
-        // Show search details if needed
         showVisitedNodeIfNeeded(curPoint, Grid::GridType::SNAKEBODY1);
 
-        // If the goal point is found,
-        // construct the path and exit.
         if (curPoint == to) {
             constructPath(from, to, path);
             showPathIfNeeded(from, path);
             break;
         }
 
-        // Add current node to close list
         closeList.insert(curPoint);
-
-        // Get adjacent points to scan.
-        // Before traversing, randomly rearrange the adjacent
-        // points array to ensure randomness in traversing
         curPoint.getAllAdjPoint(adjPoints);
-        randomChange(adjPoints);
+        randomChange(adjPoints);  // Ensure randomly traversing
         for (const auto &adjPoint : adjPoints) {
             if (!isUnsearch(adjPoint) && closeList.find(adjPoint) == closeList.end()) {
                 SearchableGrid &adjGrid = getGrid(adjPoint);
@@ -290,42 +279,77 @@ void Map::findMaxPath(const Point &from, const Point &to, std::list<Direction> &
     if (!isInside(from) || !isInside(to)) {
         return;
     }
-
-    // Create close list
-    // The first param is the number of buckets in the hash table
-    // The second param is the hash function
     hash_table closeList(2 * getRowCount() * getColCount(), Point::hash);
-
-    // Begin searching
-    dfs(from, from, to, closeList, path);
+    dfsFindLongest(from, from, to, closeList, path);
     showPathIfNeeded(from, path);
 }
 
-void Map::dfs(const Point &n,
+void Map::dfsFindLongest(const Point &n,
               const Point &from,
               const Point &to,
               Map::hash_table &closeList,
               std::list<Direction> &path) {
-    // Add current to close list
     closeList.insert(n);
-
-    // Show search details if needed
     showVisitedNodeIfNeeded(n, Grid::GridType::SNAKEBODY1);
-
-    // Begin searching
     if (n == to) {
         constructPath(from, to, path);
     } else {
-        // Traverse adjacent points.
-        // Start with the farthest point.
+        // Start traversing with the farthest point.
         vector<Point> adjPoints(4, Point::INVALID);
         n.getAllAdjPoint(adjPoints);
         sortByH2(adjPoints, to);
         for (const auto &adj : adjPoints) {
             if (!isUnsearch(adj) && closeList.find(adj) == closeList.end()) {
-                getGrid(adj).setParent(n);  // Record path
-                dfs(adj, from, to, closeList, path);
+                getGrid(adj).setParent(n);
+                dfsFindLongest(adj, from, to, closeList, path);
             }
+        }
+    }
+}
+
+void Map::createMaze(const Point &start) {
+    if (!isInside(start)) {
+        throw std::range_error("Map.generateMaze(): The start point is not inside the map.");
+    }
+
+    auto rows = getRowCount(), cols = getColCount();
+    if (rows % 2 == 0 || cols % 2 == 0) {
+        throw std::range_error("Map.generateMaze(): The size of the map must be (odd number)*(odd number).");
+    }
+
+    if (rows < 5 || cols < 5) {
+        throw std::range_error("Map.generateMaze(): Require minimum map size: 5*5");
+    }
+
+    // Build all walls
+    for (size_type i = 2; i < rows - 1; i += 2) {
+        for (size_type j = 1; j < cols - 1; ++j) {
+            content[i][j].setType(Grid::GridType::WALL);
+        }
+    }
+    for (size_type i = 1; i < rows; i += 2) {
+        for (size_type j = 2; j < cols - 1; j += 2) {
+            content[i][j].setType(Grid::GridType::WALL);
+        }
+    }
+
+    // Break some walls to create maze
+    hash_table closeList(2 * rows *cols, Point::hash);
+    dfsBreakWalls(start, closeList);
+}
+
+void Map::dfsBreakWalls(const Point &n, Map::hash_table &closeList) {
+    closeList.insert(n);
+    vector<Point> adjWalls(4, Point::INVALID);
+    n.getAllAdjPoint(adjWalls);
+    randomChange(adjWalls);
+    for (const auto &wall : adjWalls) {
+        Direction direc = n.getDirectionTo(wall);
+        Point p = wall.getOneAdjPoint(direc);
+        if (isInside(p) && !isUnsearch(p)
+            && closeList.find(p) == closeList.end()) {
+            getGrid(wall).setType(Grid::GridType::EMPTY);  // Break one wall
+            dfsBreakWalls(p, closeList);
         }
     }
 }

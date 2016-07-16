@@ -24,7 +24,7 @@ AI:
    
 Algorithm test
 
-(The green area is scanned by the search algorithm. The red area is the result path):
+(In graph searching algorithms, the green area is scanned by the search algorithm and the red area is the result path):
 
 1. BFS
 
@@ -38,13 +38,11 @@ Algorithm test
 
    ![](img/img_DFS.gif)
 
+4. Maze generate algorithms
+
+   ![](img/img_Maze.png)
+
 ## Compile and Run
-
-Windows:
-
-	Compile and run with Visual Studio or g++.
-	
-Linux:
 
 ```bash
 $ cd src
