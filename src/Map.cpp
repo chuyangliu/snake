@@ -6,7 +6,6 @@
 using std::vector;
 using std::string;
 
-
 Map::Map(const size_type &rowCnt_, const size_type &colCnt_)
     : content(rowCnt_, vector<SearchableGrid>(colCnt_)) {
     init();
@@ -23,7 +22,6 @@ void Map::init() {
         }
     }
     // Add default walls
-	// just to add comments for do some change
     for (size_type i = 0; i < rows; ++i) {
         if (i == 0 || i == rows - 1) {  // The first and last row
             for (size_type j = 0; j < cols; ++j) {
