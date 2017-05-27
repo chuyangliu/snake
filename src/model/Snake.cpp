@@ -283,6 +283,15 @@ void Snake::findMinPath(const Pos &from, const Pos &to, list<Direction> &path) {
     }
 }
 
+void Snake::insert_path(list<Direction>::iterator &it,list<Direction> &path,Direction first_direc,Direction second_direc, Direction third_direc){
+	
+	it = path.erase(it);
+	it = path.insert(it,first_direc);
+	it = path.insert(it,second_direc);
+	it = path.insert(it,third_direc);
+	it = path.begin();
+}
+
 void Snake::findMaxPath(const Pos &from, const Pos &to, list<Direction> &path) {
     // Get the shortest path
     bool oriEnabled = map->isTestEnabled();
@@ -320,12 +329,8 @@ void Snake::findMaxPath(const Pos &from, const Pos &to, list<Direction> &path) {
                 if (map->isEmptyNotVisit(curUp) && map->isEmptyNotVisit(nextUp)) {
                     map->getPoint(curUp).setVisit(true);
                     map->getPoint(nextUp).setVisit(true);
-                    it = path.erase(it);
-                    it = path.insert(it, DOWN);
-                    it = path.insert(it, curDirec);
-                    it = path.insert(it, UP);
-                    it = path.begin();
-                    extended = true;
+                    insert_path(it,path,DOWN,curDirec,UP);
+		    extended = true;
                 } else {
                     Pos curDown = cur.getAdj(DOWN);
                     Pos nextDown = next.getAdj(DOWN);
@@ -333,11 +338,7 @@ void Snake::findMaxPath(const Pos &from, const Pos &to, list<Direction> &path) {
                     if (map->isEmptyNotVisit(curDown) && map->isEmptyNotVisit(nextDown)) {
                         map->getPoint(curDown).setVisit(true);
                         map->getPoint(nextDown).setVisit(true);
-                        it = path.erase(it);
-                        it = path.insert(it, UP);
-                        it = path.insert(it, curDirec);
-                        it = path.insert(it, DOWN);
-                        it = path.begin();
+                        insert_path(it,path,UP,curDirec,DOWN);
                         extended = true;
                     }
                 }
@@ -351,11 +352,7 @@ void Snake::findMaxPath(const Pos &from, const Pos &to, list<Direction> &path) {
                 if (map->isEmptyNotVisit(curLeft) && map->isEmptyNotVisit(nextLeft)) {
                     map->getPoint(curLeft).setVisit(true);
                     map->getPoint(nextLeft).setVisit(true);
-                    it = path.erase(it);
-                    it = path.insert(it, RIGHT);
-                    it = path.insert(it, curDirec);
-                    it = path.insert(it, LEFT);
-                    it = path.begin();
+                    insert_path(it,path,RIGHT,curDirec,LEFT);
                     extended = true;
                 } else {
                     Pos curRight = cur.getAdj(RIGHT);
@@ -364,11 +361,7 @@ void Snake::findMaxPath(const Pos &from, const Pos &to, list<Direction> &path) {
                     if (map->isEmptyNotVisit(curRight) && map->isEmptyNotVisit(nextRight)) {
                         map->getPoint(curRight).setVisit(true);
                         map->getPoint(nextRight).setVisit(true);
-                        it = path.erase(it);
-                        it = path.insert(it, LEFT);
-                        it = path.insert(it, curDirec);
-                        it = path.insert(it, RIGHT);
-                        it = path.begin();
+                        insert_path(it,path,LEFT,curDirec,RIGHT);
                         extended = true;
                     }
                 }
