@@ -118,7 +118,8 @@ void Snake::enableHamilton() {
 void Snake::decideNext() {
     if (isDead()) {
         return;
-    } else if (!map->hasFood()) {
+
+    } else if (!isDead() && !map->hasFood()) {
         direc = NONE;
         return;
     }
