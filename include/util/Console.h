@@ -44,7 +44,6 @@ public:
     @param x The x coordinate
     @param y The y coordinate
     */
-	//Set cursor position Origin extends to upper left x axis (right) y axis (down)
     static void setCursor(const int x = 0, const int y = 0);
 
     /*
@@ -62,19 +61,19 @@ public:
     console color attribute is not supported at the linux platform.
     Reference: http://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
     */
-    static void writeWithColor(const std::string &str, const ConsoleColor &consoleColor); //Write string with given color
+    static void writeWithColor(const std::string &str, const ConsoleColor &consoleColor);
 
     /*
     A cross-platform getch() method.
     Reference: http://stackoverflow.com/questions/3276546/how-to-implement-getch-function-of-c-in-linux
     */
-    static char getch(); //Input and output functions
+    static char getch();
 
     /*
     A cross-platform kbhit() method.
     Reference: http://cboard.cprogramming.com/c-programming/63166-kbhit-linux.html
     */
-    static int kbhit(); //Keyboardhit Function to check if keyboard is pressed
+    static int kbhit();
 
 private:
 #ifdef WIN32
@@ -84,14 +83,14 @@ private:
     @param color The output color
     @return      The origin console attribute
     */
-    static WORD setColor(const ConsoleColor &consoleColor); //Console output color
+    static WORD setColor(const ConsoleColor &consoleColor);
 
     /*
     Reset console output color to default. Only available in windows platform.
 
     @param attr The console attribute to restore
     */
-    static void resetColor(const WORD attr); //Set console output color default
+    static void resetColor(const WORD attr);
 #endif
 };
 
