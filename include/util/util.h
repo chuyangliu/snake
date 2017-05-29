@@ -20,16 +20,17 @@ inline void sleep(const long ms) {
 /*
 Convert an object to a std::string object.
 */
-template<typename T>
+template<typename T> //Function template definition
 std::string toString(const T &obj) {
     std::ostringstream oss;
-    oss << std::setiosflags(std::ios::fixed) << obj;
+    oss << std::setiosflags(std::ios::fixed) << obj; //Set output method - use fixed-point notation
     return oss.str();
 }
 
 /*
 Swap the values of two elements.
 */
+//Exchange two values
 template<typename T>
 void swap(T &a, T &b) {
     T tmp = a;
@@ -44,6 +45,7 @@ Return the distance of a given index relative to the origin index in an integer 
 @param x    The given index
 @param size The size of the integer cycle
 */
+//Returns the distance of the specified index (x) based on the origin index (ori)
 template<typename SizeType>
 SizeType getDistance(const SizeType ori, const SizeType x, const SizeType size) {
     return ori < x ? x - ori : (x + size) - ori;
@@ -52,6 +54,7 @@ SizeType getDistance(const SizeType ori, const SizeType x, const SizeType size) 
 /*
 Random number generator.
 */
+//Random number generation
 template<typename RandEngine = std::default_random_engine>
 class Random {
 public:
@@ -90,6 +93,7 @@ public:
     @param beg The iterator of the first element
     @param end The iterator of the element after the last element
     */
+	//Shuffle array
     template<typename RanIt>
     void shuffle(RanIt beg, RanIt end) {
         if (end - beg > 1) {
