@@ -1,3 +1,4 @@
+
 #include "model/Snake.h"
 #include "util/util.h"
 #include "GameCtrl.h"
@@ -22,6 +23,7 @@ void Snake::setMap(Map *const m) {
     map = m;
 }
 
+// This function returns the first direction in current snake's searched path 
 Direction Snake::getDirection() const {
     return direc;
 }
@@ -65,6 +67,7 @@ void Snake::testHamilton() {
     }
 }
 
+// This function is for add snake's head / body when only initialize phase 
 void Snake::addBody(const Pos &p) {
     if (bodies.size() == 0) {  // Insert a head
         map->getPoint(p).setType(Point::Type::SNAKE_HEAD);
@@ -78,6 +81,9 @@ void Snake::addBody(const Pos &p) {
     bodies.push_back(p);
 }
 
+// this function moves snake's position toward searched path direction
+// removeTail() when snake don't eat Food
+// when snake eat food, removeTail is not called, so snake's length is increased one
 void Snake::move() {
     if (isDead() || direc == NONE) {
         return;
@@ -97,6 +103,8 @@ void Snake::move() {
     map->getPoint(newHead).setType(Point::Type::SNAKE_HEAD);
 }
 
+// this function is for only virtual snake
+// this function moves all directions in the list(searched path) for simulation the path is exist
 void Snake::move(const std::list<Direction> &path) {
     for (const Direction &d : path) {
         setDirection(d);
@@ -112,6 +120,18 @@ void Snake::enableHamilton() {
     buildHamilton();
 }
 
+// This function is for deciding next snake's path when enableAI = true
+// This function's main goal is add next direction to snake instance
+// graph based search :
+// step 1 : search min path from current virtual snake position to Food
+// step 2 : move virtual snake to searched path and when the virtual snake' body is full in the map, set the first searched direction to real snake  
+// step 3 : not step2(when the virtual snake' body is full in the map), search max path from virtual snake's head to virtual snake's Tail
+//			if path is exist, return the first direction to real snake
+// step 4 : not step 3(path is exist), search max path from real snake's head to real snake's tail
+// step 5 : not step 4(path is exist), search the max path from current to Food position and set direction the first path
+// * Caution!! step 3's virtual snake and step 4's real snake's position is different, because when step 2, virtual snake is moved.
+void Snake::decideNext() {
+    if (isDead()) {
 void Snake::decideNext() {
     if (isDead()) {
         return;

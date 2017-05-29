@@ -1,3 +1,4 @@
+
 #include "GameCtrl.h"
 #include "util/util.h"
 #include <stdexcept>
@@ -11,6 +12,7 @@
 using std::string;
 using std::list;
 
+// Error statements
 const string GameCtrl::MSG_BAD_ALLOC = "Not enough memory to run the game.";
 const string GameCtrl::MSG_LOSE = "Oops! You lose!";
 const string GameCtrl::MSG_WIN = "Congratulations! You Win!";
@@ -19,6 +21,7 @@ const string GameCtrl::MAP_INFO_FILENAME = "movements.txt";
 
 GameCtrl::GameCtrl() {}
 
+// class Destroyer
 GameCtrl::~GameCtrl() {
     delete map;
     map = nullptr;
@@ -28,6 +31,8 @@ GameCtrl::~GameCtrl() {
     }
 }
 
+// Return the class instance's address
+// Return instance will be used for creating and running game in main function
 GameCtrl* GameCtrl::getInstance() {
     static GameCtrl instance;
     return &instance;
@@ -37,10 +42,16 @@ void GameCtrl::setFPS(const double fps_) {
     fps = fps_;
 }
 
+
+// set program enable AI based search to decide next point to visit
+// enableAI_(parameter) is boolean type whether the program use AI based search or not
 void GameCtrl::setEnableAI(const bool enableAI_) {
     enableAI = enableAI_;
 }
 
+
+// set program enable Hamilton search to decide next point to visit
+// enableHamilton_(parameter) is boolean type whether the program use Hamilton based search or not
 void GameCtrl::setEnableHamilton(const bool enableHamilton_) {
     enableHamilton = enableHamilton_;
 }
@@ -49,6 +60,8 @@ void GameCtrl::setMoveInterval(const long ms) {
     moveInterval = ms;
 }
 
+// set program records the snake's movement in text file
+// b(parameter) is boolean type whether the program record snake's movement or not
 void GameCtrl::setRecordMovements(const bool b) {
     recordMovements = b;
 }
@@ -65,6 +78,9 @@ void GameCtrl::setMapCol(const SizeType n) {
     mapColCnt = n;
 }
 
+// essential function to working the program. this function call init() to initialize some variables to start game
+// return 0 : successfully exit game
+// return 1 : error is occured during game is running
 int GameCtrl::run() {
     try {
         init();
@@ -83,6 +99,11 @@ void GameCtrl::sleepFPS() const {
     util::sleep((long)((1.0 / fps) * 1000));
 }
 
+// this function is called when the program is needed to end
+// msg(parameter) contains error message
+// this function use mutex lock because when a thread access critical section, other two thread must not access same crtical section.
+// ex) when draw thread is errored, and at the same time , search thread is also errored,    
+//     the first errored thread access critical section, and then search thread access critical section
 void GameCtrl::exitGame(const std::string &msg) {
     mutexExit.lock();
     if (runMainThread) {
@@ -104,6 +125,9 @@ void GameCtrl::printMsg(const std::string &msg) {
     Console::writeWithColor(msg + "\n", ConsoleColor(WHITE, BLACK, true, false));
 }
 
+// this function is for moving snake one step more closer to food
+// this function also use mutex lock because manually moving mode, 
+// user input many keys, but the process must execute move(), writeMapToFile(), CreateRandFood() one by one
 void GameCtrl::moveSnake() {
     mutexMove.lock();
     if (map->isAllBody()) {
@@ -129,6 +153,7 @@ void GameCtrl::moveSnake() {
     }
 }
 
+// this function is for writing snake's movement to text file format
 void GameCtrl::writeMapToFile() const {
     if (!movementFile) {
         return;
@@ -158,6 +183,7 @@ void GameCtrl::writeMapToFile() const {
     fwrite("\n", sizeof(char), 1, movementFile);
 }
 
+// this function is calling functions to initialize map and snake, and optionally calling initFiles()
 void GameCtrl::init() {
     Console::clear();
     initMap();
@@ -170,6 +196,7 @@ void GameCtrl::init() {
     startThreads();
 }
 
+// this function is for initialize map
 void GameCtrl::initMap() {
     if (mapRowCnt < 5 || mapColCnt < 5) {
         string msg = "GameCtrl.initMap(): Map size at least 5*5. Current size "
@@ -184,6 +211,7 @@ void GameCtrl::initMap() {
     }
 }
 
+// this function is for initialize snake and optionally call snake.hamilton search
 void GameCtrl::initSnake() {
     snake.setMap(map);
     snake.addBody(Pos(1, 3));
@@ -194,6 +222,8 @@ void GameCtrl::initSnake() {
     }
 }
 
+// this function is for initialize movement file to record snake's movement
+// initializing file's main work is write content type description to file
 void GameCtrl::initFiles() {
     movementFile = fopen(MAP_INFO_FILENAME.c_str(), "w");
     if (!movementFile) {
@@ -207,6 +237,12 @@ void GameCtrl::initFiles() {
     }
 }
 
+// this function creates three thrads which are necessary to run the game
+// the three thread is drawThread, keyboardThread, moveThread
+// drawThread's main work is draw map in console
+// keyboardThread's main work is inputing key and calling function to move snake position
+// moveThread's main work is to move snake position based on auto search methods(Hamilton, graph search, BFS)
+// runSubThread is very important thing to run program. as long as this value is true, each thread is keep running and it means no error is occured.
 void GameCtrl::startThreads() {
     runSubThread = true;
     drawThread = std::thread(&GameCtrl::draw, this);
@@ -218,7 +254,7 @@ void GameCtrl::startThreads() {
         moveThread.detach();
     }
 }
-
+// this function calls drawMapContent() function to draw Map
 void GameCtrl::draw() {
     try {
         while (runSubThread) {
@@ -229,7 +265,8 @@ void GameCtrl::draw() {
         exitGameErr(e.what());
     }
 }
-
+// this function draws Map in console according to point type
+// setCursor needs x,y parameter, but when parameter is no, the default is x,y = 0 and this function just position console's cursor to write map
 void GameCtrl::drawMapContent() const {
     Console::setCursor();
     SizeType row = map->getRowCount(), col = map->getColCount();
@@ -269,6 +306,8 @@ void GameCtrl::drawMapContent() const {
     }
 }
 
+// this function is for drawing point in test mode
+// after debugging, I notice that the code never enter the MAX_VALUE
 void GameCtrl::drawTestPoint(const Point &p, const ConsoleColor &consoleColor) const {
     string pointStr = "";
     if (p.getDist() == Point::MAX_VALUE) {
@@ -285,6 +324,7 @@ void GameCtrl::drawTestPoint(const Point &p, const ConsoleColor &consoleColor) c
     Console::writeWithColor(pointStr, consoleColor);
 }
 
+// this function is call keyboardMove function according to key
 void GameCtrl::keyboard() {
     try {
         while (runSubThread) {
@@ -319,6 +359,9 @@ void GameCtrl::keyboard() {
     }
 }
 
+// this function is for moving snake 1 step toward manual input key
+// when pause mode, snake moves toward manual input key or
+// when not pause mode and when BFS mode(not AI search mode), move snake toward input key
 void GameCtrl::keyboardMove(Snake &s, const Direction d) {
     if (pause) {
         s.setDirection(d);
@@ -332,6 +375,9 @@ void GameCtrl::keyboardMove(Snake &s, const Direction d) {
     }
 }
 
+// this function is for auto moving snake 1 step toward AI based search path
+// snake.cpp's decideNext function is only for AI based search(hamilton, graph)
+// when enableAI == False, it determine path using BFS search method. 
 void GameCtrl::autoMove() {
     try {
         while (runSubThread) {
@@ -348,12 +394,14 @@ void GameCtrl::autoMove() {
     }
 }
 
+// this function is for testing several tests such as Food creating test, searching minimum/maximum path test, search using Hamilton test
 void GameCtrl::test() {
     //testFood();
     testSearch();
     //testHamilton();
 }
 
+// this function is for creating food randomly test
 void GameCtrl::testFood() {
     SizeType cnt = 0;
     while (runMainThread && cnt++ < map->getSize()) {
@@ -363,6 +411,8 @@ void GameCtrl::testFood() {
     exitGame("testFood() finished.");
 }
 
+// this function is for searching minimum/maximum path test calling snake.testMinPath
+// you can choose BFS method with minimum path search or search maximum path using BFS method and extra extension algorithm.
 void GameCtrl::testSearch() {
     if (mapRowCnt != 20 || mapColCnt != 20) {
         throw std::range_error("GameCtrl.testSearch(): Require map size 20*20.");
@@ -404,6 +454,7 @@ void GameCtrl::testSearch() {
     exitGame(info);
 }
 
+// this function is for testing hamilton path search
 void GameCtrl::testHamilton() {
     snake.setMap(map);
     snake.addBody(Pos(1, 3));
