@@ -133,7 +133,8 @@ void GameCtrl::writeMapToFile() const {
     if (!movementFile) {
         return;
     }
-    SizeType rows = map->getRowCount(), cols = map->getColCount();
+    SizeType rows = map->getRowCount();
+    SizeType cols = map->getColCount();
     for (SizeType i = 0; i < rows; ++i) {
         for (SizeType j = 0; j < cols; ++j) {
             switch (map->getPoint(Pos(i, j)).getType()) {
