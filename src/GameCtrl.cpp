@@ -16,6 +16,7 @@ const string GameCtrl::MSG_LOSE = "Oops! You lose!";
 const string GameCtrl::MSG_WIN = "Congratulations! You Win!";
 const string GameCtrl::MSG_ESC = "Game ended.";
 const string GameCtrl::MAP_INFO_FILENAME = "movements.txt";
+int select_path=0; //Select Min Path or Max Path
 
 GameCtrl::GameCtrl() {}
 
@@ -28,8 +29,9 @@ GameCtrl::~GameCtrl() {
     }
 }
 
-GameCtrl* GameCtrl::getInstance() {
+GameCtrl* GameCtrl::getInstance(int n) {
     static GameCtrl instance;
+	select_path=n;
     return &instance;
 }
 
@@ -380,8 +382,8 @@ void GameCtrl::testSearch() {
     }
    
     Pos from(6, 7), to(14, 13);
-    snake.testMinPath(from, to, path);
-    //snake.testMaxPath(from, to, path);
+	if(select_path==0) snake.testMinPath(from, to, path);
+    else if(select_path==1) snake.testMaxPath(from, to, path);
 
     // Print path info
     string info = "Path from " + from.toString() + " to " + to.toString()
