@@ -1,5 +1,5 @@
 #include "GameCtrl.h"
-#include "util/util.h"
+#include "util.h"
 #include <stdexcept>
 #include <cstdio>
 #include <chrono>
@@ -7,6 +7,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+#pragma warning(disable:4996)
 
 using std::string;
 using std::list;
@@ -133,8 +134,7 @@ void GameCtrl::writeMapToFile() const {
     if (!movementFile) {
         return;
     }
-    SizeType rows = map->getRowCount();
-    SizeType cols = map->getColCount();
+    SizeType rows = map->getRowCount(), cols = map->getColCount();
     for (SizeType i = 0; i < rows; ++i) {
         for (SizeType j = 0; j < cols; ++j) {
             switch (map->getPoint(Pos(i, j)).getType()) {
@@ -291,16 +291,20 @@ void GameCtrl::keyboard() {
         while (runSubThread) {
             if (Console::kbhit()) {
                 switch (Console::getch()) {
-                    case 'w':
+					case 'w': 
+					case 'W':
                         keyboardMove(snake, Direction::UP);
                         break;
-                    case 'a':
+					case 'a': 
+					case 'A':
                         keyboardMove(snake, Direction::LEFT);
                         break;
-                    case 's':
+					case 's': 
+					case 'S':
                         keyboardMove(snake, Direction::DOWN);
                         break;
-                    case 'd':
+					case 'd':
+					case 'D':
                         keyboardMove(snake, Direction::RIGHT);
                         break;
                     case ' ':
