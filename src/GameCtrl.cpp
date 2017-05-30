@@ -291,20 +291,16 @@ void GameCtrl::keyboard() {
         while (runSubThread) {
             if (Console::kbhit()) {
                 switch (Console::getch()) {
-					case 'w': 
-					case 'W':
+					case 'w': case 'W':
                         keyboardMove(snake, Direction::UP);
                         break;
-					case 'a': 
-					case 'A':
+					case 'a': case 'A':
                         keyboardMove(snake, Direction::LEFT);
                         break;
-					case 's': 
-					case 'S':
+					case 's': case 'S':
                         keyboardMove(snake, Direction::DOWN);
                         break;
-					case 'd':
-					case 'D':
+					case 'd': case 'D':
                         keyboardMove(snake, Direction::RIGHT);
                         break;
                     case ' ':
