@@ -5,7 +5,7 @@ using std::vector;
 using std::string;
 using std::list;
 
-Map::Map(const SizeType rowCnt_, const SizeType colCnt_) //Draw a wall
+Map::Map(const SizeType rowCnt_, const SizeType colCnt_)
     : content(rowCnt_, vector<Point>(colCnt_)) {
     size = (rowCnt_ - 2) * (colCnt_ - 2);
     // Add boundary walls

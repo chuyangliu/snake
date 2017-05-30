@@ -21,7 +21,6 @@ public:
     void setX(const SizeType x_);
     void setY(const SizeType y_);
 
-	//friend : Functions that give external functions permission to access private members of a class
     friend Pos operator+(const Pos &a, const Pos &b);
     friend bool operator==(const Pos &a, const Pos &b);
     friend bool operator!=(const Pos &a, const Pos &b);

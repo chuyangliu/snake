@@ -1,7 +1,6 @@
 #include "GameCtrl.h"
 
 int main() {
-	//Create game object
     auto game = GameCtrl::getInstance();
 
     // Set FPS. Default is 60.0
