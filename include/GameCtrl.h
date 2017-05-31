@@ -20,7 +20,7 @@ public:
     /*
     Return the only instance.
     */
-    static GameCtrl* getInstance();
+    static GameCtrl* getInstance(int n);
 
     /*
     Game configuration setters.
