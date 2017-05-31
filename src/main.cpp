@@ -49,6 +49,7 @@ int main() {
 	scanf("%d",&menu);
 	if(menu==1) //Snake Game
 	{
+
     auto game = GameCtrl::getInstance(0);
 
     // Set FPS. Default is 60.0
