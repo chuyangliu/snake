@@ -235,7 +235,8 @@ void GameCtrl::draw() {
 
 void GameCtrl::drawMapContent() const {
     Console::setCursor();
-    SizeType row = map->getRowCount(), col = map->getColCount();
+    SizeType row = map->getRowCount();
+	SizeType col = map->getColCount();
     for (SizeType i = 0; i < row; ++i) {
         for (SizeType j = 0; j < col; ++j) {
             const Point &point = map->getPoint(Pos(i, j));
@@ -381,7 +382,8 @@ void GameCtrl::testSearch() {
         map->getPoint(Pos(15, i)).setType(Point::Type::WALL);  // horizontal #2
     }
    
-    Pos from(6, 7), to(14, 13);
+    Pos from(6, 7);
+	Pos to(14, 13);
 	if(select_path==0) snake.testMinPath(from, to, path);
     else if(select_path==1) snake.testMaxPath(from, to, path);
 
