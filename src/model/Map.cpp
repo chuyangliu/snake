@@ -9,7 +9,8 @@ Map::Map(const SizeType rowCnt_, const SizeType colCnt_) //Draw a wall
     : content(rowCnt_, vector<Point>(colCnt_)) {
     size = (rowCnt_ - 2) * (colCnt_ - 2);
     // Add boundary walls
-    SizeType row = getRowCount(), col = getColCount();
+    SizeType row = getRowCount();
+	SizeType col = getColCount();
     for (SizeType i = 0; i < row; ++i) {
         if (i == 0 || i == row - 1) {  // The first and last row
             for (SizeType j = 0; j < col; ++j) {
@@ -73,7 +74,8 @@ bool Map::isSafe(const Pos &p) const {
 }
 
 bool Map::isAllBody() const {
-    SizeType row = getRowCount(), col = getColCount();
+    SizeType row = getRowCount();
+	SizeType col = getColCount();
     for (SizeType i = 1; i < row - 1; ++i) {
         for (SizeType j = 1; j < col - 1; ++j) {
             Point::Type type = content[i][j].getType();
@@ -116,8 +118,10 @@ const Pos& Map::getFood() const {
 }
 
 Map::SizeType Map::distance(const Pos &from, const Pos &to) {
-    SizeType fromX = from.getX(), toX = to.getX();
-    SizeType fromY = from.getY(), toY = to.getY();
+    SizeType fromX = from.getX();
+	SizeType toX = to.getX();
+    SizeType fromY = from.getY();
+	SizeType toY = to.getY();
     SizeType dx = fromX > toX ? fromX - toX : toX - fromX;
     SizeType dy = fromY > toY ? fromY - toY : toY - fromY;
     return dx + dy;
@@ -147,7 +151,8 @@ void Map::showPath(const Pos &start, const list<Direction> &path) {
 
 vector<Pos> Map::getEmptyPoints() const {
     vector<Pos> points;
-    SizeType row = getRowCount(), col = getColCount();
+    SizeType row = getRowCount();
+	SizeTYPE col = getColCount();
     for (SizeType i = 1; i < row - 1; ++i) {
         for (SizeType j = 1; j < col - 1; ++j) {
             if (content[i][j].getType() == Point::Type::EMPTY) {

@@ -116,7 +116,8 @@ void Console::write(const std::string &str) {
 
 void Console::writeWithColor(const std::string &str, const ConsoleColor &consoleColor) {
 #ifdef LINUX_OR_APPLE
-    int fore = -1, back = -1;
+    int fore = -1;
+	int back = -1;
     switch (consoleColor.backColor) {
         case WHITE:
             back = 47; break;
@@ -171,7 +172,8 @@ void Console::writeWithColor(const std::string &str, const ConsoleColor &console
 
 char Console::getch() {
 #ifdef LINUX_OR_APPLE
-    struct termios oldattr, newattr;
+    struct termios oldattr;
+	struct termios newattr;
     int ch;
     tcgetattr(STDIN_FILENO, &oldattr); //Terminal attributes functions
     newattr = oldattr;
@@ -189,7 +191,8 @@ char Console::getch() {
 
 int Console::kbhit() {
 #ifdef LINUX_OR_APPLE
-    struct termios oldt, newt;
+    struct termios oldt;
+	struct termios newt;
     int ch;
     int oldf;
 

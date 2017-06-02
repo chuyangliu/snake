@@ -58,7 +58,8 @@ void Snake::testMaxPath(const Pos &from, const Pos &to, std::list<Direction> &pa
 void Snake::testHamilton() {
     map->setTestEnabled(true);
     enableHamilton();
-    SizeType row = map->getRowCount(), col = map->getColCount();
+    SizeType row = map->getRowCount();
+	SizeType col = map->getColCount();
     for (SizeType i = 1; i < row - 1; ++i) {
         for (SizeType j = 1; j < col - 1; ++j) {
             Pos pos = Pos(i, j);
@@ -147,7 +148,8 @@ void Snake::decideNext() {
     if (hamiltonEnabled) {  // AI based on the Hamiltonian cycle
 
         SizeType size = map->getSize();
-        Pos head = getHead(), tail = getTail();
+        Pos head = getHead();
+		Pos tail = getTail();
         Point::ValueType tailIndex = map->getPoint(tail).getIndex();
         Point::ValueType headIndex = map->getPoint(head).getIndex();
         // Try to take shortcuts when the snake is not long enough
@@ -181,7 +183,8 @@ void Snake::decideNext() {
 
     } else {  // AI based on graph search
 
-        list<Direction> pathToFood, pathToTail;
+        list<Direction> pathToFood; 
+		list<Direction> pathToTail;
         // Create a virtual snake
         Map tmpMap = *map;
         Snake tmpSnake(*this);
@@ -265,7 +268,8 @@ void Snake::findPathTo(const int pathType, const Pos &goal, list<Direction> &pat
 void Snake::findMinPath(const Pos &from, const Pos &to, list<Direction> &path) {
     // Init
 	//Matrix (Node) Initialization
-    SizeType row = map->getRowCount(), col = map->getColCount();
+    SizeType row = map->getRowCount();
+	SizeType col = map->getColCount();
     for (SizeType i = 1; i < row - 1; ++i) {
         for (SizeType j = 1; j < col - 1; ++j) {
             map->getPoint(Pos(i, j)).setDist(Point::MAX_VALUE);
@@ -316,7 +320,8 @@ void Snake::findMaxPath(const Pos &from, const Pos &to, list<Direction> &path) {
     findMinPath(from, to, path);
     map->setTestEnabled(oriEnabled); //Enable testing for the shortest path.
     // Init
-    SizeType row = map->getRowCount(), col = map->getColCount();
+    SizeType row = map->getRowCount();
+	SizeType col = map->getColCount();
     for (SizeType i = 1; i < row - 1; ++i) { //Initialize map size and current location
         for (SizeType j = 1; j < col - 1; ++j) {
             map->getPoint(Pos(i, j)).setVisit(false); //Initialize function to know whether you visited
@@ -411,7 +416,8 @@ void Snake::findMaxPath(const Pos &from, const Pos &to, list<Direction> &path) {
 }
 
 void Snake::buildPath(const Pos &from, const Pos &to, list<Direction> &path) const {
-    Pos tmp = to, parent;
+    Pos tmp = to;
+	Pos parent;
     while (tmp != from) {
         parent = map->getPoint(tmp).getParent();
         path.push_front(parent.getDirectionTo(tmp));
