@@ -62,7 +62,7 @@ int main() {
 
     // Set the interval time between each snake's movement. Default is 30 ms.
     // To play classic snake game, set to 150 ms is perfect.
-    game->setMoveInterval(30);
+    game->setMoveInterval(150);
 
     // Set whether to record the snake's movements to file. Default is true.
     // The movements will be written to a file named "movements.txt".
@@ -73,8 +73,8 @@ int main() {
     game->setRunTest(false);
 
     // Set map's size(including boundaries). Default is 10*10. Minimum is 5*5.
-    game->setMapRow(10);
-    game->setMapCol(10);
+    game->setMapRow(20);
+    game->setMapCol(20);
 
     return game->run();
 	}
@@ -84,12 +84,12 @@ int main() {
     game->setFPS(60.0);
     game->setEnableAI(false);
     game->setEnableHamilton(true);
-    game->setMoveInterval(30);
+    game->setMoveInterval(150);
     game->setRecordMovements(true);
     game->setRunTest(true);
 
-    game->setMapRow(10);
-    game->setMapCol(10);
+    game->setMapRow(20);
+    game->setMapCol(20);
 
     return game->run();
 	}
@@ -99,12 +99,12 @@ int main() {
     game->setFPS(60.0);
     game->setEnableAI(false);
     game->setEnableHamilton(true);
-    game->setMoveInterval(30);
+    game->setMoveInterval(150);
     game->setRecordMovements(true);
     game->setRunTest(true);
 
-    game->setMapRow(10);
-    game->setMapCol(10);
+    game->setMapRow(20);
+    game->setMapCol(20);
 
     return game->run();
 	}
@@ -114,12 +114,12 @@ int main() {
     game->setFPS(60.0);
     game->setEnableAI(true);
     game->setEnableHamilton(true);
-    game->setMoveInterval(30);
+    game->setMoveInterval(150);
     game->setRecordMovements(true);
     game->setRunTest(false);
 
-    game->setMapRow(10);
-    game->setMapCol(10);
+    game->setMapRow(20);
+    game->setMapCol(20);
 
     return game->run();
 	}
@@ -129,12 +129,12 @@ int main() {
     game->setFPS(60.0);
     game->setEnableAI(true);
     game->setEnableHamilton(false);
-    game->setMoveInterval(30);
+    game->setMoveInterval(150);
     game->setRecordMovements(true);
     game->setRunTest(false);
 
-    game->setMapRow(10);
-    game->setMapCol(10);
+    game->setMapRow(20);
+    game->setMapCol(20);
 
     return game->run();
 	}
