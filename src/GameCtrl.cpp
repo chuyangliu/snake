@@ -1,4 +1,3 @@
-
 #include "GameCtrl.h"
 #include "util/util.h"
 #include <stdexcept>
