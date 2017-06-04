@@ -152,7 +152,7 @@ void Map::showPath(const Pos &start, const list<Direction> &path) {
 vector<Pos> Map::getEmptyPoints() const {
     vector<Pos> points;
     SizeType row = getRowCount();
-	SizeTYPE col = getColCount();
+	SizeType col = getColCount();
     for (SizeType i = 1; i < row - 1; ++i) {
         for (SizeType j = 1; j < col - 1; ++j) {
             if (content[i][j].getType() == Point::Type::EMPTY) {
