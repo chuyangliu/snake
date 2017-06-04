@@ -32,9 +32,7 @@ GameCtrl::~GameCtrl() {
 }
 
 // Return the class instance's address
-// Return instance will be used for creating and running game in main function
-GameCtrl* GameCtrl::getInstance() {
-=======
+// Return instance will be used for creating and running game in main functio
 GameCtrl* GameCtrl::getInstance(int n) {
 
     static GameCtrl instance;
@@ -45,7 +43,6 @@ GameCtrl* GameCtrl::getInstance(int n) {
 void GameCtrl::setFPS(const double fps_) {
     fps = fps_;
 }
-
 
 // set program enable AI based search to decide next point to visit
 // enableAI_(parameter) is boolean type whether the program use AI based search or not
