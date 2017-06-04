@@ -111,6 +111,7 @@ private:
     @param to   The ending position
     @param path The result will be stored in this field
     */
+    void insert_path(std::list<Direction>::iterator &it,std::list<Direction> &path,Direction first_direc,Direction second_direc,Direction third_direc);
     void findMaxPath(const Pos &from, const Pos &to, std::list<Direction> &path);
 
     /*
