@@ -32,7 +32,7 @@ public:
     bool isTestEnabled() const;
 
     /*
-    Check the state of the map.
+    Check the state of the map-Related to points
     */
     bool isInside(const Pos &p) const;
     bool isEmpty(const Pos &p) const;

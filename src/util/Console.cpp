@@ -18,6 +18,7 @@ ConsoleColor::ConsoleColor(const ConsoleColorType foreColor_,
 
 #ifdef WIN32
 
+//Set console color
 WORD Console::setColor(const ConsoleColor &consoleColor) {
     WORD color = 0;
     switch (consoleColor.foreColor) {
@@ -73,7 +74,7 @@ WORD Console::setColor(const ConsoleColor &consoleColor) {
 
     // Set new attribute
     HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hout, color);
+    SetConsoleTextAttribute(hout, color); //A function that changes the attributes of characters displayed in the console window
 
     // Return the origin attribute
     return originAttr;
@@ -93,7 +94,7 @@ void Console::setCursor(const int x, const int y) {
     COORD coord;
     coord.X = x;
     coord.Y = y;
-    SetConsoleCursorPosition(hout, coord);
+    SetConsoleCursorPosition(hout, coord); //Functions to change the cursor position of the console 
 #else
     // Other platforms
 #endif
@@ -115,7 +116,8 @@ void Console::write(const std::string &str) {
 
 void Console::writeWithColor(const std::string &str, const ConsoleColor &consoleColor) {
 #ifdef LINUX_OR_APPLE
-    int fore = -1, back = -1;
+    int fore = -1;
+	int back = -1;
     switch (consoleColor.backColor) {
         case WHITE:
             back = 47; break;
@@ -170,9 +172,10 @@ void Console::writeWithColor(const std::string &str, const ConsoleColor &console
 
 char Console::getch() {
 #ifdef LINUX_OR_APPLE
-    struct termios oldattr, newattr;
+    struct termios oldattr;
+	struct termios newattr;
     int ch;
-    tcgetattr(STDIN_FILENO, &oldattr);
+    tcgetattr(STDIN_FILENO, &oldattr); //Terminal attributes functions
     newattr = oldattr;
     newattr.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
@@ -188,7 +191,8 @@ char Console::getch() {
 
 int Console::kbhit() {
 #ifdef LINUX_OR_APPLE
-    struct termios oldt, newt;
+    struct termios oldt;
+	struct termios newt;
     int ch;
     int oldf;
 
@@ -199,12 +203,12 @@ int Console::kbhit() {
     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
 
-    ch = getchar();
+    ch = getchar(); //When the keyboard is pressed
 
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     fcntl(STDIN_FILENO, F_SETFL, oldf);
 
-    if (ch != EOF) {
+    if (ch != EOF) { //When the keyboard is not pressed
         ungetc(ch, stdin);
         return 1;
     }
