@@ -134,8 +134,7 @@ void Snake::enableHamilton() {
 // step 4 : not step 3(path is exist), search max path from real snake's head to real snake's tail
 // step 5 : not step 4(path is exist), search the max path from current to Food position and set direction the first path
 // * Caution!! step 3's virtual snake and step 4's real snake's position is different, because when step 2, virtual snake is moved.
-void Snake::decideNext() {
-    if (isDead()) {
+
 void Snake::decideNext() {
     if (isDead()) {
         return;
