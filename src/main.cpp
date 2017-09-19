@@ -3,7 +3,7 @@
 int main() {
     auto game = GameCtrl::getInstance();
 
-    // Set FPS. Default is 60.0
+    // Set FPS. Default is 60.0     FPS---->Frame Per Second
     game->setFPS(60.0);
 
     // Set whether to enable the snake AI. Default is true.
