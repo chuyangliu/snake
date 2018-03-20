@@ -14,9 +14,8 @@
     - [DQN Solver](#dqn-solver)
         - [State Vector](#state-vector)
         - [Actions](#actions)
-        - [Comparisons of Different Algorithms](#comparisons-of-different-algorithms)
+        - [Comparisons](#comparisons)
         - [Network Structure](#network-structure)
-        - [Usage](#usage)
 - [References](#references)
 
 <!-- /TOC -->
@@ -117,8 +116,8 @@ Theoretically, using relative direction is more efficient since the game map is 
 
 From the image above we can figure out that using relative direction is better than absolute direction because the red line and the orange line are higher than the green line and the blue line, respectively. Moreover, local state vector is conducive to the training performance of the agent, as the red and the green line are higher than the orange and the blue line.
 
-<a id="markdown-comparisons-of-different-algorithms" name="comparisons-of-different-algorithms"></a>
-#### Comparisons of Different Algorithms
+<a id="markdown-comparisons" name="comparisons"></a>
+#### Comparisons
 
 The three optimization algorithms can be combined to optimize DQN since they are from three different perspectives. There are 8 different combinations in total and the performance are shown below (3000000 iterations, all trained with global and local state in relative direction):
 
@@ -129,8 +128,7 @@ Among the 8 combinations, "DQN + Prioritized + Duel" achieves the best performan
 <a id="markdown-network-structure" name="network-structure"></a>
 #### Network Structure
 
-<a id="markdown-usage" name="usage"></a>
-#### Usage
+We use [TensorBoard][tensorboard] to show [the network structure][net-struct] (support only Chrome and Firefox).
 
 <a id="markdown-references" name="references"></a>
 ## References
@@ -145,6 +143,8 @@ Among the 8 combinations, "DQN + Prioritized + Duel" achieves the best performan
 [wiki-bfs]: https://en.wikipedia.org/wiki/Breadth-first_search
 [wiki-longest-path]: https://en.wikipedia.org/wiki/Longest_path_problem
 
+[tensorboard]: https://github.com/tensorflow/tensorboard
+
 [src-basesolver]: ../snake/solver/base.py
 [src-pathsolver]: ../snake/solver/path.py
 [src-greedysolver]: ../snake/solver/greedy.py
@@ -158,6 +158,8 @@ Among the 8 combinations, "DQN + Prioritized + Duel" achieves the best performan
 
 [img-dqn-4-legends]: ./images/graph_dqn_4_legends.png
 [img-dqn-8-legends]: ./images/graph_dqn_8_legends.png
+
+[net-struct]: http://chuyangliu.com/assets/data/snake_dqn_net.html
 
 [ref-shortcuts]: https://johnflux.com/2015/05/02/nokia-6110-part-3-algorithms/
 [ref-dqn]: https://www.nature.com/articles/nature14236
