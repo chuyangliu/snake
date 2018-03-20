@@ -5,7 +5,8 @@
 """Unit tests for class Map."""
 
 import pytest
-from snake.base import Pos, PointType, Map
+
+from snake.base import Map, PointType, Pos
 
 
 def test_init():
