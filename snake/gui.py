@@ -40,6 +40,7 @@ class GameWindow(tk.Tk):
                 game_loop()
             self._update_contents()
             self.after(self._conf.interval_draw, cb)
+
         self.after(100, cb)
         self.mainloop()
 
@@ -52,7 +53,6 @@ class GameWindow(tk.Tk):
         self._canvas.pack(side=tk.LEFT)
 
         if self._conf.show_info_panel:
-
             self._info_var = tk.StringVar()
 
             frm = tk.Frame(self, bg=self._conf.color_bg)
@@ -141,9 +141,9 @@ class GameWindow(tk.Tk):
             status_str = self._conf.info_status[0]
 
         self._info_var.set(self._conf.info_str %
-                            (status_str,
-                             self._game.episode, self._snake.steps,
-                             self._snake.len(), self._map.capacity))
+                           (status_str,
+                            self._game.episode, self._snake.steps,
+                            self._snake.len(), self._map.capacity))
 
     def _draw_map_contents(self):
         for i in range(self._map.num_rows - 2):

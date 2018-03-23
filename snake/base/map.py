@@ -31,7 +31,7 @@ class Map:
         for i in range(self._num_rows):
             for j in range(self._num_cols):
                 if i == 0 or i == self._num_rows - 1 or \
-                   j == 0 or j == self._num_cols - 1:
+                        j == 0 or j == self._num_cols - 1:
                     self._content[i][j].type = PointType.WALL
                 else:
                     self._content[i][j].type = PointType.EMPTY
