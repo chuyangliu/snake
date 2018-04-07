@@ -23,8 +23,8 @@ class Memory:
 
     def sample(self, num_samples, beta):
         batch = [None] * num_samples
-        IS_weights = np.zeros((num_samples, ))  # Importance-sampling (IS) weights
-        tree_indices = np.zeros((num_samples, ), dtype=np.int32)
+        IS_weights = np.zeros((num_samples,))  # Importance-sampling (IS) weights
+        tree_indices = np.zeros((num_samples,), dtype=np.int32)
 
         len_seg = self._tree.sum() / num_samples
         min_prob = self._tree.min_leaf() / self._tree.sum()

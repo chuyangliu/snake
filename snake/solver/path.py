@@ -17,6 +17,7 @@ class _TableCell:
     def __str__(self):
         return "{ dist: %d  parent: %s  visit: %d }" % \
                (self.dist, str(self.parent), self.visit)
+
     __repr__ = __str__
 
     def reset(self):

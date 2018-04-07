@@ -15,6 +15,7 @@ class _TableCell:
     def __str__(self):
         return "{ idx: %d  direc: %s }" % \
                (self.idx, self.direc)
+
     __repr__ = __str__
 
     def reset(self):
@@ -32,7 +33,7 @@ class HamiltonSolver(BaseSolver):
         self._shortcuts = shortcuts
         self._path_solver = PathSolver(snake)
         self._table = [[_TableCell() for _ in range(snake.map.num_cols)]
-                        for _ in range(snake.map.num_rows)]
+                       for _ in range(snake.map.num_rows)]
         self._build_cycle()
 
     @property

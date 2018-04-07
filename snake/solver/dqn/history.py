@@ -13,7 +13,6 @@ _DIR_LOG = "logs"
 
 
 class History:
-
     PATH_DATA = os.path.join(_DIR_LOG, "history-%s-%d-%d.npy")
 
     def __init__(self, num_avg):
@@ -65,7 +64,7 @@ class History:
         self._history_min_reward.append(min_reward)
         self._history_max_reward.append(max_reward)
 
-        avg_len, min_len, max_len =[self._max_avg_len] * 3
+        avg_len, min_len, max_len = [self._max_avg_len] * 3
         if self._history_len:
             chunks = self._history_len[-self._NUM_AVG:]
             avg_len = np.mean(chunks)

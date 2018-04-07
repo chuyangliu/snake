@@ -27,6 +27,7 @@ class PointType(Enum):
 
 class Point:
     """Point on the game map."""
+
     def __init__(self):
         self._type = PointType.EMPTY
 

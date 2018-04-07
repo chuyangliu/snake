@@ -21,21 +21,20 @@ _DIR_LOG = "logs"
 
 
 class DQNSolver(BaseSolver):
-
     PATH_VAR = os.path.join(_DIR_LOG, "solver-var-%d.json")
     PATH_NET = os.path.join(_DIR_LOG, "solver-net-%d")
 
     def __init__(self, snake):
         super().__init__(snake)
 
-        self._USE_RELATIVE = True        # Whether to use relative actions
-        self._USE_VISUAL_ONLY = False    # Whether to use visual state only
-        self._USE_DDQN = False           # Whether to use double dqn
-        self._USE_DUELING = True         # Whether to use dueling network
+        self._USE_RELATIVE = True  # Whether to use relative actions
+        self._USE_VISUAL_ONLY = False  # Whether to use visual state only
+        self._USE_DDQN = False  # Whether to use double dqn
+        self._USE_DUELING = True  # Whether to use dueling network
 
-        self._EXPLOIT_STEP = 1000000     # Steps that epsilon decreases
-        self._MAX_LEARN_STEP = 3000000   # Maximum learning steps
-        self._RESTORE_STEP = 0           # Which learning step to restore (0 means not restore)
+        self._EXPLOIT_STEP = 1000000  # Steps that epsilon decreases
+        self._MAX_LEARN_STEP = 3000000  # Maximum learning steps
+        self._RESTORE_STEP = 0  # Which learning step to restore (0 means not restore)
 
         # Rewards
         self._RWD_EMPTY = -0.005
@@ -51,24 +50,24 @@ class DQNSolver(BaseSolver):
         self._EPSILON_MIN = 0.01
         self._EPSILON_DEC = (self._EPSILON_MAX - self._EPSILON_MIN) / self._EXPLOIT_STEP
 
-        self._LR = 1e-6             # Learning rate
-        self._MOMENTUM = 0.95       # SGD momentum
-        self._GAMMA = 0.99          # Reward discount
-        self._LEAKY_ALPHA = 0.01    # Leaky relu slope
+        self._LR = 1e-6  # Learning rate
+        self._MOMENTUM = 0.95  # SGD momentum
+        self._GAMMA = 0.99  # Reward discount
+        self._LEAKY_ALPHA = 0.01  # Leaky relu slope
 
-        self._TD_UPPER = 1.0        # TD-error clip upper bound
-        self._TD_LOWER = -1.0       # TD-error clip lower bound
+        self._TD_UPPER = 1.0  # TD-error clip upper bound
+        self._TD_LOWER = -1.0  # TD-error clip lower bound
 
-        self._PRI_EPSILON = 0.001   # Small positive value to avoid zero priority
-        self._ALPHA = 0.6           # How much prioritization to use
-        self._BETA_MIN = 0.4        # How much to compensate for the non-uniform probabilities
+        self._PRI_EPSILON = 0.001  # Small positive value to avoid zero priority
+        self._ALPHA = 0.6  # How much prioritization to use
+        self._BETA_MIN = 0.4  # How much to compensate for the non-uniform probabilities
         self._BETA_INC = (1.0 - self._BETA_MIN) / self._EXPLOIT_STEP
 
         # Frequency
-        self._FREQ_LEARN = 4        # Number of snake steps
+        self._FREQ_LEARN = 4  # Number of snake steps
         self._FREQ_REPLACE = 10000  # Learning steps
-        self._FREQ_LOG = 500        # Learning steps
-        self._FREQ_SAVE = 20000     # Learning steps
+        self._FREQ_LOG = 500  # Learning steps
+        self._FREQ_SAVE = 20000  # Learning steps
 
         self._HISTORY_NUM_AVG = 50  # How many latest history episodes to compute average
 
@@ -183,7 +182,7 @@ class DQNSolver(BaseSolver):
                 max_actions = tf.argmax(q_nxt_all, axis=1, output_type=tf.int32)
             q_nxt = self._filter_actions(q_nxt_all, max_actions)
             q_target = self._reward + self._GAMMA * q_nxt * \
-                (1.0 - tf.cast(self._done, tf.float32))
+                       (1.0 - tf.cast(self._done, tf.float32))
             q_target = tf.stop_gradient(q_target)
 
         with tf.variable_scope("loss"):
@@ -418,11 +417,11 @@ class DQNSolver(BaseSolver):
                 elif t == PointType.FOOD:
                     visual_state[i - 1][j - 1][1] = 1
                 elif t == PointType.HEAD_L or t == PointType.HEAD_U or \
-                     t == PointType.HEAD_R or t == PointType.HEAD_D:
+                        t == PointType.HEAD_R or t == PointType.HEAD_D:
                     visual_state[i - 1][j - 1][2] = 1
-                elif t == PointType.BODY_LU  or t == PointType.BODY_UR or \
-                     t == PointType.BODY_RD  or t == PointType.BODY_DL or \
-                     t == PointType.BODY_HOR or t == PointType.BODY_VER:
+                elif t == PointType.BODY_LU or t == PointType.BODY_UR or \
+                        t == PointType.BODY_RD or t == PointType.BODY_DL or \
+                        t == PointType.BODY_HOR or t == PointType.BODY_VER:
                     visual_state[i - 1][j - 1][3] = 1
                 else:
                     raise ValueError("Unsupported PointType: {}".format(t))
