@@ -13,7 +13,7 @@
     - [State Vector](#state-vector)
     - [Actions](#actions)
     - [Comparisons](#comparisons)
-    - [Network Structure](#network-structure)
+    - [Computation Graph](#computation-graph)
 - [References](#references)
 
 ## Overview
@@ -108,9 +108,15 @@ The three optimization algorithms can be combined to optimize DQN since they are
 
 Among the 8 combinations, "DQN + Prioritized + Duel" achieves the best performance because it receives the highest average snake length. Comparing to natural DQN, not only does it gets higher average snake length, but also lower average snake step, indicating that the snake agent trained by "DQN + Prioritized + Duel" is more efficient in consuming food.
 
-#### Network Structure
+#### Computation Graph
 
-The network structure is available [here][net-struct].
+We use [TensorBorad][doc-tensorboard] to show the whole computation graph for DQN Solver:
+
+![][img-dqn-compute]
+
+In the graph, `eval_net` and `target_net` are two convolutional neural networks with the same architecture:
+
+![][img-dqn-net]
 
 ## References
 
@@ -123,6 +129,8 @@ The network structure is available [here][net-struct].
 
 [wiki-bfs]: https://en.wikipedia.org/wiki/Breadth-first_search
 [wiki-longest-path]: https://en.wikipedia.org/wiki/Longest_path_problem
+
+[doc-tensorboard]: https://www.tensorflow.org/programmers_guide/summaries_and_tensorboard
 
 [src-basesolver]: ../snake/solver/base.py
 [src-pathsolver]: ../snake/solver/path.py
@@ -138,7 +146,8 @@ The network structure is available [here][net-struct].
 [img-dqn-4-legends]: ./images/graph_dqn_4_legends.png
 [img-dqn-8-legends]: ./images/graph_dqn_8_legends.png
 
-[net-struct]: http://chuyangliu.com/others/snake-net.html
+[img-dqn-compute]: ./images/dqn_compute.png
+[img-dqn-net]: ./images/dqn_net.png
 
 [ref-shortcuts]: https://johnflux.com/2015/05/02/nokia-6110-part-3-algorithms/
 [ref-dqn]: https://www.nature.com/articles/nature14236
