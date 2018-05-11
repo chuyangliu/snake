@@ -4,7 +4,7 @@
 
 This project focuses on the artificial intelligence of the [Snake][wiki-snake] game. The snake's goal is to eat the food continuously and fill the map with its bodies ASAP. The [old version][snake-proj-old] of this project is written in C++. Now it has been rewritten using Python for a user-friendly GUI and the simplicity in the implementations of algorithms.
 
-***[Algorithm Details >][doc-algorithms]***
+***[Algorithms >][doc-algorithms]***
 
 ## Experiments
 
