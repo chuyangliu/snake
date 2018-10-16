@@ -3,7 +3,7 @@
 # pylint: disable=C0103,C0111
 
 """Unit tests for class Pos."""
-
+import pytest
 from snake.base import Direc, Pos
 
 
@@ -37,25 +37,15 @@ def test_dist():
     assert Pos.manhattan_dist(p1, p2) == 27
 
 
-def test_adj():
+def test_all_adj():
     p = Pos(0, 0)
-    adjs = p.all_adj()
-    assert len(adjs) == 4
-    hit = [False] * 4
-    assert hit.count(False) == 4
-    for adj in adjs:
-        if adj == Pos(-1, 0):
-            assert p.direc_to(adj) == Direc.UP
-            hit[0] = True
-        elif adj == Pos(1, 0):
-            assert p.direc_to(adj) == Direc.DOWN
-            hit[1] = True
-        elif adj == Pos(0, 1):
-            assert p.direc_to(adj) == Direc.RIGHT
-            hit[2] = True
-        elif adj == Pos(0, -1):
-            assert p.direc_to(adj) == Direc.LEFT
-            hit[3] = True
-        else:
-            raise ValueError("error adj Pos")
-    assert hit.count(False) == 0
+    directions = set(map(p.direc_to, p.all_adj()))
+    assert directions == set(Direc.valid())
+
+
+@pytest.mark.parametrize("direc", Direc.valid())
+def test_bijection_adj_and_direc_to(direc):
+    pos = Pos(10, 10)
+    adj_pos = pos.adj(direc)
+    direc_adj_to_pos = pos.direc_to(adj_pos)
+    assert direc == direc_adj_to_pos

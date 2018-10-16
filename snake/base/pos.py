@@ -14,34 +14,29 @@ class Pos:
     with x-axis extends downward and y-axis extends rightward.
 
     """
+
     def __init__(self, x=0, y=0):
-        self._x = x
-        self._y = y
+        self.x = x
+        self.y = y
 
     def __str__(self):
-        return 'Pos(%d,%d)' % (self._x, self._y)
+        return 'Pos(%d,%d)' % (self.x, self.y)
     __repr__ = __str__
 
     def __eq__(self, other):
-        if isinstance(self, other.__class__):
-            return self._x == other.x and self._y == other.y
-        return NotImplemented
+        return self.x == other.x and self.y == other.y
 
     def __pos__(self):
-        return Pos(self._x, self._y)
+        return Pos(self.x, self.y)
 
     def __neg__(self):
-        return Pos(-self._x, -self._y)
+        return Pos(-self.x, -self.y)
 
     def __add__(self, other):
-        if isinstance(self, other.__class__):
-            return Pos(self._x + other.x, self._y + other.y)
-        return NotImplemented
+        return Pos(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other):
-        if isinstance(self, other.__class__):
-            return self + (-other)
-        return NotImplemented
+        return self + (-other)
 
     def __hash__(self):
         return hash((self.x, self.y))
@@ -52,53 +47,26 @@ class Pos:
 
     def direc_to(self, adj_pos):
         """Return the direction of an adjacent Pos relative to self."""
-        if self._x == adj_pos.x:
-            diff = self._y - adj_pos.y
-            if diff == 1:
-                return Direc.LEFT
-            elif diff == -1:
-                return Direc.RIGHT
-        elif self._y == adj_pos.y:
-            diff = self._x - adj_pos.x
-            if diff == 1:
-                return Direc.UP
-            elif diff == -1:
-                return Direc.DOWN
-        return Direc.NONE
+        adj_diff_to_dir = {adj_diff: dir_ for dir_, adj_diff
+                           in _dir_and_adj_diff}
+        real_diff = adj_pos - self
+        return adj_diff_to_dir.get(real_diff, Direc.NONE)
 
     def adj(self, direc):
         """Return the adjacent Pos in a given direction."""
-        if direc == Direc.LEFT:
-            return Pos(self._x, self._y - 1)
-        elif direc == Direc.RIGHT:
-            return Pos(self._x, self._y + 1)
-        elif direc == Direc.UP:
-            return Pos(self._x - 1, self._y)
-        elif direc == Direc.DOWN:
-            return Pos(self._x + 1, self._y)
-        else:
-            return None
+        dir_to_adj_diff = dict(_dir_and_adj_diff)
+        adj_diff = dir_to_adj_diff.get(direc, None)
+        if adj_diff is not None:
+            return self + adj_diff
 
     def all_adj(self):
         """Return a list of all the adjacent Pos."""
-        adjs = []
-        for direc in Direc:
-            if direc != Direc.NONE:
-                adjs.append(self.adj(direc))
-        return adjs
+        return list(map(self.adj, Direc.valid()))
 
-    @property
-    def x(self):
-        return self._x
 
-    @x.setter
-    def x(self, val):
-        self._x = val
-
-    @property
-    def y(self):
-        return self._y
-
-    @y.setter
-    def y(self, val):
-        self._y = val
+_dir_and_adj_diff = (
+    (Direc.LEFT, Pos(0, -1)),
+    (Direc.RIGHT, Pos(0, 1)),
+    (Direc.DOWN, Pos(1, 0)),
+    (Direc.UP, Pos(-1, 0)),
+)
