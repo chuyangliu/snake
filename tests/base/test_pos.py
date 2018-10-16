@@ -43,6 +43,17 @@ def test_all_adj():
     assert directions == set(Direc.valid())
 
 
+def test_direc_to_none():
+    pos1 = Pos(10, 10)
+    pos2 = Pos(12, 15)
+    assert Direc.NONE == pos1.direc_to(pos2)
+
+
+def test_adj_none():
+    pos = Pos(0, 0)
+    assert pos.adj(Direc.NONE) is None
+
+
 @pytest.mark.parametrize("direc", Direc.valid())
 def test_bijection_adj_and_direc_to(direc):
     pos = Pos(10, 10)

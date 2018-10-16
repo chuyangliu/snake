@@ -15,3 +15,5 @@ __pycache__
 logs/
 
 \.idea/
+
+\.coverage
