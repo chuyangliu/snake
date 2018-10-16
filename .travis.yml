@@ -14,6 +14,10 @@ python:
 
 install:
   - pip install -U -r requirements.txt
+  - pip install codecov pytest-cov
 
 script:
-  - python -m pytest -v --ignore=tests/gui/
+  - pytest -v --ignore=tests/gui/ --cov=.
+
+after_success:
+  - codecov
