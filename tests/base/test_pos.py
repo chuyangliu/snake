@@ -3,7 +3,7 @@
 # pylint: disable=C0103,C0111
 
 """Unit tests for class Pos."""
-
+import pytest
 from snake.base import Direc, Pos
 
 
@@ -22,6 +22,7 @@ def test_arithmetic():
     p3 = p1 + p2
     p4 = p1 - p2
     p5 = p2 - p1
+    assert p1 == +Pos(-5, 10)
     assert p3 == Pos(0, 0)
     assert p3 - p1 == p2
     assert p3 - p2 == p1
@@ -31,31 +32,36 @@ def test_arithmetic():
     assert p5 + p1 == p2
 
 
+def test_pos_str():
+    assert "Pos(x=-5, y=10)" == str(Pos(-5, 10))
+
+
 def test_dist():
     p1 = Pos(-5, 20)
     p2 = Pos(10, 8)
     assert Pos.manhattan_dist(p1, p2) == 27
 
 
-def test_adj():
+def test_all_adj():
     p = Pos(0, 0)
-    adjs = p.all_adj()
-    assert len(adjs) == 4
-    hit = [False] * 4
-    assert hit.count(False) == 4
-    for adj in adjs:
-        if adj == Pos(-1, 0):
-            assert p.direc_to(adj) == Direc.UP
-            hit[0] = True
-        elif adj == Pos(1, 0):
-            assert p.direc_to(adj) == Direc.DOWN
-            hit[1] = True
-        elif adj == Pos(0, 1):
-            assert p.direc_to(adj) == Direc.RIGHT
-            hit[2] = True
-        elif adj == Pos(0, -1):
-            assert p.direc_to(adj) == Direc.LEFT
-            hit[3] = True
-        else:
-            raise ValueError("error adj Pos")
-    assert hit.count(False) == 0
+    directions = set(map(p.direc_to, p.all_adj()))
+    assert directions == set(Direc.valid())
+
+
+def test_direc_to_none():
+    pos1 = Pos(10, 10)
+    pos2 = Pos(12, 15)
+    assert Direc.NONE == pos1.direc_to(pos2)
+
+
+def test_adj_none():
+    pos = Pos(0, 0)
+    assert pos.adj(Direc.NONE) is None
+
+
+@pytest.mark.parametrize("direc", Direc.valid())
+def test_bijection_adj_and_direc_to(direc):
+    pos = Pos(10, 10)
+    adj_pos = pos.adj(direc)
+    direc_adj_to_pos = pos.direc_to(adj_pos)
+    assert direc == direc_adj_to_pos

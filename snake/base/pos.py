@@ -3,10 +3,12 @@
 # pylint: disable=C0103,C0111
 
 """Definitions of class Pos."""
+import attr
 
 from snake.base.direc import Direc
 
 
+@attr.s(hash=True)
 class Pos:
     """Integer coordinate in 2D plane.
 
@@ -14,37 +16,20 @@ class Pos:
     with x-axis extends downward and y-axis extends rightward.
 
     """
-    def __init__(self, x=0, y=0):
-        self._x = x
-        self._y = y
-
-    def __str__(self):
-        return 'Pos(%d,%d)' % (self._x, self._y)
-    __repr__ = __str__
-
-    def __eq__(self, other):
-        if isinstance(self, other.__class__):
-            return self._x == other.x and self._y == other.y
-        return NotImplemented
+    x = attr.ib(default=0)
+    y = attr.ib(default=0)
 
     def __pos__(self):
-        return Pos(self._x, self._y)
+        return Pos(self.x, self.y)
 
     def __neg__(self):
-        return Pos(-self._x, -self._y)
+        return Pos(-self.x, -self.y)
 
     def __add__(self, other):
-        if isinstance(self, other.__class__):
-            return Pos(self._x + other.x, self._y + other.y)
-        return NotImplemented
+        return Pos(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other):
-        if isinstance(self, other.__class__):
-            return self + (-other)
-        return NotImplemented
-
-    def __hash__(self):
-        return hash((self.x, self.y))
+        return self + (-other)
 
     @staticmethod
     def manhattan_dist(p1, p2):
@@ -52,53 +37,27 @@ class Pos:
 
     def direc_to(self, adj_pos):
         """Return the direction of an adjacent Pos relative to self."""
-        if self._x == adj_pos.x:
-            diff = self._y - adj_pos.y
-            if diff == 1:
-                return Direc.LEFT
-            elif diff == -1:
-                return Direc.RIGHT
-        elif self._y == adj_pos.y:
-            diff = self._x - adj_pos.x
-            if diff == 1:
-                return Direc.UP
-            elif diff == -1:
-                return Direc.DOWN
-        return Direc.NONE
+        real_diff = adj_pos - self
+        return _ADJ_DIFF_TO_DIR.get(real_diff, Direc.NONE)
 
     def adj(self, direc):
         """Return the adjacent Pos in a given direction."""
-        if direc == Direc.LEFT:
-            return Pos(self._x, self._y - 1)
-        elif direc == Direc.RIGHT:
-            return Pos(self._x, self._y + 1)
-        elif direc == Direc.UP:
-            return Pos(self._x - 1, self._y)
-        elif direc == Direc.DOWN:
-            return Pos(self._x + 1, self._y)
-        else:
-            return None
+        adj_diff = _DIR_TO_ADJ_DIFF.get(direc, None)
+        if adj_diff is not None:
+            return self + adj_diff
 
     def all_adj(self):
         """Return a list of all the adjacent Pos."""
-        adjs = []
-        for direc in Direc:
-            if direc != Direc.NONE:
-                adjs.append(self.adj(direc))
-        return adjs
+        return list(map(self.adj, Direc.valid()))
 
-    @property
-    def x(self):
-        return self._x
 
-    @x.setter
-    def x(self, val):
-        self._x = val
+_DIR_AND_ADJ_DIFF = (
+    (Direc.LEFT, Pos(0, -1)),
+    (Direc.RIGHT, Pos(0, 1)),
+    (Direc.DOWN, Pos(1, 0)),
+    (Direc.UP, Pos(-1, 0)),
+)
 
-    @property
-    def y(self):
-        return self._y
-
-    @y.setter
-    def y(self, val):
-        self._y = val
+_DIR_TO_ADJ_DIFF = dict(_DIR_AND_ADJ_DIFF)
+_ADJ_DIFF_TO_DIR = {adj_diff: dir_ for dir_, adj_diff
+                    in _DIR_AND_ADJ_DIFF}

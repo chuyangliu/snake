@@ -29,3 +29,7 @@ class Direc(Enum):
             return Direc.UP
         else:
             return Direc.NONE
+
+    @classmethod
+    def valid(cls):
+        return [cls.LEFT, cls.UP, cls.RIGHT, cls.DOWN]
