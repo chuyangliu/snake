@@ -16,8 +16,8 @@ class Pos:
     with x-axis extends downward and y-axis extends rightward.
 
     """
-    x = attr.ib()
-    y = attr.ib()
+    x = attr.ib(default=0)
+    y = attr.ib(default=0)
 
     def __pos__(self):
         return Pos(self.x, self.y)
