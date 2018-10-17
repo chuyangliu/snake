@@ -3,10 +3,12 @@
 # pylint: disable=C0103,C0111
 
 """Definitions of class Pos."""
+import attr
 
 from snake.base.direc import Direc
 
 
+@attr.s(hash=True)
 class Pos:
     """Integer coordinate in 2D plane.
 
@@ -14,17 +16,8 @@ class Pos:
     with x-axis extends downward and y-axis extends rightward.
 
     """
-
-    def __init__(self, x=0, y=0):
-        self.x = x
-        self.y = y
-
-    def __str__(self):
-        return 'Pos(%d,%d)' % (self.x, self.y)
-    __repr__ = __str__
-
-    def __eq__(self, other):
-        return self.x == other.x and self.y == other.y
+    x = attr.ib()
+    y = attr.ib()
 
     def __pos__(self):
         return Pos(self.x, self.y)
@@ -38,24 +31,18 @@ class Pos:
     def __sub__(self, other):
         return self + (-other)
 
-    def __hash__(self):
-        return hash((self.x, self.y))
-
     @staticmethod
     def manhattan_dist(p1, p2):
         return abs(p1.x - p2.x) + abs(p1.y - p2.y)
 
     def direc_to(self, adj_pos):
         """Return the direction of an adjacent Pos relative to self."""
-        adj_diff_to_dir = {adj_diff: dir_ for dir_, adj_diff
-                           in _dir_and_adj_diff}
         real_diff = adj_pos - self
-        return adj_diff_to_dir.get(real_diff, Direc.NONE)
+        return _ADJ_DIFF_TO_DIR.get(real_diff, Direc.NONE)
 
     def adj(self, direc):
         """Return the adjacent Pos in a given direction."""
-        dir_to_adj_diff = dict(_dir_and_adj_diff)
-        adj_diff = dir_to_adj_diff.get(direc, None)
+        adj_diff = _DIR_TO_ADJ_DIFF.get(direc, None)
         if adj_diff is not None:
             return self + adj_diff
 
@@ -64,9 +51,13 @@ class Pos:
         return list(map(self.adj, Direc.valid()))
 
 
-_dir_and_adj_diff = (
+_DIR_AND_ADJ_DIFF = (
     (Direc.LEFT, Pos(0, -1)),
     (Direc.RIGHT, Pos(0, 1)),
     (Direc.DOWN, Pos(1, 0)),
     (Direc.UP, Pos(-1, 0)),
 )
+
+_DIR_TO_ADJ_DIFF = dict(_DIR_AND_ADJ_DIFF)
+_ADJ_DIFF_TO_DIR = {adj_diff: dir_ for dir_, adj_diff
+                    in _DIR_AND_ADJ_DIFF}

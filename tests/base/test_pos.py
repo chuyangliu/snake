@@ -22,6 +22,7 @@ def test_arithmetic():
     p3 = p1 + p2
     p4 = p1 - p2
     p5 = p2 - p1
+    assert p1 == +Pos(-5, 10)
     assert p3 == Pos(0, 0)
     assert p3 - p1 == p2
     assert p3 - p2 == p1
@@ -29,6 +30,10 @@ def test_arithmetic():
     assert p5 == -Pos(-10, 20)
     assert p4 + p2 == p1
     assert p5 + p1 == p2
+
+
+def test_pos_str():
+    assert "Pos(x=-5, y=10)" == str(Pos(-5, 10))
 
 
 def test_dist():
