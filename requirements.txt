@@ -1,4 +1,4 @@
-pytest
-numpy
-matplotlib
-tensorflow
+pytest==5.3.0
+numpy==1.16.4
+matplotlib==3.1.2
+tensorflow==1.14
