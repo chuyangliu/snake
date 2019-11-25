@@ -1,4 +1,4 @@
-language: python 
+language: python
 
 os:
   - linux
@@ -11,9 +11,10 @@ branches:
 python:
   - "3.5"
   - "3.6"
+  - "3.7"
 
 install:
-  - pip install -U -r requirements.txt
+  - pip install -r requirements.txt
 
 script:
   - python -m pytest -v --ignore=tests/gui/

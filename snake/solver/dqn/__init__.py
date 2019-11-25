@@ -34,7 +34,7 @@ class DQNSolver(BaseSolver):
         self._USE_DUELING = True         # Whether to use dueling network
 
         self._EXPLOIT_STEP = 1000000     # Steps that epsilon decreases
-        self._MAX_LEARN_STEP = 3000000   # Maximum learning steps
+        self._MAX_LEARN_STEP = 3000000   # Maximum learning steps (require >= self._RESTORE_STEP)
         self._RESTORE_STEP = 0           # Which learning step to restore (0 means not restore)
 
         # Rewards
