@@ -50,7 +50,7 @@ See the [LICENSE](./LICENSE) file for license rights and limitations.
 
 [badge-travis]: https://travis-ci.org/chuyangliu/snake.svg?branch=master
 [badge-appveyor]: https://ci.appveyor.com/api/projects/status/ew63pr1vb7ee1yyi/branch/master?svg=true
-[badge-python]: https://img.shields.io/badge/python-3.5%2C%203.6-blue.svg
+[badge-python]: https://img.shields.io/badge/python-3.5+-blue.svg
 
 [wiki-snake]: https://en.wikipedia.org/wiki/Snake_(video_game)
 [doc-tkinter]: https://docs.python.org/3.6/library/tkinter.html
