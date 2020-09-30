@@ -1,4 +1,4 @@
-# Snake
+# amazing Snake game
 
 [![][badge-travis]][build-travis] [![][badge-appveyor]][build-appveyor] ![][badge-python]
 
