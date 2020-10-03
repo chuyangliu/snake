@@ -8,7 +8,7 @@ The project focuses on the artificial intelligence of the [Snake][wiki-snake] ga
 
 ## Experiments
 
-We use two metrics to evaluate the performance of an AI:
+We have used two metrics to evaluate the performance of an AI:
 
 1. **Average Length:** Average length the snake has grown to (*max:* 64).
 2. **Average Steps:** Average steps the snake has moved.
