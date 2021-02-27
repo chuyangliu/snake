@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=C0103,C0111,W0201,W0703
 
-import errno
-import os
-import traceback
+import pygame # use pygame
+import errno # use errno
+import os # use os
+import traceback # use traceback
 from enum import Enum, unique
 
 from snake.base import Direc, Map, PointType, Pos, Snake
