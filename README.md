@@ -1,6 +1,6 @@
 # Snake
 
-The project focuses on the artificial intelligence of the [Snake][wiki-snake] game. The snake's goal is to eat the food continuously and fill the map with its bodies as soon as possible. Originally, the project was [written in C++][snake-proj-old]. It has now been rewritten in Python for a user-friendly GUI and the simplicity in algorithm implementations.
+The project focuses on the artificial intelligence of the [Snake][snake-wiki] game. The snake's goal is to eat the food continuously and fill the map with its bodies as soon as possible. Originally, the project was [written in C++][snake-cpp]. It has now been rewritten in Python for a user-friendly GUI and the simplicity in algorithm implementations.
 
 ***[Algorithms >][doc-algorithms]***
 
@@ -39,12 +39,9 @@ python -m pytest -v
 See the [LICENSE](./LICENSE.md) file for license rights and limitations.
 
 
-[snake-proj-old]: https://github.com/chuyangliu/Snake/tree/7227f5e0f3185b07e9e3de1ac5c19a17b9de3e3c
+[snake-wiki]: https://en.wikipedia.org/wiki/Snake_(video_game)
+[snake-cpp]: https://github.com/chuyangliu/snake/tree/7227f5e0f3185b07e9e3de1ac5c19a17b9de3e3c
 
-[build-travis]: https://travis-ci.org/chuyangliu/snake
-[build-appveyor]: https://ci.appveyor.com/project/chuyangliu/snake/branch/master
-
-[wiki-snake]: https://en.wikipedia.org/wiki/Snake_(video_game)
 [doc-tkinter]: https://docs.python.org/3/library/tkinter.html
 [doc-algorithms]: ./docs/algorithms.md
 [doc-greedy]: ./docs/algorithms.md#greedy-solver
