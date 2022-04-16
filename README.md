@@ -1,7 +1,5 @@
 # Snake
 
-[![][badge-travis]][build-travis] [![][badge-appveyor]][build-appveyor] ![][badge-python]
-
 The project focuses on the artificial intelligence of the [Snake][wiki-snake] game. The snake's goal is to eat the food continuously and fill the map with its bodies as soon as possible. Originally, the project was [written in C++][snake-proj-old]. It has now been rewritten in Python for a user-friendly GUI and the simplicity in algorithm implementations.
 
 ***[Algorithms >][doc-algorithms]***
@@ -45,10 +43,6 @@ See the [LICENSE](./LICENSE.md) file for license rights and limitations.
 
 [build-travis]: https://travis-ci.org/chuyangliu/snake
 [build-appveyor]: https://ci.appveyor.com/project/chuyangliu/snake/branch/master
-
-[badge-travis]: https://travis-ci.org/chuyangliu/snake.svg?branch=master
-[badge-appveyor]: https://ci.appveyor.com/api/projects/status/ew63pr1vb7ee1yyi/branch/master?svg=true
-[badge-python]: https://img.shields.io/badge/python-3.5+-blue.svg
 
 [wiki-snake]: https://en.wikipedia.org/wiki/Snake_(video_game)
 [doc-tkinter]: https://docs.python.org/3/library/tkinter.html
