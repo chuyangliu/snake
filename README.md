@@ -26,16 +26,14 @@ Test results (averaged over 1000 episodes):
 Requirements: Python 3.5+ (64-bit) with [Tkinter][doc-tkinter] installed.
 
 ```
-$ pip3 install -r requirements.txt
-
-# Use -h for more details
-$ python3 run.py [-h]
+pip install -r requirements.txt
+python run.py [-h]
 ```
 
 Run unit tests:
 
 ```
-$ python3 -m pytest -v
+python -m pytest -v
 ```
 
 ## License
@@ -53,7 +51,7 @@ See the [LICENSE](./LICENSE.md) file for license rights and limitations.
 [badge-python]: https://img.shields.io/badge/python-3.5+-blue.svg
 
 [wiki-snake]: https://en.wikipedia.org/wiki/Snake_(video_game)
-[doc-tkinter]: https://docs.python.org/3.6/library/tkinter.html
+[doc-tkinter]: https://docs.python.org/3/library/tkinter.html
 [doc-algorithms]: ./docs/algorithms.md
 [doc-greedy]: ./docs/algorithms.md#greedy-solver
 [doc-hamilton]: ./docs/algorithms.md#hamilton-solver

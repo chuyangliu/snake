@@ -8,7 +8,13 @@ import json
 import os
 
 import numpy as np
-import tensorflow as tf
+
+try:
+    import tensorflow as tf
+except ImportError:
+    print("*------------------------------------------------------------------------------*")
+    print("| WARNING: Tensorflow 1.x is not installed. DQN testing will not be available. |")
+    print("*------------------------------------------------------------------------------*")
 
 from snake.base import Direc, Pos, PointType
 from snake.solver.base import BaseSolver
