@@ -32,9 +32,9 @@ class GameConf:
         self.solver_name = 'HamiltonSolver'  # Class name of the solver
 
         # Size
-        self.map_rows = 8
+        self.map_rows = 16
         self.map_cols = self.map_rows
-        self.map_width = 160  # pixels
+        self.map_width = self.map_rows**2  # pixels
         self.map_height = self.map_width
         self.info_panel_width = 155  # pixels
         self.window_width = self.map_width + self.info_panel_width
@@ -46,8 +46,8 @@ class GameConf:
         self.show_info_panel = True
 
         # Delay
-        self.interval_draw = 50       # ms
-        self.interval_draw_max = 200  # ms
+        self.interval_draw = 50     # ms
+        self.interval_draw_max = 300  # ms
 
         # Color
         self.color_bg = '#000000'
@@ -74,10 +74,12 @@ class GameConf:
             "-----------------------------------\n"
             "status: %s\n"
             "episode: %d   step: %d\n"
-            "length: %d/%d (" + str(self.map_rows) + "x" + str(self.map_cols) + ")\n"
+            "length: %d/%d (" + str(self.map_rows) + "x" +
+            str(self.map_cols) + ")\n"
             "-----------------------------------"
         )
         self.info_status = ['eating', 'dead', 'full']
+
 
 class Game:
 
@@ -189,22 +191,22 @@ class Game:
         if self._pause or self._is_episode_end():
             return
 
-        self._update_direc(self._solver.next_direc())
+        # self._update_direc(self._solver.next_direc())
 
-        if self._conf.mode == GameMode.NORMAL and self._snake.direc_next != Direc.NONE:
-            self._write_logs()
-
+        # if self._conf.mode == GameMode.NORMAL and self._snake.direc_next != Direc.NONE:
+            # self._write_logs()
+        # self._update_direc()
         self._snake.move()
 
-        if self._is_episode_end():
-            self._write_logs()  # Write the last step
+        # if self._is_episode_end():
+        # self._write_logs()  # Write the last step
 
     def _plot_history(self):
         self._solver.plot()
 
-    def _update_direc(self, new_direc):
-        self._snake.direc_next = new_direc
-        if self._pause:
+    def _update_direc(self, new_direc=Direc.RIGHT):
+        if not self._pause and self._snake.direc_next != Direc.opposite(new_direc):
+            self._snake.direc_next = new_direc
             self._snake.move()
 
     def _toggle_pause(self):
@@ -237,7 +239,7 @@ class Game:
                 self._log_file.close()
 
     def _write_logs(self):
-        self._log_file.write("[ Episode %d / Step %d ]\n" % \
+        self._log_file.write("[ Episode %d / Step %d ]\n" %
                              (self._episode, self._snake.steps))
         for i in range(self._map.num_rows):
             for j in range(self._map.num_cols):
@@ -250,13 +252,13 @@ class Game:
                 elif t == PointType.FOOD:
                     self._log_file.write("F ")
                 elif t == PointType.HEAD_L or t == PointType.HEAD_U or \
-                    t == PointType.HEAD_R or t == PointType.HEAD_D:
+                        t == PointType.HEAD_R or t == PointType.HEAD_D:
                     self._log_file.write("H ")
                 elif pos == self._snake.tail():
                     self._log_file.write("T ")
                 else:
                     self._log_file.write("B ")
             self._log_file.write("\n")
-        self._log_file.write("[ last/next direc: %s/%s ]\n" % \
-                              (self._snake.direc, self._snake.direc_next))
+        self._log_file.write("[ last/next direc: %s/%s ]\n" %
+                             (self._snake.direc, self._snake.direc_next))
         self._log_file.write("\n")
