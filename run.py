@@ -5,6 +5,7 @@
 import argparse
 
 from snake.game import Game, GameConf, GameMode
+#from __future__ import print_function # if your python-ver is 2.x
 
 dict_solver = {
     "greedy": "GreedySolver",

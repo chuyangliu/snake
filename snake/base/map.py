@@ -8,7 +8,7 @@ import random
 
 from snake.base.point import Point, PointType
 from snake.base.pos import Pos
-
+from snake.gui import GameWindow
 
 class Map:
     """2D game map."""
@@ -28,6 +28,7 @@ class Map:
 
     def reset(self):
         self._food = None
+        self._poison = None
         for i in range(self._num_rows):
             for j in range(self._num_cols):
                 if i == 0 or i == self._num_rows - 1 or \
@@ -58,6 +59,10 @@ class Map:
     @property
     def food(self):
         return self._food
+    
+    @property
+    def poison(self):
+        return self._poison 
 
     def point(self, pos):
         """Return a point on the map.
@@ -82,8 +87,9 @@ class Map:
         return self.is_inside(pos) and self.point(pos).type == PointType.EMPTY
 
     def is_safe(self, pos):
-        return self.is_inside(pos) and (self.point(pos).type == PointType.EMPTY or \
-                                        self.point(pos).type == PointType.FOOD)
+        return self.is_inside(pos) and self.point(pos).type != PointType.POISON and \
+                                        (self.point(pos).type == PointType.EMPTY or \
+                                            self.point(pos).type == PointType.FOOD) 
 
     def is_full(self):
         """Check if the map is filled with the snake's bodies."""
@@ -118,5 +124,32 @@ class Map:
                     return None  # Stop if food exists
         if empty_pos:
             return self.create_food(random.choice(empty_pos))
+        else:
+            return None
+        
+    def has_poison(self):
+        return self._poison is not None
+
+    def rm_poison(self):
+        if self.has_poison():
+            self.point(self._poison).type = PointType.EMPTY
+            self._poison = None
+            
+    def create_poison(self, pos):
+        self.point(pos).type = PointType.POISON
+        self._poison = pos
+        return self._poison
+
+    def create_rand_poison(self):
+        empty_pos = []
+        for i in range(1, self._num_rows - 1):
+            for j in range(1, self._num_cols - 1):
+                t = self._content[i][j].type
+                if t == PointType.EMPTY:
+                    empty_pos.append(Pos(i, j))
+                elif t == PointType.POISON:
+                    return None  # Stop if food exists
+        if empty_pos:
+            return self.create_poison(random.choice(empty_pos))
         else:
             return None

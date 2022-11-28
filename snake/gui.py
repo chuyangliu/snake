@@ -93,6 +93,7 @@ class GameWindow(tk.Tk):
     def _init_draw_params(self):
         pad_ratio = self._conf.grid_pad_ratio
         food_pad_ratio = 0.9 * pad_ratio
+        poison_pad_ratio = 0.9 * pad_ratio
         self._dx1 = pad_ratio * self._grid_width
         self._dx2 = (1 - pad_ratio) * self._grid_width + 1
         self._dy1 = pad_ratio * self._grid_height
@@ -101,6 +102,10 @@ class GameWindow(tk.Tk):
         self._dx2_food = (1 - food_pad_ratio) * self._grid_width
         self._dy1_food = food_pad_ratio * self._grid_height
         self._dy2_food = (1 - food_pad_ratio) * self._grid_height
+        self._dx1_poison = poison_pad_ratio * self._grid_width
+        self._dx2_poison = (1 - poison_pad_ratio) * self._grid_width
+        self._dy1_poison = poison_pad_ratio * self._grid_height
+        self._dy2_poison = (1 - poison_pad_ratio) * self._grid_height
 
     def _update_contents(self):
         self._canvas.delete(tk.ALL)
@@ -123,10 +128,10 @@ class GameWindow(tk.Tk):
                 y = i * self._grid_height
                 self._canvas.create_line(x, 0,
                                          x, self._conf.map_height,
-                                         fill=self._conf.color_line)
+                                         fill=self._conf.color_pixel_line)
                 self._canvas.create_line(0, y,
                                          self._conf.map_width, y,
-                                         fill=self._conf.color_line)
+                                         fill=self._conf.color_pixel_line)
 
     def _draw_info_panel(self):
         self._canvas.create_line(self._conf.map_width - 1, 0,
@@ -152,6 +157,13 @@ class GameWindow(tk.Tk):
                                 self._map.point(Pos(i + 1, j + 1)).type)
 
     def _draw_grid(self, x, y, t):
+        if self._snake.dead:
+            self._conf.color_head = self._conf.color_dead
+            self._conf.color_body = self._conf.color_dead
+        else :
+            self._conf.color_head = self._conf.color_alive
+            self._conf.color_body = self._conf.color_alive
+            
         if t == PointType.WALL:
             self._canvas.create_rectangle(x, y,
                                           x + self._grid_width, y + self._grid_height,
@@ -160,6 +172,10 @@ class GameWindow(tk.Tk):
             self._canvas.create_rectangle(x + self._dx1_food, y + self._dy1_food,
                                           x + self._dx2_food, y + self._dy2_food,
                                           fill=self._conf.color_food, outline='')
+        elif t == PointType.POISON:
+            self._canvas.create_rectangle(x + self._dx1_poison, y + self._dy1_poison,
+                                          x + self._dx2_poison, y + self._dy2_poison,
+                                          fill=self._conf.color_poison, outline='')
         elif t == PointType.HEAD_L:
             self._canvas.create_rectangle(x + self._dx1, y + self._dy1,
                                           x + self._grid_width, y + self._dy2,
@@ -212,3 +228,6 @@ class GameWindow(tk.Tk):
             self._canvas.create_rectangle(x + self._dx1, y,
                                           x + self._dx2, y + self._grid_height,
                                           fill=self._conf.color_body, outline='')
+        def reset():
+            self._conf.color_head = self._conf.color_head
+            self._conf.color_body = self._conf.color_body

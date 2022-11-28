@@ -13,6 +13,7 @@ class PointType(Enum):
     EMPTY = 0
     WALL = 1
     FOOD = 2
+    POISON = 3
     HEAD_L = 100
     HEAD_U = 101
     HEAD_R = 102
