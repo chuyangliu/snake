@@ -40,9 +40,11 @@ class GameConf:
         self.window_width = self.map_width + self.info_panel_width
         self.window_height = self.map_height
         self.grid_pad_ratio = 0.25
+        self.evasion_time = 3
+        self.fever_activation = 3 + 5*(self.evasion_time) # default lenth + eat count * evasion time
 
         # Switch
-        self.show_grid_line = False
+        self.show_grid_line = True
         self.show_info_panel = True
 
         # Delay
@@ -53,10 +55,14 @@ class GameConf:
         self.color_bg = '#000000'
         self.color_txt = '#F5F5F5'
         self.color_line = '#424242'
+        self.color_pixel_line = '#F5F5F5'
         self.color_wall = '#F5F5F5'
         self.color_food = '#FFF59D'
+        self.color_poison = '#A30FE2'
         self.color_head = '#F5F5F5'
         self.color_body = '#F5F5F5'
+        self.color_alive = '#F5F5F5'
+        self.color_dead = '#FF0000'
 
         # Initial snake
         self.init_direc = Direc.RIGHT
@@ -92,6 +98,8 @@ class Game:
         self._solver = globals()[self._conf.solver_name](self._snake)
         self._episode = 1
         self._init_log_file()
+        #self._fever = GameConf.fever_activation
+        self._fever = conf.fever_activation
 
     @property
     def snake(self):
@@ -149,6 +157,7 @@ class Game:
                     # self._write_logs()  # Write the last step
                     break
             tot_len += self._snake.len()
+            
             tot_steps += self._snake.steps
             self._reset()
 
@@ -173,7 +182,10 @@ class Game:
     def _game_main_dqn_train(self):
         if not self._map.has_food():
             self._map.create_rand_food()
-
+        
+        if not self._map.has_poison():
+            self._map.create_rand_poison()
+            
         if self._pause:
             return
 
@@ -188,6 +200,10 @@ class Game:
         if not self._map.has_food():
             self._map.create_rand_food()
 
+        if not self._map.has_poison():
+            if self._snake.len() <= self._fever:
+                self._map.create_rand_poison()
+            
         if self._pause or self._is_episode_end():
             return
 

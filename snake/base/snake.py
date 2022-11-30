@@ -61,6 +61,7 @@ class Snake:
         self._direc = self._init_direc
         self._direc_next = Direc.NONE
         self._bodies = deque(self._init_bodies)
+        self._eat_count = 0
 
         if reset_map:
             self._map.reset()
@@ -78,6 +79,7 @@ class Snake:
         s_copy._direc = self._direc
         s_copy._direc_next = self._direc_next
         s_copy._bodies = deque(self._bodies)
+        s_copy._eat_count = self._eat_count
         return s_copy, m_copy
 
     @property
@@ -147,7 +149,10 @@ class Snake:
         if not self._map.is_safe(new_head):
             self._dead = True
         if self._map.point(new_head).type == PointType.FOOD:
+            self._eat_count += 1
             self._map.rm_food()
+            if self._eat_count%5 == 0:
+                self._map.rm_poison()
         else:
             self._rm_tail()
 
