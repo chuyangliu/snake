@@ -32,9 +32,9 @@ class GameConf:
         self.solver_name = 'HamiltonSolver'  # Class name of the solver
 
         # Size
-        self.map_rows = 16
+        self.map_rows = 8
         self.map_cols = self.map_rows
-        self.map_width = self.map_rows**2  # pixels
+        self.map_width = 500  # pixels
         self.map_height = self.map_width
         self.info_panel_width = 155  # pixels
         self.window_width = self.map_width + self.info_panel_width
@@ -46,7 +46,7 @@ class GameConf:
         self.show_info_panel = True
 
         # Delay
-        self.interval_draw = 50     # ms
+        self.interval_draw = 100     # ms
         self.interval_draw_max = 300  # ms
 
         # Color
@@ -146,7 +146,7 @@ class Game:
                 elif self._snake.steps >= STEPS_LIMIT:
                     print("STEP LIMIT (len: %d | steps: %d)"
                           % (self._snake.len(), self._snake.steps))
-                    self._write_logs()  # Write the last step
+                    # self._write_logs()  # Write the last step
                     break
             tot_len += self._snake.len()
             tot_steps += self._snake.steps
