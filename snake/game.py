@@ -32,7 +32,7 @@ class GameConf:
         self.solver_name = 'HamiltonSolver'  # Class name of the solver
 
         # Size
-        self.map_rows = 8
+        self.map_rows = 10
         self.map_cols = self.map_rows
         self.map_width = 500  # pixels
         self.map_height = self.map_width
@@ -41,14 +41,15 @@ class GameConf:
         self.window_height = self.map_height
         self.grid_pad_ratio = 0.25
         self.evasion_time = 3
-        self.fever_activation = 3 + 5*(self.evasion_time) # default lenth + eat count * evasion time
+        # default lenth + eat count * evasion time
+        self.fever_activation = 3 + 5*(self.evasion_time)
 
         # Switch
         self.show_grid_line = True
         self.show_info_panel = True
 
         # Delay
-        self.interval_draw = 100     # ms
+        self.interval_draw = 50     # ms
         self.interval_draw_max = 300  # ms
 
         # Color
@@ -118,9 +119,13 @@ class Game:
         else:
             window = GameWindow("Snake", self._conf, self._map, self, self._on_exit, (
                 ('<w>', lambda e: self._update_direc(Direc.UP)),
+                ('<Up>', lambda e: self._update_direc(Direc.UP)),
                 ('<a>', lambda e: self._update_direc(Direc.LEFT)),
+                ('<Left>', lambda e: self._update_direc(Direc.LEFT)),
                 ('<s>', lambda e: self._update_direc(Direc.DOWN)),
+                ('<Down>', lambda e: self._update_direc(Direc.DOWN)),
                 ('<d>', lambda e: self._update_direc(Direc.RIGHT)),
+                ('<Right>', lambda e: self._update_direc(Direc.RIGHT)),
                 ('<r>', lambda e: self._reset()),
                 ('<space>', lambda e: self._toggle_pause())
             ))
@@ -157,7 +162,7 @@ class Game:
                     # self._write_logs()  # Write the last step
                     break
             tot_len += self._snake.len()
-            
+
             tot_steps += self._snake.steps
             self._reset()
 
@@ -182,10 +187,10 @@ class Game:
     def _game_main_dqn_train(self):
         if not self._map.has_food():
             self._map.create_rand_food()
-        
+
         if not self._map.has_poison():
             self._map.create_rand_poison()
-            
+
         if self._pause:
             return
 
@@ -203,7 +208,7 @@ class Game:
         if not self._map.has_poison():
             if self._snake.len() <= self._fever:
                 self._map.create_rand_poison()
-            
+
         if self._pause or self._is_episode_end():
             return
 

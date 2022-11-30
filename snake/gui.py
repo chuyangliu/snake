@@ -3,6 +3,7 @@
 # pylint: disable=C0103,C0111
 
 import tkinter as tk
+import time
 from snake.base import Pos, PointType
 
 
@@ -39,6 +40,7 @@ class GameWindow(tk.Tk):
             if callable(game_loop):
                 game_loop()
             self._update_contents()
+            time.sleep(0.01)
             self.after(self._conf.interval_draw, cb)
         self.after(100, cb)
         self.mainloop()
@@ -146,9 +148,9 @@ class GameWindow(tk.Tk):
             status_str = self._conf.info_status[0]
 
         self._info_var.set(self._conf.info_str %
-                            (status_str,
-                             self._game.episode, self._snake.steps,
-                             self._snake.len(), self._map.capacity))
+                           (status_str,
+                            self._game.episode, self._snake.steps,
+                            self._snake.len(), self._map.capacity))
 
     def _draw_map_contents(self):
         for i in range(self._map.num_rows - 2):
@@ -160,10 +162,10 @@ class GameWindow(tk.Tk):
         if self._snake.dead:
             self._conf.color_head = self._conf.color_dead
             self._conf.color_body = self._conf.color_dead
-        else :
+        else:
             self._conf.color_head = self._conf.color_alive
             self._conf.color_body = self._conf.color_alive
-            
+
         if t == PointType.WALL:
             self._canvas.create_rectangle(x, y,
                                           x + self._grid_width, y + self._grid_height,
@@ -228,6 +230,7 @@ class GameWindow(tk.Tk):
             self._canvas.create_rectangle(x + self._dx1, y,
                                           x + self._dx2, y + self._grid_height,
                                           fill=self._conf.color_body, outline='')
+
         def reset():
             self._conf.color_head = self._conf.color_head
             self._conf.color_body = self._conf.color_body

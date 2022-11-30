@@ -39,8 +39,10 @@ class Snake:
             head_col = random.randrange(2, self._map.num_cols - 2)
             head = Pos(head_row, head_col)
 
-            self._init_direc = random.choice([Direc.LEFT, Direc.UP, Direc.RIGHT, Direc.DOWN])
-            self._init_bodies = [head, head.adj(Direc.opposite(self._init_direc))]
+            self._init_direc = random.choice(
+                [Direc.LEFT, Direc.UP, Direc.RIGHT, Direc.DOWN])
+            self._init_bodies = [head, head.adj(
+                Direc.opposite(self._init_direc))]
 
             self._init_types = []
             if self._init_direc == Direc.LEFT:
@@ -151,7 +153,7 @@ class Snake:
         if self._map.point(new_head).type == PointType.FOOD:
             self._eat_count += 1
             self._map.rm_food()
-            if self._eat_count%5 == 0:
+            if self._eat_count % 5 == 0:
                 self._map.rm_poison()
         else:
             self._rm_tail()
