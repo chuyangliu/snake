@@ -11,6 +11,7 @@ import numpy as np
 
 try:
     import tensorflow as tf
+    tf.compat.v1.disable_eager_execution()
 except ImportError:
     print("*------------------------------------------------------------------------------*")
     print("| WARNING: Tensorflow 1.x is not installed. DQN testing will not be available. |")
@@ -93,8 +94,8 @@ class DQNSolver(BaseSolver):
 
         # Replay memory
         self._mem = Memory(mem_size=self._MEM_SIZE,
-                           alpha=self._ALPHA,
-                           epsilon=self._PRI_EPSILON)
+                            alpha=self._ALPHA,
+                            epsilon=self._PRI_EPSILON)
         self._mem_cnt = 0
 
         self._learn_step = 1
@@ -105,12 +106,12 @@ class DQNSolver(BaseSolver):
         self._history = History(self._HISTORY_NUM_AVG)
 
         eval_params, target_params = self._build_graph()
-        self._net_saver = tf.train.Saver(var_list=eval_params + target_params,
+        self._net_saver = tf.compat.v1.train.Saver(var_list=eval_params + target_params,
                                          max_to_keep=500)
 
-        self._sess = tf.Session()
-        self._sess.run(tf.global_variables_initializer())
-        self._summary_writer = tf.summary.FileWriter(_DIR_LOG, self._sess.graph)
+        self._sess = tf.compat.v1.Session()
+        self._sess.run(tf.compat.v1.global_variables_initializer())
+        self._summary_writer = tf.compat.v1.summary.FileWriter(_DIR_LOG, self._sess.graph)
 
         if self._RESTORE_STEP > 0:
             self._load_model()
@@ -137,31 +138,31 @@ class DQNSolver(BaseSolver):
     def _build_graph(self):
 
         # Input tensor for eval net
-        self._state_eval = tf.placeholder(
+        self._state_eval = tf.compat.v1.placeholder(
             tf.float32, [None, self._NUM_ALL_FEATURES], name="state_eval")
 
         # Input tensor for target net
-        self._state_target = tf.placeholder(
+        self._state_target = tf.compat.v1.placeholder(
             tf.float32, [None, self._NUM_ALL_FEATURES], name="state_target")
 
         # Input tensor for actions taken by agent
-        self._action = tf.placeholder(
+        self._action = tf.compat.v1.placeholder(
             tf.int32, [None, ], name="action")
 
         # Input tensor for rewards received by agent
-        self._reward = tf.placeholder(
+        self._reward = tf.compat.v1.placeholder(
             tf.float32, [None, ], name="reward")
 
         # Input tensor for whether episodes are finished
-        self._done = tf.placeholder(
+        self._done = tf.compat.v1.placeholder(
             tf.bool, [None, ], name="done")
 
         # Input tensor for eval net output of next state
-        self._q_eval_all_nxt = tf.placeholder(
+        self._q_eval_all_nxt = tf.compat.v1.placeholder(
             tf.float32, [None, self._NUM_ACTIONS], name="q_eval_all_nxt")
 
         # Input tensor for importance-sampling weights
-        self._IS_weights = tf.placeholder(
+        self._IS_weights = tf.compat.v1.placeholder(
             tf.float32, [None, ], name="IS_weights")
 
         SCOPE_EVAL_NET = "eval_net"
@@ -170,18 +171,18 @@ class DQNSolver(BaseSolver):
         w_init = tf.keras.initializers.he_normal()
         b_init = tf.constant_initializer(0)
 
-        with tf.variable_scope(SCOPE_EVAL_NET):
+        with tf.compat.v1.variable_scope(SCOPE_EVAL_NET):
             # Eval net output
             self._q_eval_all = self._build_net(self._state_eval, "q_eval_all", w_init, b_init)
 
-        with tf.variable_scope("q_eval"):
+        with tf.compat.v1.variable_scope("q_eval"):
             q_eval = self._filter_actions(self._q_eval_all, self._action)
 
-        with tf.variable_scope(SCOPE_TARGET_NET):
+        with tf.compat.v1.variable_scope(SCOPE_TARGET_NET):
             # Target net output
             q_nxt_all = self._build_net(self._state_target, "q_nxt_all", w_init, b_init)
 
-        with tf.variable_scope("q_target"):
+        with tf.compat.v1.variable_scope("q_target"):
             max_actions = None
             if self._USE_DDQN:
                 max_actions = tf.argmax(self._q_eval_all_nxt, axis=1, output_type=tf.int32)
@@ -192,8 +193,8 @@ class DQNSolver(BaseSolver):
                 (1.0 - tf.cast(self._done, tf.float32))
             q_target = tf.stop_gradient(q_target)
 
-        with tf.variable_scope("loss"):
-            with tf.variable_scope("td_err"):
+        with tf.compat.v1.variable_scope("loss"):
+            with tf.compat.v1.variable_scope("td_err"):
                 td_err = tf.clip_by_value(
                     q_eval - q_target,
                     clip_value_min=self._TD_LOWER,
@@ -202,19 +203,19 @@ class DQNSolver(BaseSolver):
             self._loss = tf.reduce_mean(self._IS_weights * tf.square(td_err))
             self._td_err_abs = tf.abs(td_err, name="td_err_abs")  # To update sum tree
 
-        with tf.variable_scope("train"):
-            self._train = tf.train.RMSPropOptimizer(
+        with tf.compat.v1.variable_scope("train"):
+            self._train = tf.compat.v1.train.RMSPropOptimizer(
                 learning_rate=self._LR, momentum=self._MOMENTUM
             ).minimize(self._loss)
 
         # Replace target net params with eval net's
-        with tf.variable_scope("replace"):
-            eval_params = tf.get_collection(
-                tf.GraphKeys.GLOBAL_VARIABLES, scope=SCOPE_EVAL_NET)
-            target_params = tf.get_collection(
-                tf.GraphKeys.GLOBAL_VARIABLES, scope=SCOPE_TARGET_NET)
+        with tf.compat.v1.variable_scope("replace"):
+            eval_params = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope=SCOPE_EVAL_NET)
+            target_params = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope=SCOPE_TARGET_NET)
             self._replace_target = [
-                tf.assign(t, e) for t, e in zip(target_params, eval_params)
+                tf.compat.v1.assign(t, e) for t, e in zip(target_params, eval_params)
             ]
 
         return eval_params, target_params
@@ -233,7 +234,7 @@ class DQNSolver(BaseSolver):
                                             self._SHAPE_VISUAL_STATE[2]],
                                      name="visual_state_2d")
 
-        conv1 = tf.layers.conv2d(inputs=visual_state_2d,
+        conv1 = tf.compat.v1.layers.conv2d(inputs=visual_state_2d,
                                  filters=32,
                                  kernel_size=3,
                                  strides=1,
@@ -241,9 +242,10 @@ class DQNSolver(BaseSolver):
                                  activation=self._leaky_relu,
                                  kernel_initializer=w_init_,
                                  bias_initializer=b_init_,
-                                 name="conv1")
+                                 name="conv1",
+                                )
 
-        conv2 = tf.layers.conv2d(inputs=conv1,
+        conv2 = tf.compat.v1.layers.conv2d(inputs=conv1,
                                  filters=64,
                                  kernel_size=3,
                                  strides=1,
@@ -253,7 +255,7 @@ class DQNSolver(BaseSolver):
                                  bias_initializer=b_init_,
                                  name="conv2")
 
-        conv3 = tf.layers.conv2d(inputs=conv2,
+        conv3 = tf.compat.v1.layers.conv2d(inputs=conv2,
                                  filters=128,
                                  kernel_size=2,
                                  strides=1,
@@ -263,7 +265,7 @@ class DQNSolver(BaseSolver):
                                  bias_initializer=b_init_,
                                  name="conv3")
 
-        conv4 = tf.layers.conv2d(inputs=conv3,
+        conv4 = tf.compat.v1.layers.conv2d(inputs=conv3,
                                  filters=256,
                                  kernel_size=2,
                                  strides=1,
@@ -294,7 +296,7 @@ class DQNSolver(BaseSolver):
                                           axis=1,
                                           name="combined_features")
 
-        fc1 = tf.layers.dense(inputs=combined_features,
+        fc1 = tf.compat.v1.layers.dense(inputs=combined_features,
                               units=1024,
                               activation=self._leaky_relu,
                               kernel_initializer=w_init_,
@@ -305,48 +307,48 @@ class DQNSolver(BaseSolver):
 
         if self._USE_DUELING:
 
-            fc2_v = tf.layers.dense(inputs=fc1,
+            fc2_v = tf.compat.v1.layers.dense(inputs=fc1,
                                     units=512,
                                     activation=self._leaky_relu,
                                     kernel_initializer=w_init_,
                                     bias_initializer=b_init_,
                                     name="fc2_v")
 
-            fc2_a = tf.layers.dense(inputs=fc1,
+            fc2_a = tf.compat.v1.layers.dense(inputs=fc1,
                                     units=512,
                                     activation=self._leaky_relu,
                                     kernel_initializer=w_init_,
                                     bias_initializer=b_init_,
                                     name="fc2_a")
 
-            v = tf.layers.dense(inputs=fc2_v,
+            v = tf.compat.v1.layers.dense(inputs=fc2_v,
                                 units=1,
                                 activation=self._leaky_relu,
                                 kernel_initializer=w_init_,
                                 bias_initializer=b_init_,
                                 name="v")
 
-            a = tf.layers.dense(inputs=fc2_a,
+            a = tf.compat.v1.layers.dense(inputs=fc2_a,
                                 units=self._NUM_ACTIONS,
                                 activation=self._leaky_relu,
                                 kernel_initializer=w_init_,
                                 bias_initializer=b_init_,
                                 name="a")
 
-            with tf.variable_scope(output_name):
-                a_mean = tf.reduce_mean(a, axis=1, keep_dims=True, name="a_mean")
+            with tf.compat.v1.variable_scope(output_name):
+                a_mean = tf.reduce_mean(a, axis=1, keepdims=True, name="a_mean")
                 q_all = v + (a - a_mean)
 
         else:
 
-            fc2 = tf.layers.dense(inputs=fc1,
+            fc2 = tf.compat.v1.layers.dense(inputs=fc1,
                                   units=1024,
                                   activation=self._leaky_relu,
                                   kernel_initializer=w_init_,
                                   bias_initializer=b_init_,
                                   name="fc2")
 
-            q_all = tf.layers.dense(inputs=fc2,
+            q_all = tf.compat.v1.layers.dense(inputs=fc2,
                                     units=self._NUM_ACTIONS,
                                     kernel_initializer=w_init_,
                                     bias_initializer=b_init_,
@@ -358,7 +360,7 @@ class DQNSolver(BaseSolver):
         return tf.nn.leaky_relu(features, alpha=self._LEAKY_ALPHA)
 
     def _filter_actions(self, q_all, actions):
-        with tf.variable_scope("action_filter"):
+        with tf.compat.v1.variable_scope("action_filter"):
             indices = tf.range(tf.shape(q_all)[0], dtype=tf.int32)
             action_indices = tf.stack([indices, actions], axis=1)
             return tf.gather_nd(q_all, action_indices)  # Shape: (None, )
