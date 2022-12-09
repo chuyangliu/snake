@@ -15,6 +15,7 @@ dict_solver = {
 
 dict_mode = {
     "normal": GameMode.NORMAL,
+    "play": GameMode.PLAY,
     "bcmk": GameMode.BENCHMARK,
     "train_dqn": GameMode.TRAIN_DQN,
     "train_dqn_gui": GameMode.TRAIN_DQN_GUI,

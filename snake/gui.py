@@ -148,7 +148,7 @@ class GameWindow(tk.Tk):
             status_str = self._conf.info_status[0]
 
         self._info_var.set(self._conf.info_str %
-                           (status_str,
+                           (status_str, 
                             self._game.episode, self._snake.steps,
                             self._snake.len(), self._map.capacity))
 
@@ -230,7 +230,3 @@ class GameWindow(tk.Tk):
             self._canvas.create_rectangle(x + self._dx1, y,
                                           x + self._dx2, y + self._grid_height,
                                           fill=self._conf.color_body, outline='')
-
-        def reset():
-            self._conf.color_head = self._conf.color_head
-            self._conf.color_body = self._conf.color_body

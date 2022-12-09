@@ -15,6 +15,7 @@ from snake.solver import DQNSolver, GreedySolver, HamiltonSolver
 @unique
 class GameMode(Enum):
     NORMAL = 0         # AI with GUI
+    PLAY = -1          # player is user
     BENCHMARK = 1      # Run benchmarks without GUI
     TRAIN_DQN = 2      # Train DQNSolver without GUI
     TRAIN_DQN_GUI = 3  # Train DQNSolver with GUI
@@ -40,7 +41,7 @@ class GameConf:
         self.window_width = self.map_width + self.info_panel_width
         self.window_height = self.map_height
         self.grid_pad_ratio = 0.25
-        self.evasion_time = 3
+        self.evasion_time = 10
         # default lenth + eat count * evasion time
         self.fever_activation = 3 + 5*(self.evasion_time)
 
@@ -71,7 +72,7 @@ class GameConf:
         self.init_types = [PointType.HEAD_R] + [PointType.BODY_HOR] * 3
 
         # Font
-        self.font_info = ('Arial', 9)
+        self.font_info = ('Arial', 12)
 
         # Info
         self.info_str = (
@@ -80,6 +81,7 @@ class GameConf:
             "<r>: restart    <esc>: exit\n"
             "-----------------------------------\n"
             "status: %s\n"
+            #"status: %s    best feed: %d\n"
             "episode: %d   step: %d\n"
             "length: %d/%d (" + str(self.map_rows) + "x" +
             str(self.map_cols) + ")\n"
@@ -98,8 +100,8 @@ class Game:
         self._pause = False
         self._solver = globals()[self._conf.solver_name](self._snake)
         self._episode = 1
+        self._best_score = 0
         self._init_log_file()
-        #self._fever = GameConf.fever_activation
         self._fever = conf.fever_activation
 
     @property
@@ -129,7 +131,8 @@ class Game:
                 ('<r>', lambda e: self._reset()),
                 ('<space>', lambda e: self._toggle_pause())
             ))
-            if self._conf.mode == GameMode.NORMAL:
+            if self._conf.mode == GameMode.NORMAL or self._conf.mode == GameMode.PLAY:
+                self._play = True if (self._conf.mode == GameMode.PLAY) else False
                 window.show(self._game_main_normal)
             elif self._conf.mode == GameMode.TRAIN_DQN_GUI:
                 window.show(self._game_main_dqn_train)
@@ -211,21 +214,27 @@ class Game:
 
         if self._pause or self._is_episode_end():
             return
-
-        # self._update_direc(self._solver.next_direc())
-
+        
+        if self._play:
+            self._snake.move()
+        else:
+            self._none_player()
+    
+    def _none_player(self):
+        self._update_direc(self._solver.next_direc())
+        
         # if self._conf.mode == GameMode.NORMAL and self._snake.direc_next != Direc.NONE:
-            # self._write_logs()
-        # self._update_direc()
+        #     self._write_logs()
+        self._update_direc()
         self._snake.move()
 
         # if self._is_episode_end():
-        # self._write_logs()  # Write the last step
+        #     self._write_logs()  # Write the last step
 
     def _plot_history(self):
         self._solver.plot()
 
-    def _update_direc(self, new_direc=Direc.RIGHT):
+    def _update_direc(self, new_direc=Direc.NONE):
         if not self._pause and self._snake.direc_next != Direc.opposite(new_direc):
             self._snake.direc_next = new_direc
             self._snake.move()

@@ -137,6 +137,8 @@ class PathSolver(BaseSolver):
             for test_direc in tests:
                 cur_test = cur.adj(test_direc)
                 nxt_test = nxt.adj(test_direc)
+                # print('poison: ', self.map.poison)
+                # print('cur/nxt: ',cur_test, nxt_test)
                 if self._is_valid(cur_test) and self._is_valid(nxt_test):
                     self._table[cur_test.x][cur_test.y].visit = True
                     self._table[nxt_test.x][nxt_test.y].visit = True

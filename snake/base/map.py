@@ -87,7 +87,7 @@ class Map:
         return self.is_inside(pos) and self.point(pos).type == PointType.EMPTY
 
     def is_safe(self, pos):
-        return self.is_inside(pos) and self.point(pos).type != PointType.POISON and \
+        return self.is_inside(pos) and not self.point(pos).type == PointType.POISON and \
                                         (self.point(pos).type == PointType.EMPTY or \
                                             self.point(pos).type == PointType.FOOD) 
 
