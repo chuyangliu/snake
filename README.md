@@ -36,7 +36,7 @@ python -m pytest -v
 
 ## License
 
-See the [LICENSE](./LICENSE.md) file for license rights and limitations.
+See the [COPYING](./COPYING) file for license rights and limitations.
 
 
 [snake-wiki]: https://en.wikipedia.org/wiki/Snake_(video_game)
