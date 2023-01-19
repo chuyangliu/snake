@@ -138,7 +138,7 @@ Please refer to [my presentation][ppt-dqn] for more details (e.g., environment d
 [img-dqn-4-legends]: ./images/graph_dqn_4_legends.png
 [img-dqn-8-legends]: ./images/graph_dqn_8_legends.png
 
-[ppt-dqn]: https://www.slideshare.net/ChuyangLiu2/playing-the-snake-game-with-deep-reinforcement-learning-chuyang-liu
+[ppt-dqn]: ./presentation.pptx
 
 [ref-shortcuts]: https://johnflux.com/2015/05/02/nokia-6110-part-3-algorithms/
 [ref-dqn]: https://www.nature.com/articles/nature14236
