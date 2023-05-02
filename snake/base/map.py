@@ -20,8 +20,8 @@ class Map:
         if num_rows < 5 or num_cols < 5:
             raise ValueError("\'num_rows\' and \'num_cols\' must >= 5")
 
-        self._num_rows = num_rows
-        self._num_cols = num_cols
+        self._num_rows = num_rows + 1
+        self._num_cols = num_cols + 1
         self._capacity = (num_rows - 2) * (num_cols - 2)
         self._content = [[Point() for _ in range(num_cols)] for _ in range(num_rows)]
         self.reset()
