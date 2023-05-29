@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111,W0201,W0212
-
-"""Definition of class Snake."""
-
 import random
 from collections import deque
 

@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111,W0201,W0703
-
 import errno
 import os
 import traceback
@@ -9,6 +5,8 @@ from enum import Enum, unique
 
 from snake.base import Direc, Map, PointType, Pos, Snake
 from snake.gui import GameWindow
+
+# Add solver names to globals()
 from snake.solver import DQNSolver, GreedySolver, HamiltonSolver
 
 
@@ -79,6 +77,7 @@ class GameConf:
         )
         self.info_status = ['eating', 'dead', 'full']
 
+
 class Game:
 
     def __init__(self, conf):
@@ -121,39 +120,35 @@ class Game:
                 self._plot_history()
 
     def _run_benchmarks(self):
-        STEPS_LIMIT = 5000
-        NUM_EPISODES = int(input("Please input the number of episodes: "))
+        steps_limit = 5000
+        num_episodes = int(input("Please input the number of episodes: "))
 
-        print("\nMap size: %dx%d" % (self._conf.map_rows, self._conf.map_cols))
-        print("Solver: %s\n" % self._conf.solver_name[:-6].lower())
+        print(f"\nMap size: {self._conf.map_rows}x{self._conf.map_cols}")
+        print(f"Solver: {self._conf.solver_name[:-6].lower()}\n")
 
         tot_len, tot_steps = 0, 0
 
-        for _ in range(NUM_EPISODES):
-            print("Episode %d - " % self._episode, end="")
+        for _ in range(num_episodes):
+            print(f"Episode {self._episode} - ", end="")
             while True:
                 self._game_main_normal()
                 if self._map.is_full():
-                    print("FULL (len: %d | steps: %d)"
-                          % (self._snake.len(), self._snake.steps))
+                    print(f"FULL (len: {self._snake.len()} | steps: {self._snake.steps})")
                     break
-                elif self._snake.dead:
-                    print("DEAD (len: %d | steps: %d)"
-                          % (self._snake.len(), self._snake.steps))
+                if self._snake.dead:
+                    print(f"DEAD (len: {self._snake.len()} | steps: {self._snake.steps})")
                     break
-                elif self._snake.steps >= STEPS_LIMIT:
-                    print("STEP LIMIT (len: %d | steps: %d)"
-                          % (self._snake.len(), self._snake.steps))
+                if self._snake.steps >= steps_limit:
+                    print(f"STEP LIMIT (len: {self._snake.len()} | steps: {self._snake.steps})")
                     self._write_logs()  # Write the last step
                     break
             tot_len += self._snake.len()
             tot_steps += self._snake.steps
             self._reset()
 
-        avg_len = tot_len / NUM_EPISODES
-        avg_steps = tot_steps / NUM_EPISODES
-        print("\n[Summary]\nAverage Length: %.2f\nAverage Steps: %.2f\n"
-              % (avg_len, avg_steps))
+        avg_len = tot_len / num_episodes
+        avg_steps = tot_steps / num_episodes
+        print(f"\n[Summary]\nAverage Length: {avg_len:.2f}\nAverage Steps: {avg_steps:.2f}\n")
 
         self._on_exit()
 
@@ -231,14 +226,13 @@ class Game:
                 raise
         try:
             self._log_file = None
-            self._log_file = open('logs/snake.log', 'w')
+            self._log_file = open("logs/snake.log", "w", encoding="utf-8")
         except FileNotFoundError:
             if self._log_file:
                 self._log_file.close()
 
     def _write_logs(self):
-        self._log_file.write("[ Episode %d / Step %d ]\n" % \
-                             (self._episode, self._snake.steps))
+        self._log_file.write(f"[ Episode {self._episode} / Step {self._snake.steps} ]\n")
         for i in range(self._map.num_rows):
             for j in range(self._map.num_cols):
                 pos = Pos(i, j)
@@ -257,6 +251,5 @@ class Game:
                 else:
                     self._log_file.write("B ")
             self._log_file.write("\n")
-        self._log_file.write("[ last/next direc: %s/%s ]\n" % \
-                              (self._snake.direc, self._snake.direc_next))
+        self._log_file.write(f"[ last/next direc: {self._snake.direc}/{self._snake.direc_next} ]\n")
         self._log_file.write("\n")

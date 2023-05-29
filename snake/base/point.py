@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111
-
-"""Definition of class Point."""
-
 from enum import Enum, unique
 
 

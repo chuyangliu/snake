@@ -21,7 +21,7 @@ Test results (averaged over 1000 episodes):
 
 ## Installation
 
-Requirements: Python 3.5+ (64-bit) with [Tkinter][doc-tkinter] installed.
+Requirements: Python 3.6+ with [Tkinter][doc-tkinter] installed.
 
 ```
 pip install -r requirements.txt
@@ -31,7 +31,7 @@ python run.py [-h]
 Run unit tests:
 
 ```
-python -m pytest -v
+python -m pytest
 ```
 
 ## License

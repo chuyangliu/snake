@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111
-
-"""Definitions of class Pos."""
-
 from snake.base.direc import Direc
 
 
@@ -12,14 +6,13 @@ class Pos:
 
     The origin of the coordinate system is at the top-left corner,
     with x-axis extends downward and y-axis extends rightward.
-
     """
     def __init__(self, x=0, y=0):
         self._x = x
         self._y = y
 
     def __str__(self):
-        return 'Pos(%d,%d)' % (self._x, self._y)
+        return f"Pos({self._x},{self._y})"
     __repr__ = __str__
 
     def __eq__(self, other):
@@ -56,13 +49,13 @@ class Pos:
             diff = self._y - adj_pos.y
             if diff == 1:
                 return Direc.LEFT
-            elif diff == -1:
+            if diff == -1:
                 return Direc.RIGHT
         elif self._y == adj_pos.y:
             diff = self._x - adj_pos.x
             if diff == 1:
                 return Direc.UP
-            elif diff == -1:
+            if diff == -1:
                 return Direc.DOWN
         return Direc.NONE
 

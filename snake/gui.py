@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111
-
 import tkinter as tk
 from snake.base import Pos, PointType
 
@@ -14,7 +10,7 @@ class GameWindow(tk.Tk):
         super().resizable(width=False, height=False)
         super().configure(background=conf.color_bg)
         if conf.show_info_panel:
-            super().geometry("%dx%d" % (conf.window_width, conf.window_height))
+            super().geometry(f"{conf.window_width}x{conf.window_height}")
 
         self._conf = conf
         self._map = game_map
@@ -141,9 +137,9 @@ class GameWindow(tk.Tk):
             status_str = self._conf.info_status[0]
 
         self._info_var.set(self._conf.info_str %
-                            (status_str,
-                             self._game.episode, self._snake.steps,
-                             self._snake.len(), self._map.capacity))
+                           (status_str,
+                            self._game.episode, self._snake.steps,
+                            self._snake.len(), self._map.capacity))
 
     def _draw_map_contents(self):
         for i in range(self._map.num_rows - 2):

@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111
-
-"""Unit tests for class Map."""
-
 import pytest
 
 from snake.base import Map, PointType, Pos
@@ -71,9 +65,9 @@ def test_food():
     assert m.has_food()
     m.rm_food()
     assert not m.has_food()
-    fd = m.create_rand_food()
+    food = m.create_rand_food()
     assert m.has_food()
-    assert m.point(fd).type == PointType.FOOD
+    assert m.point(food).type == PointType.FOOD
     m.rm_food()
     for i in range(1, m.num_rows - 1):
         for j in range(1, m.num_cols - 1):

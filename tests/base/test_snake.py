@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111
-
-"""Unit tests for class Snake."""
-
 from snake.base import Direc, Pos, PointType, Map, Snake
 
 
@@ -179,5 +173,5 @@ def test_copy():
     assert not s.dead and s.dead == s_copy.dead
     assert s.direc == Direc.LEFT and s.direc == s_copy.direc
     assert s.direc_next == Direc.LEFT and s.direc_next == s_copy.direc_next
-    for i, b in enumerate(s.bodies):
-        assert b == s_copy.bodies[i]
+    for i, body in enumerate(s.bodies):
+        assert body == s_copy.bodies[i]

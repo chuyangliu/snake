@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0111,C0103
-
 from snake.base import Direc
 from snake.solver.base import BaseSolver
 from snake.solver.path import PathSolver
@@ -13,8 +9,7 @@ class _TableCell:
         self.reset()
 
     def __str__(self):
-        return "{ idx: %d  direc: %s }" % \
-               (self.idx, self.direc)
+        return f"{{ idx: {self.idx}  direc: {self.direc} }}"
     __repr__ = __str__
 
     def reset(self):
@@ -32,7 +27,7 @@ class HamiltonSolver(BaseSolver):
         self._shortcuts = shortcuts
         self._path_solver = PathSolver(snake)
         self._table = [[_TableCell() for _ in range(snake.map.num_cols)]
-                        for _ in range(snake.map.num_rows)]
+                       for _ in range(snake.map.num_rows)]
         self._build_cycle()
 
     @property

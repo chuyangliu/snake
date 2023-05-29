@@ -1,8 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0111
-
-
 class BaseSolver:
     """Super class of all the solvers."""
 
@@ -29,4 +24,3 @@ class BaseSolver:
 
     def close(self):
         """Release resources."""
-        pass

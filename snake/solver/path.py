@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0111,E1101
-
 import sys
 import random
 from collections import deque
@@ -15,8 +11,7 @@ class _TableCell:
         self.reset()
 
     def __str__(self):
-        return "{ dist: %d  parent: %s  visit: %d }" % \
-               (self.dist, str(self.parent), self.visit)
+        return f"{{ dist: {self.dist}  parent: {str(self.parent)}  visit: {self.visit} }}"
     __repr__ = __str__
 
     def reset(self):
@@ -62,7 +57,6 @@ class PathSolver(BaseSolver):
 
         Returns:
             A collections.deque of snake.base.direc.Direc indicating the path directions.
-
         """
         self._reset_table()
 
@@ -107,7 +101,6 @@ class PathSolver(BaseSolver):
 
         Returns:
             A collections.deque of snake.base.direc.Direc indicating the path directions.
-
         """
         path = self.shortest_path_to(des)
         if not path:

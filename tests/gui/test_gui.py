@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0111
-
 from snake.base import Pos, PointType, Map
 from snake.game import GameConf
 from snake.gui import GameWindow

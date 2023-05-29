@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0111
-
-"""Unit tests for class Direction."""
-
 from snake.base import Direc
 
 

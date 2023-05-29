@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0111,C0103
-
 from enum import Enum, unique
 
 from snake.base.direc import Direc
@@ -19,21 +15,22 @@ class SnakeAction(Enum):
         """Return the direction wrt the action."""
         if action == SnakeAction.FORWARD:
             return cur_direc
-        elif action == SnakeAction.LEFT:
+        if action == SnakeAction.LEFT:
             if cur_direc == Direc.LEFT:
                 return Direc.DOWN
-            elif cur_direc == Direc.UP:
+            if cur_direc == Direc.UP:
                 return Direc.LEFT
-            elif cur_direc == Direc.RIGHT:
+            if cur_direc == Direc.RIGHT:
                 return Direc.UP
-            elif cur_direc == Direc.DOWN:
+            if cur_direc == Direc.DOWN:
                 return Direc.RIGHT
-        elif action == SnakeAction.RIGHT:
+        if action == SnakeAction.RIGHT:
             if cur_direc == Direc.LEFT:
                 return Direc.UP
-            elif cur_direc == Direc.UP:
+            if cur_direc == Direc.UP:
                 return Direc.RIGHT
-            elif cur_direc == Direc.RIGHT:
+            if cur_direc == Direc.RIGHT:
                 return Direc.DOWN
-            elif cur_direc == Direc.DOWN:
+            if cur_direc == Direc.DOWN:
                 return Direc.LEFT
+        return Direc.NONE

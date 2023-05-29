@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0111
-
 from snake.base.pos import Pos
 from snake.solver.base import BaseSolver
 from snake.solver.path import PathSolver

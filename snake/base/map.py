@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111,W0201,W0212
-
-"""Definition of class Map."""
-
 import random
 
 from snake.base.point import Point, PointType
@@ -76,14 +70,14 @@ class Map:
 
     def is_inside(self, pos):
         return pos.x > 0 and pos.x < self.num_rows - 1 \
-               and pos.y > 0 and pos.y < self.num_cols - 1
+            and pos.y > 0 and pos.y < self.num_cols - 1
 
     def is_empty(self, pos):
         return self.is_inside(pos) and self.point(pos).type == PointType.EMPTY
 
     def is_safe(self, pos):
-        return self.is_inside(pos) and (self.point(pos).type == PointType.EMPTY or \
-                                        self.point(pos).type == PointType.FOOD)
+        return self.is_inside(pos) and (self.point(pos).type == PointType.EMPTY
+                                        or self.point(pos).type == PointType.FOOD)
 
     def is_full(self):
         """Check if the map is filled with the snake's bodies."""
@@ -118,5 +112,4 @@ class Map:
                     return None  # Stop if food exists
         if empty_pos:
             return self.create_food(random.choice(empty_pos))
-        else:
-            return None
+        return None

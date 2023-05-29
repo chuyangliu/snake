@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111,E1101
-
-"""Unit tests for SumTree."""
-
 import numpy as np
 import pytest
 
@@ -23,8 +17,8 @@ def test_sumtree():
         ("g", 8),
         ("h", 2),
     )
-    for d in data:
-        tree.insert(d[0], d[1])
+    for dat in data:
+        tree.insert(dat[0], dat[1])
 
     assert tree.sum() == 42
     assert tree.max_leaf() == 12
@@ -83,12 +77,12 @@ def test_probability():
         ("g", 8),
         ("h", 2),
     )
-    for p in pairs:
-        tree.insert(p[0], p[1])
+    for pair in pairs:
+        tree.insert(pair[0], pair[1])
 
-    N, counts = 10000000, {}
+    n, counts = 10000000, {}
 
-    for _ in range(N):
+    for _ in range(n):
         val = np.random.uniform(0, tree.sum())
         _, _, data = tree.retrieve(val)
         if counts.get(data) is None:
@@ -97,10 +91,10 @@ def test_probability():
             counts[data] += 1
 
     print("Expect    Actual")
-    for p in pairs:
-        expect = p[1] / tree.sum()
-        actual = counts[p[0]] / N
-        print("%.6f  %.6f" % (expect, actual))
+    for pair in pairs:
+        expect = pair[1] / tree.sum()
+        actual = counts[pair[0]] / n
+        print(f"{expect:.6f}  {actual:.6f}")
 
     # Force to show stdout
-    assert 1 == 0
+    assert False

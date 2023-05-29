@@ -1,14 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*--
-
 import os
 
 import platform
-if (platform.system() == "Darwin"):
+if platform.system() == "Darwin":
     import matplotlib
     matplotlib.use("TkAgg")  # Fix NSException
 
-import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -22,10 +18,10 @@ class History:
     PATH_DATA = os.path.join(_DIR_LOG, "history-%s-%d-%d.npy")
 
     def __init__(self, num_avg):
-        self._NUM_AVG = num_avg
-        self._X_SCALE = 1e-4
-        self._COLOR_FILL = (240 / 255, 240 / 255, 240 / 255)
-        self._COLOR_LEGEND_EDGE = (0 / 255, 0 / 255, 0 / 255)
+        self._num_avg = num_avg
+        self._x_scale = 1e-4
+        self._color_fill = (240 / 255, 240 / 255, 240 / 255)
+        self._color_legend_edge = (0 / 255, 0 / 255, 0 / 255)
 
         self._tot_reward = 0
         self._max_avg_len = 0.0
@@ -62,7 +58,7 @@ class History:
     def add_learn_step(self):
         avg_reward, min_reward, max_reward = [0.0] * 3
         if self._history_reward:
-            chunks = self._history_reward[-self._NUM_AVG:]
+            chunks = self._history_reward[-self._num_avg:]
             avg_reward = np.mean(chunks)
             min_reward = np.min(chunks)
             max_reward = np.max(chunks)
@@ -72,7 +68,7 @@ class History:
 
         avg_len, min_len, max_len =[self._max_avg_len] * 3
         if self._history_len:
-            chunks = self._history_len[-self._NUM_AVG:]
+            chunks = self._history_len[-self._num_avg:]
             avg_len = np.mean(chunks)
             min_len = np.min(chunks)
             max_len = np.max(chunks)
@@ -82,7 +78,7 @@ class History:
 
         avg_steps, min_steps, max_steps = [0.0] * 3
         if self._history_step:
-            chunks = self._history_step[-self._NUM_AVG:]
+            chunks = self._history_step[-self._num_avg:]
             avg_steps = np.mean(chunks)
             min_steps = np.min(chunks)
             max_steps = np.max(chunks)
@@ -150,25 +146,25 @@ class History:
     def _plot_avg(self, learn_step_beg, name, color, data_avg, data_min, data_max):
         plt.figure(num=name)
 
-        steps = (np.arange(len(data_avg)) + learn_step_beg) * self._X_SCALE
-        plt.fill_between(steps, data_min, data_max, color=self._COLOR_FILL, label="Min/Max")
+        steps = (np.arange(len(data_avg)) + learn_step_beg) * self._x_scale
+        plt.fill_between(steps, data_min, data_max, color=self._color_fill, label="Min/Max")
         plt.plot(steps, data_avg, "-", color=color, linewidth=0.5, label="Average")
 
         plt.xlabel("Learning Step (1e4)")
         plt.ylabel(name)
 
-        plt.legend(loc="upper left", fancybox=False, edgecolor=self._COLOR_LEGEND_EDGE)
+        plt.legend(loc="upper left", fancybox=False, edgecolor=self._color_legend_edge)
 
-        x_max_max = (np.argmax(data_max) + learn_step_beg) * self._X_SCALE
+        x_max_max = (np.argmax(data_max) + learn_step_beg) * self._x_scale
         y_max_max = np.max(data_max)
-        x_max_avg = (np.argmax(data_avg) + learn_step_beg) * self._X_SCALE
+        x_max_avg = (np.argmax(data_avg) + learn_step_beg) * self._x_scale
         y_max_avg = np.max(data_avg)
 
-        plt.annotate("Max: %.2f" % y_max_max,
+        plt.annotate(f"Max: {y_max_max:.2f}",
                      xy=(x_max_max, y_max_max), xytext=(-50, -25),
                      textcoords="offset points",
-                     arrowprops=dict(facecolor="black", arrowstyle="->"))
-        plt.annotate("Max: %.2f" % y_max_avg,
+                     arrowprops={"facecolor": "black", "arrowstyle": "->"})
+        plt.annotate(f"Max: {y_max_avg:.2f}",
                      xy=(x_max_avg, y_max_avg), xytext=(-50, 20),
                      textcoords="offset points",
-                     arrowprops=dict(facecolor="black", arrowstyle="->"))
+                     arrowprops={"facecolor": "black", "arrowstyle": "->"})

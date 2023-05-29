@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# pylint: disable=C0103,C0111
-
-"""Unit tests for PathSolver."""
-
 from snake.base import Direc, Pos, PointType, Map, Snake
 from snake.solver import PathSolver
 
