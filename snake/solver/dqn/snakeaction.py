@@ -6,6 +6,7 @@ from snake.base.direc import Direc
 @unique
 class SnakeAction(Enum):
     """Snake actions for DQN."""
+
     LEFT = 0
     FORWARD = 1
     RIGHT = 2

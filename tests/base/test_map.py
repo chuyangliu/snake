@@ -37,8 +37,7 @@ def test_predicate():
         for j in range(m.num_cols):
             p = Pos(i, j)
             if i == 0 or i == m.num_rows - 1 or j == 0 or j == m.num_cols - 1:
-                assert not m.is_inside(p) and not m.is_empty(p) \
-                       and not m.is_safe(p)
+                assert not m.is_inside(p) and not m.is_empty(p) and not m.is_safe(p)
             else:
                 assert m.is_inside(p) and m.is_empty(p) and m.is_safe(p)
     p1, p2, p3 = Pos(1, 1), Pos(2, 2), Pos(3, 3)

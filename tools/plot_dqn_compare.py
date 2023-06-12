@@ -41,8 +41,8 @@ def main():
     if args.zh:
         labels = LABELS_ZH
         # Fix Chinese characters for matplotlib
-        plt.rcParams['font.sans-serif'] = ['SimHei']
-        plt.rcParams['axes.unicode_minus'] = False
+        plt.rcParams["font.sans-serif"] = ["SimHei"]
+        plt.rcParams["axes.unicode_minus"] = False
 
     def plot_one(file_path, legend_name, interval=5000):
         data = np.load(file_path)
@@ -59,16 +59,15 @@ def main():
 
     def make_bar(x, heights, side, color):
         if side == "l":
-            x = x - BAR_WIDTH / 2.
+            x = x - BAR_WIDTH / 2.0
         elif side == "r":
-            x = x + BAR_WIDTH / 2.
+            x = x + BAR_WIDTH / 2.0
 
         bars = plt.bar(x, height=heights, width=BAR_WIDTH, alpha=0.4, color=color)
 
         for bar in bars:
             height = bar.get_height()
-            plt.text(bar.get_x() + bar.get_width() / 2., height,
-                     f"{height:.2f}", ha='center', va='bottom')
+            plt.text(bar.get_x() + bar.get_width() / 2.0, height, f"{height:.2f}", ha="center", va="bottom")
 
         return bars
 
@@ -80,19 +79,21 @@ def main():
     ]
 
     plt.figure()
-    max_len = \
-        plot_one(os.path.join(args.path, "len-dqn-visual-absolute.npy"), legends[0]), \
-        plot_one(os.path.join(args.path, "len-dqn-visual-relative.npy"), legends[1]), \
-        plot_one(os.path.join(args.path, "len-dqn-important-absolute.npy"), legends[2]), \
-        plot_one(os.path.join(args.path, "len-dqn-important-relative.npy"), legends[3])
+    max_len = (
+        plot_one(os.path.join(args.path, "len-dqn-visual-absolute.npy"), legends[0]),
+        plot_one(os.path.join(args.path, "len-dqn-visual-relative.npy"), legends[1]),
+        plot_one(os.path.join(args.path, "len-dqn-important-absolute.npy"), legends[2]),
+        plot_one(os.path.join(args.path, "len-dqn-important-relative.npy"), legends[3]),
+    )
     add_decorations("snake_len")
 
     plt.figure()
-    max_step = \
-        plot_one(os.path.join(args.path, "step-dqn-visual-absolute.npy"), legends[0]), \
-        plot_one(os.path.join(args.path, "step-dqn-visual-relative.npy"), legends[1]), \
-        plot_one(os.path.join(args.path, "step-dqn-important-absolute.npy"), legends[2]), \
-        plot_one(os.path.join(args.path, "step-dqn-important-relative.npy"), legends[3])
+    max_step = (
+        plot_one(os.path.join(args.path, "step-dqn-visual-absolute.npy"), legends[0]),
+        plot_one(os.path.join(args.path, "step-dqn-visual-relative.npy"), legends[1]),
+        plot_one(os.path.join(args.path, "step-dqn-important-absolute.npy"), legends[2]),
+        plot_one(os.path.join(args.path, "step-dqn-important-relative.npy"), legends[3]),
+    )
     add_decorations("snake_step")
 
     plt.figure()
@@ -101,8 +102,13 @@ def main():
     bar_step = make_bar(x, max_step, "r", "b")
     plt.xticks(x, legends)
     plt.ylabel(labels["max"])
-    plt.legend((bar_len[0], bar_step[0]), (labels["snake_len"], labels["snake_step"]),
-               loc="lower right", fancybox=False, edgecolor=COLOR_LEGEND_EDGE)
+    plt.legend(
+        (bar_len[0], bar_step[0]),
+        (labels["snake_len"], labels["snake_step"]),
+        loc="lower right",
+        fancybox=False,
+        edgecolor=COLOR_LEGEND_EDGE,
+    )
 
     interval = 100000
 
@@ -118,35 +124,39 @@ def main():
     ]
 
     plt.figure()
-    max_len_1 = \
-        plot_one(os.path.join(args.path, "len-dqn-important-relative.npy"), legends[0], interval), \
-        plot_one(os.path.join(args.path, "len-dqn-pri-important-relative.npy"), legends[1], interval), \
-        plot_one(os.path.join(args.path, "len-dqn-duel-important-relative.npy"), legends[2], interval), \
-        plot_one(os.path.join(args.path, "len-dqn-pri-duel-important-relative.npy"), legends[3], interval)
+    max_len_1 = (
+        plot_one(os.path.join(args.path, "len-dqn-important-relative.npy"), legends[0], interval),
+        plot_one(os.path.join(args.path, "len-dqn-pri-important-relative.npy"), legends[1], interval),
+        plot_one(os.path.join(args.path, "len-dqn-duel-important-relative.npy"), legends[2], interval),
+        plot_one(os.path.join(args.path, "len-dqn-pri-duel-important-relative.npy"), legends[3], interval),
+    )
     add_decorations("snake_len")
 
     plt.figure()
-    max_step_1 = \
-        plot_one(os.path.join(args.path, "step-dqn-important-relative.npy"), legends[0], interval), \
-        plot_one(os.path.join(args.path, "step-dqn-pri-important-relative.npy"), legends[1], interval), \
-        plot_one(os.path.join(args.path, "step-dqn-duel-important-relative.npy"), legends[2], interval), \
-        plot_one(os.path.join(args.path, "step-dqn-pri-duel-important-relative.npy"), legends[3], interval)
+    max_step_1 = (
+        plot_one(os.path.join(args.path, "step-dqn-important-relative.npy"), legends[0], interval),
+        plot_one(os.path.join(args.path, "step-dqn-pri-important-relative.npy"), legends[1], interval),
+        plot_one(os.path.join(args.path, "step-dqn-duel-important-relative.npy"), legends[2], interval),
+        plot_one(os.path.join(args.path, "step-dqn-pri-duel-important-relative.npy"), legends[3], interval),
+    )
     add_decorations("snake_step")
 
     plt.figure()
-    max_len_2 = \
-        plot_one(os.path.join(args.path, "len-ddqn-important-relative.npy"), legends[4], interval), \
-        plot_one(os.path.join(args.path, "len-ddqn-pri-important-relative.npy"), legends[5], interval), \
-        plot_one(os.path.join(args.path, "len-ddqn-duel-important-relative.npy"), legends[6], interval), \
-        plot_one(os.path.join(args.path, "len-ddqn-pri-duel-important-relative.npy"), legends[7], interval)
+    max_len_2 = (
+        plot_one(os.path.join(args.path, "len-ddqn-important-relative.npy"), legends[4], interval),
+        plot_one(os.path.join(args.path, "len-ddqn-pri-important-relative.npy"), legends[5], interval),
+        plot_one(os.path.join(args.path, "len-ddqn-duel-important-relative.npy"), legends[6], interval),
+        plot_one(os.path.join(args.path, "len-ddqn-pri-duel-important-relative.npy"), legends[7], interval),
+    )
     add_decorations("snake_len")
 
     plt.figure()
-    max_step_2 = \
-        plot_one(os.path.join(args.path, "step-ddqn-important-relative.npy"), legends[4], interval), \
-        plot_one(os.path.join(args.path, "step-ddqn-pri-important-relative.npy"), legends[5], interval), \
-        plot_one(os.path.join(args.path, "step-ddqn-duel-important-relative.npy"), legends[6], interval), \
-        plot_one(os.path.join(args.path, "step-ddqn-pri-duel-important-relative.npy"), legends[7], interval)
+    max_step_2 = (
+        plot_one(os.path.join(args.path, "step-ddqn-important-relative.npy"), legends[4], interval),
+        plot_one(os.path.join(args.path, "step-ddqn-pri-important-relative.npy"), legends[5], interval),
+        plot_one(os.path.join(args.path, "step-ddqn-duel-important-relative.npy"), legends[6], interval),
+        plot_one(os.path.join(args.path, "step-ddqn-pri-duel-important-relative.npy"), legends[7], interval),
+    )
     add_decorations("snake_step")
 
     plt.figure()
@@ -155,8 +165,13 @@ def main():
     bar_step = make_bar(x, max_step_1 + max_step_2, "r", "b")
     plt.xticks(x, legends)
     plt.ylabel(labels["max"])
-    plt.legend((bar_len[0], bar_step[0]), (labels["snake_len"], labels["snake_step"]),
-               loc="lower right", fancybox=False, edgecolor=COLOR_LEGEND_EDGE)
+    plt.legend(
+        (bar_len[0], bar_step[0]),
+        (labels["snake_len"], labels["snake_step"]),
+        loc="lower right",
+        fancybox=False,
+        edgecolor=COLOR_LEGEND_EDGE,
+    )
 
     plt.show()
 

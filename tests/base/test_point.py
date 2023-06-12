@@ -1,4 +1,4 @@
-from snake.base import PointType, Point
+from snake.base import Point, PointType
 
 
 def test_init():

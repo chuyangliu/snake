@@ -5,7 +5,6 @@ from snake.util.sumtree import SumTree
 
 
 def test_sumtree():
-
     tree = SumTree(8)
     data = (
         ("a", 3),
@@ -65,7 +64,6 @@ def test_sumtree():
 
 @pytest.mark.skip(reason="may be time-consuming")
 def test_probability():
-
     tree = SumTree(8)
     pairs = (
         ("a", 3),

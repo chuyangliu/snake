@@ -4,7 +4,6 @@ from snake.util.sumtree import SumTree
 
 
 class Memory:
-
     def __init__(self, mem_size, alpha, epsilon):
         self._alpha = alpha
         self._epsilon = epsilon
@@ -18,8 +17,8 @@ class Memory:
 
     def sample(self, num_samples, beta):
         batch = [None] * num_samples
-        weights = np.zeros((num_samples, ))  # Importance-sampling (IS) weights
-        tree_indices = np.zeros((num_samples, ), dtype=np.int32)
+        weights = np.zeros((num_samples,))  # Importance-sampling (IS) weights
+        tree_indices = np.zeros((num_samples,), dtype=np.int32)
 
         len_seg = self._tree.sum() / num_samples
         min_prob = self._tree.min_leaf() / self._tree.sum()

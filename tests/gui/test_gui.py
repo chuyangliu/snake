@@ -1,4 +1,4 @@
-from snake.base import Pos, PointType, Map
+from snake.base import Map, PointType, Pos
 from snake.game import GameConf
 from snake.gui import GameWindow
 
@@ -100,7 +100,7 @@ def test_game_window():
         (Pos(6, 7), PointType.BODY_HOR),
         (Pos(6, 8), PointType.BODY_HOR),
         (Pos(6, 9), PointType.BODY_HOR),
-        (Pos(6, 10), PointType.HEAD_R)
+        (Pos(6, 10), PointType.HEAD_R),
     )
     for content in contents:
         game_map.point(content[0]).type = content[1]

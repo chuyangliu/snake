@@ -10,32 +10,31 @@ except ImportError:
     print("| WARNING: Tensorflow 1.x is not installed. DQN testing will not be available. |")
     print("*------------------------------------------------------------------------------*")
 
-from snake.base import Direc, Pos, PointType
+from snake.base import Direc, PointType, Pos
 from snake.solver.base import BaseSolver
-from snake.solver.dqn.memory import Memory
-from snake.solver.dqn.logger import log
-from snake.solver.dqn.snakeaction import SnakeAction
 from snake.solver.dqn.history import History
+from snake.solver.dqn.logger import log
+from snake.solver.dqn.memory import Memory
+from snake.solver.dqn.snakeaction import SnakeAction
 
 _DIR_LOG = "logs"
 
 
 class DQNSolver(BaseSolver):
-
     PATH_VAR = os.path.join(_DIR_LOG, "solver-var-%d.json")
     PATH_NET = os.path.join(_DIR_LOG, "solver-net-%d")
 
     def __init__(self, snake):
         super().__init__(snake)
 
-        self._use_relative = True        # Whether to use relative actions
-        self._use_visual_only = False    # Whether to use visual state only
-        self._use_ddqn = False           # Whether to use double dqn
-        self._use_dueling = True         # Whether to use dueling network
+        self._use_relative = True  # Whether to use relative actions
+        self._use_visual_only = False  # Whether to use visual state only
+        self._use_ddqn = False  # Whether to use double dqn
+        self._use_dueling = True  # Whether to use dueling network
 
-        self._exploit_step = 1000000     # Steps that epsilon decreases
-        self._max_learn_step = 3000000   # Maximum learning steps (require >= self._restore_step)
-        self._restore_step = 0           # Which learning step to restore (0 means not restore)
+        self._exploit_step = 1000000  # Steps that epsilon decreases
+        self._max_learn_step = 3000000  # Maximum learning steps (require >= self._restore_step)
+        self._restore_step = 0  # Which learning step to restore (0 means not restore)
 
         # Rewards
         self._rwd_empty = -0.005
@@ -51,24 +50,24 @@ class DQNSolver(BaseSolver):
         self._epsilon_min = 0.01
         self._epsilon_dec = (self._epsilon_max - self._epsilon_min) / self._exploit_step
 
-        self._lr = 1e-6             # Learning rate
-        self._momentum = 0.95       # SGD momentum
-        self._gamma = 0.99          # Reward discount
-        self._leaky_alpha = 0.01    # Leaky relu slope
+        self._lr = 1e-6  # Learning rate
+        self._momentum = 0.95  # SGD momentum
+        self._gamma = 0.99  # Reward discount
+        self._leaky_alpha = 0.01  # Leaky relu slope
 
-        self._td_upper = 1.0        # TD-error clip upper bound
-        self._td_lower = -1.0       # TD-error clip lower bound
+        self._td_upper = 1.0  # TD-error clip upper bound
+        self._td_lower = -1.0  # TD-error clip lower bound
 
-        self._pri_epsilon = 0.001   # Small positive value to avoid zero priority
-        self._alpha = 0.6           # How much prioritization to use
-        self._beta_min = 0.4        # How much to compensate for the non-uniform probabilities
+        self._pri_epsilon = 0.001  # Small positive value to avoid zero priority
+        self._alpha = 0.6  # How much prioritization to use
+        self._beta_min = 0.4  # How much to compensate for the non-uniform probabilities
         self._beta_inc = (1.0 - self._beta_min) / self._exploit_step
 
         # Frequency
-        self._freq_learn = 4        # Number of snake steps
+        self._freq_learn = 4  # Number of snake steps
         self._freq_replace = 10000  # Learning steps
-        self._freq_log = 500        # Learning steps
-        self._freq_save = 20000     # Learning steps
+        self._freq_log = 500  # Learning steps
+        self._freq_save = 20000  # Learning steps
 
         self._history_num_avg = 50  # How many latest history episodes to compute average
 
@@ -86,9 +85,7 @@ class DQNSolver(BaseSolver):
         self._num_all_features = self._num_visual_features + self._num_important_features
 
         # Replay memory
-        self._mem = Memory(mem_size=self._mem_size,
-                           alpha=self._alpha,
-                           epsilon=self._pri_epsilon)
+        self._mem = Memory(mem_size=self._mem_size, alpha=self._alpha, epsilon=self._pri_epsilon)
         self._mem_cnt = 0
 
         self._learn_step = 1
@@ -99,8 +96,7 @@ class DQNSolver(BaseSolver):
         self._history = History(self._history_num_avg)
 
         eval_params, target_params = self._build_graph()
-        self._net_saver = tf.train.Saver(var_list=eval_params + target_params,
-                                         max_to_keep=500)
+        self._net_saver = tf.train.Saver(var_list=eval_params + target_params, max_to_keep=500)
 
         self._sess = tf.Session()
         self._sess.run(tf.global_variables_initializer())
@@ -110,13 +106,16 @@ class DQNSolver(BaseSolver):
             self._load_model()
 
     def _save_model(self):
-        self._net_saver.save(self._sess, DQNSolver.PATH_NET % self._learn_step,
-                             write_meta_graph=False)
+        self._net_saver.save(self._sess, DQNSolver.PATH_NET % self._learn_step, write_meta_graph=False)
         with open(DQNSolver.PATH_VAR % self._learn_step, "w", encoding="utf-8") as f:
-            json.dump({
-                "epsilon": self._epsilon,
-                "beta": self._beta,
-            }, f, indent=2)
+            json.dump(
+                {
+                    "epsilon": self._epsilon,
+                    "beta": self._beta,
+                },
+                f,
+                indent=2,
+            )
 
     def _load_model(self):
         self._net_saver.restore(self._sess, DQNSolver.PATH_NET % self._restore_step)
@@ -125,38 +124,56 @@ class DQNSolver(BaseSolver):
         self._epsilon = var["epsilon"]
         self._beta = var["beta"]
         self._learn_step = self._restore_step + 1
-        log(f"model loaded | RESTORE_STEP: {self._restore_step}"
-            f" | epsilon: {self._epsilon:.6f} | beta: {self._beta:.6f}")
+        log(
+            f"model loaded | RESTORE_STEP: {self._restore_step}"
+            f" | epsilon: {self._epsilon:.6f} | beta: {self._beta:.6f}"
+        )
 
     def _build_graph(self):
-
         # Input tensor for eval net
-        self._state_eval = tf.placeholder(
-            tf.float32, [None, self._num_all_features], name="state_eval")
+        self._state_eval = tf.placeholder(tf.float32, [None, self._num_all_features], name="state_eval")
 
         # Input tensor for target net
-        self._state_target = tf.placeholder(
-            tf.float32, [None, self._num_all_features], name="state_target")
+        self._state_target = tf.placeholder(tf.float32, [None, self._num_all_features], name="state_target")
 
         # Input tensor for actions taken by agent
         self._action = tf.placeholder(
-            tf.int32, [None, ], name="action")
+            tf.int32,
+            [
+                None,
+            ],
+            name="action",
+        )
 
         # Input tensor for rewards received by agent
         self._reward = tf.placeholder(
-            tf.float32, [None, ], name="reward")
+            tf.float32,
+            [
+                None,
+            ],
+            name="reward",
+        )
 
         # Input tensor for whether episodes are finished
         self._done = tf.placeholder(
-            tf.bool, [None, ], name="done")
+            tf.bool,
+            [
+                None,
+            ],
+            name="done",
+        )
 
         # Input tensor for eval net output of next state
-        self._q_eval_all_nxt = tf.placeholder(
-            tf.float32, [None, self._num_actions], name="q_eval_all_nxt")
+        self._q_eval_all_nxt = tf.placeholder(tf.float32, [None, self._num_actions], name="q_eval_all_nxt")
 
         # Input tensor for importance-sampling weights
         self.weights = tf.placeholder(
-            tf.float32, [None, ], name="IS_weights")
+            tf.float32,
+            [
+                None,
+            ],
+            name="IS_weights",
+        )
 
         scope_eval_net = "eval_net"
         scope_target_net = "target_net"
@@ -182,8 +199,7 @@ class DQNSolver(BaseSolver):
             else:
                 max_actions = tf.argmax(q_nxt_all, axis=1, output_type=tf.int32)
             q_nxt = self._filter_actions(q_nxt_all, max_actions)
-            q_target = self._reward + self._gamma * q_nxt * \
-                (1.0 - tf.cast(self._done, tf.float32))
+            q_target = self._reward + self._gamma * q_nxt * (1.0 - tf.cast(self._done, tf.float32))
             q_target = tf.stop_gradient(q_target)
 
         with tf.variable_scope("loss"):
@@ -197,154 +213,161 @@ class DQNSolver(BaseSolver):
             self._td_err_abs = tf.abs(td_err, name="td_err_abs")  # To update sum tree
 
         with tf.variable_scope("train"):
-            self._train = tf.train.RMSPropOptimizer(
-                learning_rate=self._lr, momentum=self._momentum
-            ).minimize(self._loss)
+            self._train = tf.train.RMSPropOptimizer(learning_rate=self._lr, momentum=self._momentum).minimize(
+                self._loss
+            )
 
         # Replace target net params with eval net's
         with tf.variable_scope("replace"):
-            eval_params = tf.get_collection(
-                tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_eval_net)
-            target_params = tf.get_collection(
-                tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_target_net)
-            self._replace_target = [
-                tf.assign(t, e) for t, e in zip(target_params, eval_params)
-            ]
+            eval_params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_eval_net)
+            target_params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_target_net)
+            self._replace_target = [tf.assign(t, e) for t, e in zip(target_params, eval_params)]
 
         return eval_params, target_params
 
     def _build_net(self, features, output_name, w_init_, b_init_):
+        visual_state = tf.slice(features, begin=[0, 0], size=[-1, self._num_visual_features], name="visual_state")
 
-        visual_state = tf.slice(features,
-                                begin=[0, 0],
-                                size=[-1, self._num_visual_features],
-                                name="visual_state")
+        visual_state_2d = tf.reshape(
+            tensor=visual_state,
+            shape=[-1, self._shape_visual_state[0], self._shape_visual_state[1], self._shape_visual_state[2]],
+            name="visual_state_2d",
+        )
 
-        visual_state_2d = tf.reshape(tensor=visual_state,
-                                     shape=[-1,
-                                            self._shape_visual_state[0],
-                                            self._shape_visual_state[1],
-                                            self._shape_visual_state[2]],
-                                     name="visual_state_2d")
+        conv1 = tf.layers.conv2d(
+            inputs=visual_state_2d,
+            filters=32,
+            kernel_size=3,
+            strides=1,
+            padding="valid",
+            activation=self._leaky_relu,
+            kernel_initializer=w_init_,
+            bias_initializer=b_init_,
+            name="conv1",
+        )
 
-        conv1 = tf.layers.conv2d(inputs=visual_state_2d,
-                                 filters=32,
-                                 kernel_size=3,
-                                 strides=1,
-                                 padding='valid',
-                                 activation=self._leaky_relu,
-                                 kernel_initializer=w_init_,
-                                 bias_initializer=b_init_,
-                                 name="conv1")
+        conv2 = tf.layers.conv2d(
+            inputs=conv1,
+            filters=64,
+            kernel_size=3,
+            strides=1,
+            padding="valid",
+            activation=self._leaky_relu,
+            kernel_initializer=w_init_,
+            bias_initializer=b_init_,
+            name="conv2",
+        )
 
-        conv2 = tf.layers.conv2d(inputs=conv1,
-                                 filters=64,
-                                 kernel_size=3,
-                                 strides=1,
-                                 padding='valid',
-                                 activation=self._leaky_relu,
-                                 kernel_initializer=w_init_,
-                                 bias_initializer=b_init_,
-                                 name="conv2")
+        conv3 = tf.layers.conv2d(
+            inputs=conv2,
+            filters=128,
+            kernel_size=2,
+            strides=1,
+            padding="valid",
+            activation=self._leaky_relu,
+            kernel_initializer=w_init_,
+            bias_initializer=b_init_,
+            name="conv3",
+        )
 
-        conv3 = tf.layers.conv2d(inputs=conv2,
-                                 filters=128,
-                                 kernel_size=2,
-                                 strides=1,
-                                 padding='valid',
-                                 activation=self._leaky_relu,
-                                 kernel_initializer=w_init_,
-                                 bias_initializer=b_init_,
-                                 name="conv3")
+        conv4 = tf.layers.conv2d(
+            inputs=conv3,
+            filters=256,
+            kernel_size=2,
+            strides=1,
+            padding="valid",
+            activation=self._leaky_relu,
+            kernel_initializer=w_init_,
+            bias_initializer=b_init_,
+            name="conv4",
+        )
 
-        conv4 = tf.layers.conv2d(inputs=conv3,
-                                 filters=256,
-                                 kernel_size=2,
-                                 strides=1,
-                                 padding='valid',
-                                 activation=self._leaky_relu,
-                                 kernel_initializer=w_init_,
-                                 bias_initializer=b_init_,
-                                 name="conv4")
-
-        conv4_flat = tf.reshape(tensor=conv4,
-                                shape=[-1, 2 * 2 * 256],
-                                name="conv4_flat")
+        conv4_flat = tf.reshape(tensor=conv4, shape=[-1, 2 * 2 * 256], name="conv4_flat")
 
         combined_features = None
 
         if self._use_visual_only:
-
             combined_features = conv4_flat
 
         else:
+            important_state = tf.slice(
+                features,
+                begin=[0, self._num_visual_features],
+                size=[-1, self._num_important_features],
+                name="important_state",
+            )
 
-            important_state = tf.slice(features,
-                                       begin=[0, self._num_visual_features],
-                                       size=[-1, self._num_important_features],
-                                       name="important_state")
+            combined_features = tf.concat([conv4_flat, important_state], axis=1, name="combined_features")
 
-            combined_features = tf.concat([conv4_flat, important_state],
-                                          axis=1,
-                                          name="combined_features")
-
-        fc1 = tf.layers.dense(inputs=combined_features,
-                              units=1024,
-                              activation=self._leaky_relu,
-                              kernel_initializer=w_init_,
-                              bias_initializer=b_init_,
-                              name="fc1")
+        fc1 = tf.layers.dense(
+            inputs=combined_features,
+            units=1024,
+            activation=self._leaky_relu,
+            kernel_initializer=w_init_,
+            bias_initializer=b_init_,
+            name="fc1",
+        )
 
         q_all = None
 
         if self._use_dueling:
+            fc2_v = tf.layers.dense(
+                inputs=fc1,
+                units=512,
+                activation=self._leaky_relu,
+                kernel_initializer=w_init_,
+                bias_initializer=b_init_,
+                name="fc2_v",
+            )
 
-            fc2_v = tf.layers.dense(inputs=fc1,
-                                    units=512,
-                                    activation=self._leaky_relu,
-                                    kernel_initializer=w_init_,
-                                    bias_initializer=b_init_,
-                                    name="fc2_v")
+            fc2_a = tf.layers.dense(
+                inputs=fc1,
+                units=512,
+                activation=self._leaky_relu,
+                kernel_initializer=w_init_,
+                bias_initializer=b_init_,
+                name="fc2_a",
+            )
 
-            fc2_a = tf.layers.dense(inputs=fc1,
-                                    units=512,
-                                    activation=self._leaky_relu,
-                                    kernel_initializer=w_init_,
-                                    bias_initializer=b_init_,
-                                    name="fc2_a")
+            v = tf.layers.dense(
+                inputs=fc2_v,
+                units=1,
+                activation=self._leaky_relu,
+                kernel_initializer=w_init_,
+                bias_initializer=b_init_,
+                name="v",
+            )
 
-            v = tf.layers.dense(inputs=fc2_v,
-                                units=1,
-                                activation=self._leaky_relu,
-                                kernel_initializer=w_init_,
-                                bias_initializer=b_init_,
-                                name="v")
-
-            a = tf.layers.dense(inputs=fc2_a,
-                                units=self._num_actions,
-                                activation=self._leaky_relu,
-                                kernel_initializer=w_init_,
-                                bias_initializer=b_init_,
-                                name="a")
+            a = tf.layers.dense(
+                inputs=fc2_a,
+                units=self._num_actions,
+                activation=self._leaky_relu,
+                kernel_initializer=w_init_,
+                bias_initializer=b_init_,
+                name="a",
+            )
 
             with tf.variable_scope(output_name):
                 a_mean = tf.reduce_mean(a, axis=1, keep_dims=True, name="a_mean")
                 q_all = v + (a - a_mean)
 
         else:
+            fc2 = tf.layers.dense(
+                inputs=fc1,
+                units=1024,
+                activation=self._leaky_relu,
+                kernel_initializer=w_init_,
+                bias_initializer=b_init_,
+                name="fc2",
+            )
 
-            fc2 = tf.layers.dense(inputs=fc1,
-                                  units=1024,
-                                  activation=self._leaky_relu,
-                                  kernel_initializer=w_init_,
-                                  bias_initializer=b_init_,
-                                  name="fc2")
-
-            q_all = tf.layers.dense(inputs=fc2,
-                                    units=self._num_actions,
-                                    kernel_initializer=w_init_,
-                                    bias_initializer=b_init_,
-                                    name=output_name)
+            q_all = tf.layers.dense(
+                inputs=fc2,
+                units=self._num_actions,
+                kernel_initializer=w_init_,
+                bias_initializer=b_init_,
+                name=output_name,
+            )
 
         return q_all  # Shape: (None, num_actions)
 
@@ -400,7 +423,6 @@ class DQNSolver(BaseSolver):
         visual_state = np.zeros(self._shape_visual_state, dtype=np.int32)
         for i in range(1, self.map.num_rows - 1):
             for j in range(1, self.map.num_cols - 1):
-
                 pos = Pos(i, j)
                 if self._use_relative:
                     if self.snake.direc == Direc.LEFT:
@@ -419,8 +441,14 @@ class DQNSolver(BaseSolver):
                     visual_state[i - 1][j - 1][1] = 1
                 elif t in (PointType.HEAD_L, PointType.HEAD_U, PointType.HEAD_R, PointType.HEAD_D):
                     visual_state[i - 1][j - 1][2] = 1
-                elif t in (PointType.BODY_LU, PointType.BODY_UR, PointType.BODY_RD,
-                           PointType.BODY_DL, PointType.BODY_HOR, PointType.BODY_VER):
+                elif t in (
+                    PointType.BODY_LU,
+                    PointType.BODY_UR,
+                    PointType.BODY_RD,
+                    PointType.BODY_DL,
+                    PointType.BODY_HOR,
+                    PointType.BODY_VER,
+                ):
                     visual_state[i - 1][j - 1][3] = 1
                 raise ValueError(f"Unsupported PointType: {t}")
 
@@ -452,12 +480,7 @@ class DQNSolver(BaseSolver):
                 if Direc.opposite(self.snake.direc) != self._snake_actions[action_idx]:
                     break
         else:
-            q_eval_all = self._sess.run(
-                self._q_eval_all,
-                feed_dict={
-                    self._state_eval: self._state()[np.newaxis, :]
-                }
-            )
+            q_eval_all = self._sess.run(self._q_eval_all, feed_dict={self._state_eval: self._state()[np.newaxis, :]})
             q_eval_all = q_eval_all[0]
             # Find indices of actions with 1st and 2nd largest q value
             action_indices = np.argpartition(q_eval_all, q_eval_all.size - 2)
@@ -497,8 +520,10 @@ class DQNSolver(BaseSolver):
         self._mem_cnt += 1
 
     def _learn(self):
-        log_msg = f"step {self._learn_step} | mem_cnt: {self._mem_cnt}" + \
-            " | epsilon: {self._epsilon:.6f} | beta: {self._beta:.6f}"
+        log_msg = (
+            f"step {self._learn_step} | mem_cnt: {self._mem_cnt}"
+            + " | epsilon: {self._epsilon:.6f} | beta: {self._beta:.6f}"
+        )
 
         # Compute average
         avg_reward, avg_len, avg_steps, new_max_avg = self._history.add_learn_step()
@@ -524,7 +549,7 @@ class DQNSolver(BaseSolver):
             self._q_eval_all,
             feed_dict={
                 self._state_eval: batch_state_nxt,
-            }
+            },
         )
 
         # Learn
@@ -538,7 +563,7 @@ class DQNSolver(BaseSolver):
                 self._done: batch_done,
                 self._q_eval_all_nxt: q_eval_all_nxt,
                 self.weights: weights,
-            }
+            },
         )
         self._history.add_loss(loss)
         log_msg += f" | loss: {loss:.6f}"

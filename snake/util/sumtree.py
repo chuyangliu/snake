@@ -2,7 +2,6 @@ import numpy as np
 
 
 class SumTree:
-
     def __init__(self, capacity):
         self._capacity = capacity
         self._tree = np.zeros(2 * self._capacity - 1)
@@ -66,4 +65,4 @@ class SumTree:
         return np.min(self.leaves())
 
     def leaves(self):
-        return self._tree[-self._capacity:]
+        return self._tree[-self._capacity :]

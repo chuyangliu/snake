@@ -1,11 +1,11 @@
-from snake.base import Direc, Pos, PointType, Map, Snake
+from snake.base import Direc, Map, PointType, Pos, Snake
 
 
 def test_init():
     m = Map(5, 5)
-    s = Snake(m, Direc.RIGHT,
-              [Pos(1, 3), Pos(1, 2), Pos(1, 1)],
-              [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR])
+    s = Snake(
+        m, Direc.RIGHT, [Pos(1, 3), Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR]
+    )
     assert not s.dead
     assert s.direc is Direc.RIGHT
     assert s.len() == 3
@@ -19,9 +19,7 @@ def test_init():
 
 def test_move_eat():
     m = Map(5, 5)
-    s = Snake(m, Direc.RIGHT,
-              [Pos(1, 2), Pos(1, 1)],
-              [PointType.HEAD_R, PointType.BODY_HOR])
+    s = Snake(m, Direc.RIGHT, [Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR])
     assert s.len() == 2
     m.create_food(Pos(1, 3))
     assert m.has_food()
@@ -119,42 +117,44 @@ def test_move_eat():
 
 def test_dead():
     m = Map(5, 5)
-    s = Snake(m, Direc.RIGHT,
-              [Pos(1, 3), Pos(1, 2), Pos(1, 1)],
-              [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR])
+    s = Snake(
+        m, Direc.RIGHT, [Pos(1, 3), Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR]
+    )
     assert not s.dead
     s.move(s.direc)
     assert s.dead and s.len() == 3 and s.head() == Pos(1, 4)
 
     m.reset()
-    s = Snake(m, Direc.RIGHT,
-              [Pos(1, 3), Pos(1, 2), Pos(1, 1)],
-              [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR])
+    s = Snake(
+        m, Direc.RIGHT, [Pos(1, 3), Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR]
+    )
     assert not s.dead
     s.move(Direc.UP)
     assert s.dead and s.len() == 3 and s.head() == Pos(0, 3)
 
     m.reset()
-    s = Snake(m, Direc.DOWN,
-              [Pos(3, 1), Pos(2, 1), Pos(1, 1)],
-              [PointType.HEAD_D, PointType.BODY_VER, PointType.BODY_VER])
+    s = Snake(
+        m, Direc.DOWN, [Pos(3, 1), Pos(2, 1), Pos(1, 1)], [PointType.HEAD_D, PointType.BODY_VER, PointType.BODY_VER]
+    )
     assert not s.dead
     s.move(s.direc)
     assert s.dead and s.len() == 3 and s.head() == Pos(4, 1)
 
     m.reset()
-    s = Snake(m, Direc.DOWN,
-              [Pos(3, 1), Pos(2, 1), Pos(1, 1)],
-              [PointType.HEAD_D, PointType.BODY_VER, PointType.BODY_VER])
+    s = Snake(
+        m, Direc.DOWN, [Pos(3, 1), Pos(2, 1), Pos(1, 1)], [PointType.HEAD_D, PointType.BODY_VER, PointType.BODY_VER]
+    )
     assert not s.dead
     s.move(Direc.LEFT)
     assert s.dead and s.len() == 3 and s.head() == Pos(3, 0)
 
     m.reset()
-    s = Snake(m, Direc.LEFT,
-              [Pos(2, 2), Pos(3, 2), Pos(3, 1), Pos(2, 1), Pos(1, 1)],
-              [PointType.HEAD_U, PointType.BODY_LU, PointType.BODY_UR,
-               PointType.BODY_VER, PointType.BODY_VER])
+    s = Snake(
+        m,
+        Direc.LEFT,
+        [Pos(2, 2), Pos(3, 2), Pos(3, 1), Pos(2, 1), Pos(1, 1)],
+        [PointType.HEAD_U, PointType.BODY_LU, PointType.BODY_UR, PointType.BODY_VER, PointType.BODY_VER],
+    )
     assert not s.dead
     s.move(s.direc)
     assert s.dead and s.len() == 5 and s.head() == Pos(2, 1)
@@ -162,9 +162,9 @@ def test_dead():
 
 def test_copy():
     m = Map(5, 5)
-    s = Snake(m, Direc.RIGHT,
-              [Pos(1, 3), Pos(1, 2), Pos(1, 1)],
-              [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR])
+    s = Snake(
+        m, Direc.RIGHT, [Pos(1, 3), Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR]
+    )
     s.move(Direc.DOWN)
     s.move(Direc.LEFT)
     s_copy, _ = s.copy()

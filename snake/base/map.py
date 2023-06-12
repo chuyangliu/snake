@@ -10,9 +10,9 @@ class Map:
     def __init__(self, num_rows, num_cols):
         """Initialize a Map object."""
         if not isinstance(num_rows, int) or not isinstance(num_cols, int):
-            raise TypeError("\'num_rows\' and \'num_cols\' must be integers")
+            raise TypeError("'num_rows' and 'num_cols' must be integers")
         if num_rows < 5 or num_cols < 5:
-            raise ValueError("\'num_rows\' and \'num_cols\' must >= 5")
+            raise ValueError("'num_rows' and 'num_cols' must >= 5")
 
         self._num_rows = num_rows
         self._num_cols = num_cols
@@ -24,8 +24,7 @@ class Map:
         self._food = None
         for i in range(self._num_rows):
             for j in range(self._num_cols):
-                if i == 0 or i == self._num_rows - 1 or \
-                   j == 0 or j == self._num_cols - 1:
+                if i == 0 or i == self._num_rows - 1 or j == 0 or j == self._num_cols - 1:
                     self._content[i][j].type = PointType.WALL
                 else:
                     self._content[i][j].type = PointType.EMPTY
@@ -69,15 +68,15 @@ class Map:
         return self._content[pos.x][pos.y]
 
     def is_inside(self, pos):
-        return pos.x > 0 and pos.x < self.num_rows - 1 \
-            and pos.y > 0 and pos.y < self.num_cols - 1
+        return pos.x > 0 and pos.x < self.num_rows - 1 and pos.y > 0 and pos.y < self.num_cols - 1
 
     def is_empty(self, pos):
         return self.is_inside(pos) and self.point(pos).type == PointType.EMPTY
 
     def is_safe(self, pos):
-        return self.is_inside(pos) and (self.point(pos).type == PointType.EMPTY
-                                        or self.point(pos).type == PointType.FOOD)
+        return self.is_inside(pos) and (
+            self.point(pos).type == PointType.EMPTY or self.point(pos).type == PointType.FOOD
+        )
 
     def is_full(self):
         """Check if the map is filled with the snake's bodies."""

@@ -1,10 +1,5 @@
 import os
 
-import platform
-if platform.system() == "Darwin":
-    import matplotlib
-    matplotlib.use("TkAgg")  # Fix NSException
-
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,7 +9,6 @@ _DIR_LOG = "logs"
 
 
 class History:
-
     PATH_DATA = os.path.join(_DIR_LOG, "history-%s-%d-%d.npy")
 
     def __init__(self, num_avg):
@@ -58,7 +52,7 @@ class History:
     def add_learn_step(self):
         avg_reward, min_reward, max_reward = [0.0] * 3
         if self._history_reward:
-            chunks = self._history_reward[-self._num_avg:]
+            chunks = self._history_reward[-self._num_avg :]
             avg_reward = np.mean(chunks)
             min_reward = np.min(chunks)
             max_reward = np.max(chunks)
@@ -66,9 +60,9 @@ class History:
         self._history_min_reward.append(min_reward)
         self._history_max_reward.append(max_reward)
 
-        avg_len, min_len, max_len =[self._max_avg_len] * 3
+        avg_len, min_len, max_len = [self._max_avg_len] * 3
         if self._history_len:
-            chunks = self._history_len[-self._num_avg:]
+            chunks = self._history_len[-self._num_avg :]
             avg_len = np.mean(chunks)
             min_len = np.min(chunks)
             max_len = np.max(chunks)
@@ -78,7 +72,7 @@ class History:
 
         avg_steps, min_steps, max_steps = [0.0] * 3
         if self._history_step:
-            chunks = self._history_step[-self._num_avg:]
+            chunks = self._history_step[-self._num_avg :]
             avg_steps = np.mean(chunks)
             min_steps = np.min(chunks)
             max_steps = np.max(chunks)
@@ -100,20 +94,17 @@ class History:
         plt.xlabel("Learning Step")
         plt.ylabel("Loss")
 
-        self._plot_avg(beg_step, "Reward", "green",
-                       self._history_avg_reward,
-                       self._history_min_reward,
-                       self._history_max_reward)
+        self._plot_avg(
+            beg_step, "Reward", "green", self._history_avg_reward, self._history_min_reward, self._history_max_reward
+        )
 
-        self._plot_avg(beg_step, "Snake Length", "red",
-                       self._history_avg_len,
-                       self._history_min_len,
-                       self._history_max_len)
+        self._plot_avg(
+            beg_step, "Snake Length", "red", self._history_avg_len, self._history_min_len, self._history_max_len
+        )
 
-        self._plot_avg(beg_step, "Snake Step", "blue",
-                       self._history_avg_step,
-                       self._history_min_step,
-                       self._history_max_step)
+        self._plot_avg(
+            beg_step, "Snake Step", "blue", self._history_avg_step, self._history_min_step, self._history_max_step
+        )
 
         plt.show()
 
@@ -160,11 +151,17 @@ class History:
         x_max_avg = (np.argmax(data_avg) + learn_step_beg) * self._x_scale
         y_max_avg = np.max(data_avg)
 
-        plt.annotate(f"Max: {y_max_max:.2f}",
-                     xy=(x_max_max, y_max_max), xytext=(-50, -25),
-                     textcoords="offset points",
-                     arrowprops={"facecolor": "black", "arrowstyle": "->"})
-        plt.annotate(f"Max: {y_max_avg:.2f}",
-                     xy=(x_max_avg, y_max_avg), xytext=(-50, 20),
-                     textcoords="offset points",
-                     arrowprops={"facecolor": "black", "arrowstyle": "->"})
+        plt.annotate(
+            f"Max: {y_max_max:.2f}",
+            xy=(x_max_max, y_max_max),
+            xytext=(-50, -25),
+            textcoords="offset points",
+            arrowprops={"facecolor": "black", "arrowstyle": "->"},
+        )
+        plt.annotate(
+            f"Max: {y_max_avg:.2f}",
+            xy=(x_max_avg, y_max_avg),
+            xytext=(-50, 20),
+            textcoords="offset points",
+            arrowprops={"facecolor": "black", "arrowstyle": "->"},
+        )

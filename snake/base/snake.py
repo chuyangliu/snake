@@ -127,10 +127,12 @@ class Snake:
         if new_direc is not None:
             self._direc_next = new_direc
 
-        if self._dead or \
-           self._direc_next == Direc.NONE or \
-           self._map.is_full() or \
-           self._direc_next == Direc.opposite(self._direc):
+        if (
+            self._dead
+            or self._direc_next == Direc.NONE
+            or self._map.is_full()
+            or self._direc_next == Direc.opposite(self._direc)
+        ):
             return
 
         old_head_type, new_head_type = self._new_types()
@@ -165,22 +167,28 @@ class Snake:
         elif self._direc_next == Direc.DOWN:
             new_head_type = PointType.HEAD_D
         # old_head_type
-        if (self._direc == Direc.LEFT and self._direc_next == Direc.LEFT) or \
-           (self._direc == Direc.RIGHT and self._direc_next == Direc.RIGHT):
+        if (self._direc == Direc.LEFT and self._direc_next == Direc.LEFT) or (
+            self._direc == Direc.RIGHT and self._direc_next == Direc.RIGHT
+        ):
             old_head_type = PointType.BODY_HOR
-        elif (self._direc == Direc.UP and self._direc_next == Direc.UP) or \
-             (self._direc == Direc.DOWN and self._direc_next == Direc.DOWN):
+        elif (self._direc == Direc.UP and self._direc_next == Direc.UP) or (
+            self._direc == Direc.DOWN and self._direc_next == Direc.DOWN
+        ):
             old_head_type = PointType.BODY_VER
-        elif (self._direc == Direc.RIGHT and self._direc_next == Direc.UP) or \
-             (self._direc == Direc.DOWN and self._direc_next == Direc.LEFT):
+        elif (self._direc == Direc.RIGHT and self._direc_next == Direc.UP) or (
+            self._direc == Direc.DOWN and self._direc_next == Direc.LEFT
+        ):
             old_head_type = PointType.BODY_LU
-        elif (self._direc == Direc.LEFT and self._direc_next == Direc.UP) or \
-             (self._direc == Direc.DOWN and self._direc_next == Direc.RIGHT):
+        elif (self._direc == Direc.LEFT and self._direc_next == Direc.UP) or (
+            self._direc == Direc.DOWN and self._direc_next == Direc.RIGHT
+        ):
             old_head_type = PointType.BODY_UR
-        elif (self._direc == Direc.LEFT and self._direc_next == Direc.DOWN) or \
-             (self._direc == Direc.UP and self._direc_next == Direc.RIGHT):
+        elif (self._direc == Direc.LEFT and self._direc_next == Direc.DOWN) or (
+            self._direc == Direc.UP and self._direc_next == Direc.RIGHT
+        ):
             old_head_type = PointType.BODY_RD
-        elif (self._direc == Direc.RIGHT and self._direc_next == Direc.DOWN) or \
-             (self._direc == Direc.UP and self._direc_next == Direc.LEFT):
+        elif (self._direc == Direc.RIGHT and self._direc_next == Direc.DOWN) or (
+            self._direc == Direc.UP and self._direc_next == Direc.LEFT
+        ):
             old_head_type = PointType.BODY_DL
         return old_head_type, new_head_type

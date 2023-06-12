@@ -4,12 +4,12 @@ from snake.solver.path import PathSolver
 
 
 class _TableCell:
-
     def __init__(self):
         self.reset()
 
     def __str__(self):
         return f"{{ idx: {self.idx}  direc: {self.direc} }}"
+
     __repr__ = __str__
 
     def reset(self):
@@ -18,7 +18,6 @@ class _TableCell:
 
 
 class HamiltonSolver(BaseSolver):
-
     def __init__(self, snake, shortcuts=True):
         if snake.map.num_rows % 2 != 0 or snake.map.num_cols % 2 != 0:
             raise ValueError("num_rows and num_cols must be even.")
@@ -26,8 +25,7 @@ class HamiltonSolver(BaseSolver):
 
         self._shortcuts = shortcuts
         self._path_solver = PathSolver(snake)
-        self._table = [[_TableCell() for _ in range(snake.map.num_cols)]
-                       for _ in range(snake.map.num_rows)]
+        self._table = [[_TableCell() for _ in range(snake.map.num_cols)] for _ in range(snake.map.num_rows)]
         self._build_cycle()
 
     @property

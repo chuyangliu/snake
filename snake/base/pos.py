@@ -7,12 +7,14 @@ class Pos:
     The origin of the coordinate system is at the top-left corner,
     with x-axis extends downward and y-axis extends rightward.
     """
+
     def __init__(self, x=0, y=0):
         self._x = x
         self._y = y
 
     def __str__(self):
         return f"Pos({self._x},{self._y})"
+
     __repr__ = __str__
 
     def __eq__(self, other):
