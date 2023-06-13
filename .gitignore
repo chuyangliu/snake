@@ -1,15 +1,4 @@
-/build
-/bin
-CMakeCache.txt
-CMakeFiles
-cmake_install.cmake
-Makefile
-
-*.TMP
-*.html
-
-*.pyc
 __pycache__
-*.cache
+.pytest_cache
 
-logs/
+logs
