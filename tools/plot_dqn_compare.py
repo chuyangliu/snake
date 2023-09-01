@@ -31,7 +31,9 @@ LABELS_ZH = {
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot dqn performance comparation graphs.")
+    parser = argparse.ArgumentParser(
+        description="Plot dqn performance comparation graphs."
+    )
     parser.add_argument("path", help="Path to history data directory")
     parser.add_argument("-zh", action="store_true", help="use Chinese characters")
     args = parser.parse_args()
@@ -67,7 +69,13 @@ def main():
 
         for bar in bars:
             height = bar.get_height()
-            plt.text(bar.get_x() + bar.get_width() / 2.0, height, f"{height:.2f}", ha="center", va="bottom")
+            plt.text(
+                bar.get_x() + bar.get_width() / 2.0,
+                height,
+                f"{height:.2f}",
+                ha="center",
+                va="bottom",
+            )
 
         return bars
 
@@ -91,8 +99,12 @@ def main():
     max_step = (
         plot_one(os.path.join(args.path, "step-dqn-visual-absolute.npy"), legends[0]),
         plot_one(os.path.join(args.path, "step-dqn-visual-relative.npy"), legends[1]),
-        plot_one(os.path.join(args.path, "step-dqn-important-absolute.npy"), legends[2]),
-        plot_one(os.path.join(args.path, "step-dqn-important-relative.npy"), legends[3]),
+        plot_one(
+            os.path.join(args.path, "step-dqn-important-absolute.npy"), legends[2]
+        ),
+        plot_one(
+            os.path.join(args.path, "step-dqn-important-relative.npy"), legends[3]
+        ),
     )
     add_decorations("snake_step")
 
@@ -125,37 +137,101 @@ def main():
 
     plt.figure()
     max_len_1 = (
-        plot_one(os.path.join(args.path, "len-dqn-important-relative.npy"), legends[0], interval),
-        plot_one(os.path.join(args.path, "len-dqn-pri-important-relative.npy"), legends[1], interval),
-        plot_one(os.path.join(args.path, "len-dqn-duel-important-relative.npy"), legends[2], interval),
-        plot_one(os.path.join(args.path, "len-dqn-pri-duel-important-relative.npy"), legends[3], interval),
+        plot_one(
+            os.path.join(args.path, "len-dqn-important-relative.npy"),
+            legends[0],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "len-dqn-pri-important-relative.npy"),
+            legends[1],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "len-dqn-duel-important-relative.npy"),
+            legends[2],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "len-dqn-pri-duel-important-relative.npy"),
+            legends[3],
+            interval,
+        ),
     )
     add_decorations("snake_len")
 
     plt.figure()
     max_step_1 = (
-        plot_one(os.path.join(args.path, "step-dqn-important-relative.npy"), legends[0], interval),
-        plot_one(os.path.join(args.path, "step-dqn-pri-important-relative.npy"), legends[1], interval),
-        plot_one(os.path.join(args.path, "step-dqn-duel-important-relative.npy"), legends[2], interval),
-        plot_one(os.path.join(args.path, "step-dqn-pri-duel-important-relative.npy"), legends[3], interval),
+        plot_one(
+            os.path.join(args.path, "step-dqn-important-relative.npy"),
+            legends[0],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "step-dqn-pri-important-relative.npy"),
+            legends[1],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "step-dqn-duel-important-relative.npy"),
+            legends[2],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "step-dqn-pri-duel-important-relative.npy"),
+            legends[3],
+            interval,
+        ),
     )
     add_decorations("snake_step")
 
     plt.figure()
     max_len_2 = (
-        plot_one(os.path.join(args.path, "len-ddqn-important-relative.npy"), legends[4], interval),
-        plot_one(os.path.join(args.path, "len-ddqn-pri-important-relative.npy"), legends[5], interval),
-        plot_one(os.path.join(args.path, "len-ddqn-duel-important-relative.npy"), legends[6], interval),
-        plot_one(os.path.join(args.path, "len-ddqn-pri-duel-important-relative.npy"), legends[7], interval),
+        plot_one(
+            os.path.join(args.path, "len-ddqn-important-relative.npy"),
+            legends[4],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "len-ddqn-pri-important-relative.npy"),
+            legends[5],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "len-ddqn-duel-important-relative.npy"),
+            legends[6],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "len-ddqn-pri-duel-important-relative.npy"),
+            legends[7],
+            interval,
+        ),
     )
     add_decorations("snake_len")
 
     plt.figure()
     max_step_2 = (
-        plot_one(os.path.join(args.path, "step-ddqn-important-relative.npy"), legends[4], interval),
-        plot_one(os.path.join(args.path, "step-ddqn-pri-important-relative.npy"), legends[5], interval),
-        plot_one(os.path.join(args.path, "step-ddqn-duel-important-relative.npy"), legends[6], interval),
-        plot_one(os.path.join(args.path, "step-ddqn-pri-duel-important-relative.npy"), legends[7], interval),
+        plot_one(
+            os.path.join(args.path, "step-ddqn-important-relative.npy"),
+            legends[4],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "step-ddqn-pri-important-relative.npy"),
+            legends[5],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "step-ddqn-duel-important-relative.npy"),
+            legends[6],
+            interval,
+        ),
+        plot_one(
+            os.path.join(args.path, "step-ddqn-pri-duel-important-relative.npy"),
+            legends[7],
+            interval,
+        ),
     )
     add_decorations("snake_step")
 

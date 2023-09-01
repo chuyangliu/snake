@@ -6,7 +6,10 @@ def test_shortest():
     m = Map(7, 7)
     m.create_food(Pos(5, 5))
     s = Snake(
-        m, Direc.RIGHT, [Pos(2, 3), Pos(2, 2), Pos(2, 1)], [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR]
+        m,
+        Direc.RIGHT,
+        [Pos(2, 3), Pos(2, 2), Pos(2, 1)],
+        [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR],
     )
     solver = PathSolver(s)
     act_path = solver.shortest_path_to_food()
@@ -25,7 +28,10 @@ def test_longest():
     m = Map(6, 6)
     m.create_food(Pos(4, 4))
     s = Snake(
-        m, Direc.RIGHT, [Pos(1, 3), Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR]
+        m,
+        Direc.RIGHT,
+        [Pos(1, 3), Pos(1, 2), Pos(1, 1)],
+        [PointType.HEAD_R, PointType.BODY_HOR, PointType.BODY_HOR],
     )
     solver = PathSolver(s)
     act_path = solver.longest_path_to_tail()

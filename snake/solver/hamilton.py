@@ -25,7 +25,10 @@ class HamiltonSolver(BaseSolver):
 
         self._shortcuts = shortcuts
         self._path_solver = PathSolver(snake)
-        self._table = [[_TableCell() for _ in range(snake.map.num_cols)] for _ in range(snake.map.num_rows)]
+        self._table = [
+            [_TableCell() for _ in range(snake.map.num_cols)]
+            for _ in range(snake.map.num_rows)
+        ]
         self._build_cycle()
 
     @property
@@ -47,9 +50,15 @@ class HamiltonSolver(BaseSolver):
                 food_idx = self._table[food.x][food.y].idx
                 # Exclude one exception
                 if not (len(path) == 1 and abs(food_idx - tail_idx) == 1):
-                    head_idx_rel = self._relative_dist(tail_idx, head_idx, self.map.capacity)
-                    nxt_idx_rel = self._relative_dist(tail_idx, nxt_idx, self.map.capacity)
-                    food_idx_rel = self._relative_dist(tail_idx, food_idx, self.map.capacity)
+                    head_idx_rel = self._relative_dist(
+                        tail_idx, head_idx, self.map.capacity
+                    )
+                    nxt_idx_rel = self._relative_dist(
+                        tail_idx, nxt_idx, self.map.capacity
+                    )
+                    food_idx_rel = self._relative_dist(
+                        tail_idx, food_idx, self.map.capacity
+                    )
                     if nxt_idx_rel > head_idx_rel and nxt_idx_rel <= food_idx_rel:
                         nxt_direc = path[0]
 

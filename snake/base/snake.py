@@ -33,7 +33,9 @@ class Snake:
             head_col = random.randrange(2, self._map.num_cols - 2)
             head = Pos(head_row, head_col)
 
-            self._init_direc = random.choice([Direc.LEFT, Direc.UP, Direc.RIGHT, Direc.DOWN])
+            self._init_direc = random.choice(
+                [Direc.LEFT, Direc.UP, Direc.RIGHT, Direc.DOWN]
+            )
             self._init_bodies = [head, head.adj(Direc.opposite(self._init_direc))]
 
             self._init_types = []

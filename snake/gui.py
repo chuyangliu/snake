@@ -4,7 +4,9 @@ from snake.base import PointType, Pos
 
 
 class GameWindow(tk.Tk):
-    def __init__(self, title, conf, game_map, game=None, on_exit=None, keybindings=None):
+    def __init__(
+        self, title, conf, game_map, game=None, on_exit=None, keybindings=None
+    ):
         super().__init__()
         super().title(title)
         super().resizable(width=False, height=False)
@@ -42,7 +44,11 @@ class GameWindow(tk.Tk):
 
     def _init_widgets(self):
         self._canvas = tk.Canvas(
-            self, bg=self._conf.color_bg, width=self._conf.map_width, height=self._conf.map_height, highlightthickness=0
+            self,
+            bg=self._conf.color_bg,
+            width=self._conf.map_width,
+            height=self._conf.map_height,
+            highlightthickness=0,
         )
         self._canvas.pack(side=tk.LEFT)
 
@@ -112,7 +118,12 @@ class GameWindow(tk.Tk):
 
     def _draw_bg(self):
         self._canvas.create_rectangle(
-            0, 0, self._conf.map_width, self._conf.map_height, fill=self._conf.color_bg, outline=""
+            0,
+            0,
+            self._conf.map_width,
+            self._conf.map_height,
+            fill=self._conf.color_bg,
+            outline="",
         )
 
     def _draw_grid_line(self):
@@ -120,12 +131,20 @@ class GameWindow(tk.Tk):
             for j in range(1, self._map.num_cols - 2):
                 x = j * self._grid_width
                 y = i * self._grid_height
-                self._canvas.create_line(x, 0, x, self._conf.map_height, fill=self._conf.color_line)
-                self._canvas.create_line(0, y, self._conf.map_width, y, fill=self._conf.color_line)
+                self._canvas.create_line(
+                    x, 0, x, self._conf.map_height, fill=self._conf.color_line
+                )
+                self._canvas.create_line(
+                    0, y, self._conf.map_width, y, fill=self._conf.color_line
+                )
 
     def _draw_info_panel(self):
         self._canvas.create_line(
-            self._conf.map_width - 1, 0, self._conf.map_width - 1, self._conf.map_height, fill=self._conf.color_line
+            self._conf.map_width - 1,
+            0,
+            self._conf.map_width - 1,
+            self._conf.map_height,
+            fill=self._conf.color_line,
         )
 
         if self._snake.dead:
@@ -137,18 +156,33 @@ class GameWindow(tk.Tk):
 
         self._info_var.set(
             self._conf.info_str
-            % (status_str, self._game.episode, self._snake.steps, self._snake.len(), self._map.capacity)
+            % (
+                status_str,
+                self._game.episode,
+                self._snake.steps,
+                self._snake.len(),
+                self._map.capacity,
+            )
         )
 
     def _draw_map_contents(self):
         for i in range(self._map.num_rows - 2):
             for j in range(self._map.num_cols - 2):
-                self._draw_grid(j * self._grid_width, i * self._grid_height, self._map.point(Pos(i + 1, j + 1)).type)
+                self._draw_grid(
+                    j * self._grid_width,
+                    i * self._grid_height,
+                    self._map.point(Pos(i + 1, j + 1)).type,
+                )
 
     def _draw_grid(self, x, y, t):
         if t == PointType.WALL:
             self._canvas.create_rectangle(
-                x, y, x + self._grid_width, y + self._grid_height, fill=self._conf.color_wall, outline=""
+                x,
+                y,
+                x + self._grid_width,
+                y + self._grid_height,
+                fill=self._conf.color_wall,
+                outline="",
             )
         elif t == PointType.FOOD:
             self._canvas.create_rectangle(
@@ -179,22 +213,47 @@ class GameWindow(tk.Tk):
             )
         elif t == PointType.HEAD_R:
             self._canvas.create_rectangle(
-                x, y + self._dy1, x + self._dx2, y + self._dy2, fill=self._conf.color_head, outline=""
+                x,
+                y + self._dy1,
+                x + self._dx2,
+                y + self._dy2,
+                fill=self._conf.color_head,
+                outline="",
             )
         elif t == PointType.HEAD_D:
             self._canvas.create_rectangle(
-                x + self._dx1, y, x + self._dx2, y + self._dy2, fill=self._conf.color_head, outline=""
+                x + self._dx1,
+                y,
+                x + self._dx2,
+                y + self._dy2,
+                fill=self._conf.color_head,
+                outline="",
             )
         elif t == PointType.BODY_LU:
             self._canvas.create_rectangle(
-                x, y + self._dy1, x + self._dx1, y + self._dy2, fill=self._conf.color_body, outline=""
+                x,
+                y + self._dy1,
+                x + self._dx1,
+                y + self._dy2,
+                fill=self._conf.color_body,
+                outline="",
             )
             self._canvas.create_rectangle(
-                x + self._dx1, y, x + self._dx2, y + self._dy2, fill=self._conf.color_body, outline=""
+                x + self._dx1,
+                y,
+                x + self._dx2,
+                y + self._dy2,
+                fill=self._conf.color_body,
+                outline="",
             )
         elif t == PointType.BODY_UR:
             self._canvas.create_rectangle(
-                x + self._dx1, y, x + self._dx2, y + self._dy2, fill=self._conf.color_body, outline=""
+                x + self._dx1,
+                y,
+                x + self._dx2,
+                y + self._dy2,
+                fill=self._conf.color_body,
+                outline="",
             )
             self._canvas.create_rectangle(
                 x + self._dx1,
@@ -231,13 +290,28 @@ class GameWindow(tk.Tk):
                 outline="",
             )
             self._canvas.create_rectangle(
-                x, y + self._dy1, x + self._dx1, y + self._dy2, fill=self._conf.color_body, outline=""
+                x,
+                y + self._dy1,
+                x + self._dx1,
+                y + self._dy2,
+                fill=self._conf.color_body,
+                outline="",
             )
         elif t == PointType.BODY_HOR:
             self._canvas.create_rectangle(
-                x, y + self._dy1, x + self._grid_width, y + self._dy2, fill=self._conf.color_body, outline=""
+                x,
+                y + self._dy1,
+                x + self._grid_width,
+                y + self._dy2,
+                fill=self._conf.color_body,
+                outline="",
             )
         elif t == PointType.BODY_VER:
             self._canvas.create_rectangle(
-                x + self._dx1, y, x + self._dx2, y + self._grid_height, fill=self._conf.color_body, outline=""
+                x + self._dx1,
+                y,
+                x + self._dx2,
+                y + self._grid_height,
+                fill=self._conf.color_body,
+                outline="",
             )

@@ -95,15 +95,30 @@ class History:
         plt.ylabel("Loss")
 
         self._plot_avg(
-            beg_step, "Reward", "green", self._history_avg_reward, self._history_min_reward, self._history_max_reward
+            beg_step,
+            "Reward",
+            "green",
+            self._history_avg_reward,
+            self._history_min_reward,
+            self._history_max_reward,
         )
 
         self._plot_avg(
-            beg_step, "Snake Length", "red", self._history_avg_len, self._history_min_len, self._history_max_len
+            beg_step,
+            "Snake Length",
+            "red",
+            self._history_avg_len,
+            self._history_min_len,
+            self._history_max_len,
         )
 
         self._plot_avg(
-            beg_step, "Snake Step", "blue", self._history_avg_step, self._history_min_step, self._history_max_step
+            beg_step,
+            "Snake Step",
+            "blue",
+            self._history_avg_step,
+            self._history_min_step,
+            self._history_max_step,
         )
 
         plt.show()
@@ -111,34 +126,75 @@ class History:
     def save(self, beg_step, end_step):
         log("Saving history...")
         np.save(History.PATH_DATA % ("loss", beg_step, end_step), self._history_loss)
-        np.save(History.PATH_DATA % ("avg-reward", beg_step, end_step), self._history_avg_reward)
-        np.save(History.PATH_DATA % ("min-reward", beg_step, end_step), self._history_min_reward)
-        np.save(History.PATH_DATA % ("max-reward", beg_step, end_step), self._history_max_reward)
-        np.save(History.PATH_DATA % ("avg-len", beg_step, end_step), self._history_avg_len)
-        np.save(History.PATH_DATA % ("min-len", beg_step, end_step), self._history_min_len)
-        np.save(History.PATH_DATA % ("max-len", beg_step, end_step), self._history_max_len)
-        np.save(History.PATH_DATA % ("avg-step", beg_step, end_step), self._history_avg_step)
-        np.save(History.PATH_DATA % ("min-step", beg_step, end_step), self._history_min_step)
-        np.save(History.PATH_DATA % ("max-step", beg_step, end_step), self._history_max_step)
+        np.save(
+            History.PATH_DATA % ("avg-reward", beg_step, end_step),
+            self._history_avg_reward,
+        )
+        np.save(
+            History.PATH_DATA % ("min-reward", beg_step, end_step),
+            self._history_min_reward,
+        )
+        np.save(
+            History.PATH_DATA % ("max-reward", beg_step, end_step),
+            self._history_max_reward,
+        )
+        np.save(
+            History.PATH_DATA % ("avg-len", beg_step, end_step), self._history_avg_len
+        )
+        np.save(
+            History.PATH_DATA % ("min-len", beg_step, end_step), self._history_min_len
+        )
+        np.save(
+            History.PATH_DATA % ("max-len", beg_step, end_step), self._history_max_len
+        )
+        np.save(
+            History.PATH_DATA % ("avg-step", beg_step, end_step), self._history_avg_step
+        )
+        np.save(
+            History.PATH_DATA % ("min-step", beg_step, end_step), self._history_min_step
+        )
+        np.save(
+            History.PATH_DATA % ("max-step", beg_step, end_step), self._history_max_step
+        )
 
     def load(self, beg_step, end_step):
         log("Loading history...")
         self._history_loss = np.load(History.PATH_DATA % ("loss", beg_step, end_step))
-        self._history_avg_reward = np.load(History.PATH_DATA % ("avg-reward", beg_step, end_step))
-        self._history_min_reward = np.load(History.PATH_DATA % ("min-reward", beg_step, end_step))
-        self._history_max_reward = np.load(History.PATH_DATA % ("max-reward", beg_step, end_step))
-        self._history_avg_len = np.load(History.PATH_DATA % ("avg-len", beg_step, end_step))
-        self._history_min_len = np.load(History.PATH_DATA % ("min-len", beg_step, end_step))
-        self._history_max_len = np.load(History.PATH_DATA % ("max-len", beg_step, end_step))
-        self._history_avg_step = np.load(History.PATH_DATA % ("avg-step", beg_step, end_step))
-        self._history_min_step = np.load(History.PATH_DATA % ("min-step", beg_step, end_step))
-        self._history_max_step = np.load(History.PATH_DATA % ("max-step", beg_step, end_step))
+        self._history_avg_reward = np.load(
+            History.PATH_DATA % ("avg-reward", beg_step, end_step)
+        )
+        self._history_min_reward = np.load(
+            History.PATH_DATA % ("min-reward", beg_step, end_step)
+        )
+        self._history_max_reward = np.load(
+            History.PATH_DATA % ("max-reward", beg_step, end_step)
+        )
+        self._history_avg_len = np.load(
+            History.PATH_DATA % ("avg-len", beg_step, end_step)
+        )
+        self._history_min_len = np.load(
+            History.PATH_DATA % ("min-len", beg_step, end_step)
+        )
+        self._history_max_len = np.load(
+            History.PATH_DATA % ("max-len", beg_step, end_step)
+        )
+        self._history_avg_step = np.load(
+            History.PATH_DATA % ("avg-step", beg_step, end_step)
+        )
+        self._history_min_step = np.load(
+            History.PATH_DATA % ("min-step", beg_step, end_step)
+        )
+        self._history_max_step = np.load(
+            History.PATH_DATA % ("max-step", beg_step, end_step)
+        )
 
     def _plot_avg(self, learn_step_beg, name, color, data_avg, data_min, data_max):
         plt.figure(num=name)
 
         steps = (np.arange(len(data_avg)) + learn_step_beg) * self._x_scale
-        plt.fill_between(steps, data_min, data_max, color=self._color_fill, label="Min/Max")
+        plt.fill_between(
+            steps, data_min, data_max, color=self._color_fill, label="Min/Max"
+        )
         plt.plot(steps, data_avg, "-", color=color, linewidth=0.5, label="Average")
 
         plt.xlabel("Learning Step (1e4)")

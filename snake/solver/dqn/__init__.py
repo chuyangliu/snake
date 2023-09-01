@@ -6,9 +6,15 @@ import numpy as np
 try:
     import tensorflow as tf
 except ImportError:
-    print("*------------------------------------------------------------------------------*")
-    print("| WARNING: Tensorflow 1.x is not installed. DQN testing will not be available. |")
-    print("*------------------------------------------------------------------------------*")
+    print(
+        "*------------------------------------------------------------------------------*"
+    )
+    print(
+        "| WARNING: Tensorflow 1.x is not installed. DQN testing will not be available. |"
+    )
+    print(
+        "*------------------------------------------------------------------------------*"
+    )
 
 from snake.base import Direc, PointType, Pos
 from snake.solver.base import BaseSolver
@@ -33,7 +39,9 @@ class DQNSolver(BaseSolver):
         self._use_dueling = True  # Whether to use dueling network
 
         self._exploit_step = 1000000  # Steps that epsilon decreases
-        self._max_learn_step = 3000000  # Maximum learning steps (require >= self._restore_step)
+        self._max_learn_step = (
+            3000000  # Maximum learning steps (require >= self._restore_step)
+        )
         self._restore_step = 0  # Which learning step to restore (0 means not restore)
 
         # Rewards
@@ -69,10 +77,16 @@ class DQNSolver(BaseSolver):
         self._freq_log = 500  # Learning steps
         self._freq_save = 20000  # Learning steps
 
-        self._history_num_avg = 50  # How many latest history episodes to compute average
+        self._history_num_avg = (
+            50  # How many latest history episodes to compute average
+        )
 
         if self._use_relative:
-            self._snake_actions = [SnakeAction.LEFT, SnakeAction.FORWARD, SnakeAction.RIGHT]
+            self._snake_actions = [
+                SnakeAction.LEFT,
+                SnakeAction.FORWARD,
+                SnakeAction.RIGHT,
+            ]
         else:
             self._snake_actions = [Direc.LEFT, Direc.UP, Direc.RIGHT, Direc.DOWN]
 
@@ -82,10 +96,14 @@ class DQNSolver(BaseSolver):
         self._shape_visual_state = (self.map.num_rows - 2, self.map.num_cols - 2, 4)
         self._num_visual_features = np.prod(self._shape_visual_state)
         self._num_important_features = 0 if self._use_visual_only else self._num_actions
-        self._num_all_features = self._num_visual_features + self._num_important_features
+        self._num_all_features = (
+            self._num_visual_features + self._num_important_features
+        )
 
         # Replay memory
-        self._mem = Memory(mem_size=self._mem_size, alpha=self._alpha, epsilon=self._pri_epsilon)
+        self._mem = Memory(
+            mem_size=self._mem_size, alpha=self._alpha, epsilon=self._pri_epsilon
+        )
         self._mem_cnt = 0
 
         self._learn_step = 1
@@ -96,7 +114,9 @@ class DQNSolver(BaseSolver):
         self._history = History(self._history_num_avg)
 
         eval_params, target_params = self._build_graph()
-        self._net_saver = tf.train.Saver(var_list=eval_params + target_params, max_to_keep=500)
+        self._net_saver = tf.train.Saver(
+            var_list=eval_params + target_params, max_to_keep=500
+        )
 
         self._sess = tf.Session()
         self._sess.run(tf.global_variables_initializer())
@@ -106,7 +126,9 @@ class DQNSolver(BaseSolver):
             self._load_model()
 
     def _save_model(self):
-        self._net_saver.save(self._sess, DQNSolver.PATH_NET % self._learn_step, write_meta_graph=False)
+        self._net_saver.save(
+            self._sess, DQNSolver.PATH_NET % self._learn_step, write_meta_graph=False
+        )
         with open(DQNSolver.PATH_VAR % self._learn_step, "w", encoding="utf-8") as f:
             json.dump(
                 {
@@ -131,10 +153,14 @@ class DQNSolver(BaseSolver):
 
     def _build_graph(self):
         # Input tensor for eval net
-        self._state_eval = tf.placeholder(tf.float32, [None, self._num_all_features], name="state_eval")
+        self._state_eval = tf.placeholder(
+            tf.float32, [None, self._num_all_features], name="state_eval"
+        )
 
         # Input tensor for target net
-        self._state_target = tf.placeholder(tf.float32, [None, self._num_all_features], name="state_target")
+        self._state_target = tf.placeholder(
+            tf.float32, [None, self._num_all_features], name="state_target"
+        )
 
         # Input tensor for actions taken by agent
         self._action = tf.placeholder(
@@ -164,7 +190,9 @@ class DQNSolver(BaseSolver):
         )
 
         # Input tensor for eval net output of next state
-        self._q_eval_all_nxt = tf.placeholder(tf.float32, [None, self._num_actions], name="q_eval_all_nxt")
+        self._q_eval_all_nxt = tf.placeholder(
+            tf.float32, [None, self._num_actions], name="q_eval_all_nxt"
+        )
 
         # Input tensor for importance-sampling weights
         self.weights = tf.placeholder(
@@ -183,7 +211,9 @@ class DQNSolver(BaseSolver):
 
         with tf.variable_scope(scope_eval_net):
             # Eval net output
-            self._q_eval_all = self._build_net(self._state_eval, "q_eval_all", w_init, b_init)
+            self._q_eval_all = self._build_net(
+                self._state_eval, "q_eval_all", w_init, b_init
+            )
 
         with tf.variable_scope("q_eval"):
             q_eval = self._filter_actions(self._q_eval_all, self._action)
@@ -195,11 +225,15 @@ class DQNSolver(BaseSolver):
         with tf.variable_scope("q_target"):
             max_actions = None
             if self._use_ddqn:
-                max_actions = tf.argmax(self._q_eval_all_nxt, axis=1, output_type=tf.int32)
+                max_actions = tf.argmax(
+                    self._q_eval_all_nxt, axis=1, output_type=tf.int32
+                )
             else:
                 max_actions = tf.argmax(q_nxt_all, axis=1, output_type=tf.int32)
             q_nxt = self._filter_actions(q_nxt_all, max_actions)
-            q_target = self._reward + self._gamma * q_nxt * (1.0 - tf.cast(self._done, tf.float32))
+            q_target = self._reward + self._gamma * q_nxt * (
+                1.0 - tf.cast(self._done, tf.float32)
+            )
             q_target = tf.stop_gradient(q_target)
 
         with tf.variable_scope("loss"):
@@ -213,24 +247,40 @@ class DQNSolver(BaseSolver):
             self._td_err_abs = tf.abs(td_err, name="td_err_abs")  # To update sum tree
 
         with tf.variable_scope("train"):
-            self._train = tf.train.RMSPropOptimizer(learning_rate=self._lr, momentum=self._momentum).minimize(
-                self._loss
-            )
+            self._train = tf.train.RMSPropOptimizer(
+                learning_rate=self._lr, momentum=self._momentum
+            ).minimize(self._loss)
 
         # Replace target net params with eval net's
         with tf.variable_scope("replace"):
-            eval_params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_eval_net)
-            target_params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_target_net)
-            self._replace_target = [tf.assign(t, e) for t, e in zip(target_params, eval_params)]
+            eval_params = tf.get_collection(
+                tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_eval_net
+            )
+            target_params = tf.get_collection(
+                tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_target_net
+            )
+            self._replace_target = [
+                tf.assign(t, e) for t, e in zip(target_params, eval_params)
+            ]
 
         return eval_params, target_params
 
     def _build_net(self, features, output_name, w_init_, b_init_):
-        visual_state = tf.slice(features, begin=[0, 0], size=[-1, self._num_visual_features], name="visual_state")
+        visual_state = tf.slice(
+            features,
+            begin=[0, 0],
+            size=[-1, self._num_visual_features],
+            name="visual_state",
+        )
 
         visual_state_2d = tf.reshape(
             tensor=visual_state,
-            shape=[-1, self._shape_visual_state[0], self._shape_visual_state[1], self._shape_visual_state[2]],
+            shape=[
+                -1,
+                self._shape_visual_state[0],
+                self._shape_visual_state[1],
+                self._shape_visual_state[2],
+            ],
             name="visual_state_2d",
         )
 
@@ -282,7 +332,9 @@ class DQNSolver(BaseSolver):
             name="conv4",
         )
 
-        conv4_flat = tf.reshape(tensor=conv4, shape=[-1, 2 * 2 * 256], name="conv4_flat")
+        conv4_flat = tf.reshape(
+            tensor=conv4, shape=[-1, 2 * 2 * 256], name="conv4_flat"
+        )
 
         combined_features = None
 
@@ -297,7 +349,9 @@ class DQNSolver(BaseSolver):
                 name="important_state",
             )
 
-            combined_features = tf.concat([conv4_flat, important_state], axis=1, name="combined_features")
+            combined_features = tf.concat(
+                [conv4_flat, important_state], axis=1, name="combined_features"
+            )
 
         fc1 = tf.layers.dense(
             inputs=combined_features,
@@ -439,7 +493,12 @@ class DQNSolver(BaseSolver):
                     visual_state[i - 1][j - 1][0] = 1
                 elif t == PointType.FOOD:
                     visual_state[i - 1][j - 1][1] = 1
-                elif t in (PointType.HEAD_L, PointType.HEAD_U, PointType.HEAD_R, PointType.HEAD_D):
+                elif t in (
+                    PointType.HEAD_L,
+                    PointType.HEAD_U,
+                    PointType.HEAD_R,
+                    PointType.HEAD_D,
+                ):
                     visual_state[i - 1][j - 1][2] = 1
                 elif t in (
                     PointType.BODY_LU,
@@ -460,7 +519,9 @@ class DQNSolver(BaseSolver):
         head = self.snake.head()
 
         if self._use_relative:
-            for i, action in enumerate([SnakeAction.LEFT, SnakeAction.FORWARD, SnakeAction.RIGHT]):
+            for i, action in enumerate(
+                [SnakeAction.LEFT, SnakeAction.FORWARD, SnakeAction.RIGHT]
+            ):
                 direc = SnakeAction.to_direc(action, self.snake.direc)
                 if not self.map.is_safe(head.adj(direc)):
                     important_state[i] = 1
@@ -480,7 +541,10 @@ class DQNSolver(BaseSolver):
                 if Direc.opposite(self.snake.direc) != self._snake_actions[action_idx]:
                     break
         else:
-            q_eval_all = self._sess.run(self._q_eval_all, feed_dict={self._state_eval: self._state()[np.newaxis, :]})
+            q_eval_all = self._sess.run(
+                self._q_eval_all,
+                feed_dict={self._state_eval: self._state()[np.newaxis, :]},
+            )
             q_eval_all = q_eval_all[0]
             # Find indices of actions with 1st and 2nd largest q value
             action_indices = np.argpartition(q_eval_all, q_eval_all.size - 2)

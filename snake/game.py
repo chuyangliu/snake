@@ -81,7 +81,9 @@ class Game:
     def __init__(self, conf):
         self._conf = conf
         self._map = Map(conf.map_rows + 2, conf.map_cols + 2)
-        self._snake = Snake(self._map, conf.init_direc, conf.init_bodies, conf.init_types)
+        self._snake = Snake(
+            self._map, conf.init_direc, conf.init_bodies, conf.init_types
+        )
         self._pause = False
         self._solver = globals()[self._conf.solver_name](self._snake)
         self._episode = 1
@@ -137,13 +139,19 @@ class Game:
             while True:
                 self._game_main_normal()
                 if self._map.is_full():
-                    print(f"FULL (len: {self._snake.len()} | steps: {self._snake.steps})")
+                    print(
+                        f"FULL (len: {self._snake.len()} | steps: {self._snake.steps})"
+                    )
                     break
                 if self._snake.dead:
-                    print(f"DEAD (len: {self._snake.len()} | steps: {self._snake.steps})")
+                    print(
+                        f"DEAD (len: {self._snake.len()} | steps: {self._snake.steps})"
+                    )
                     break
                 if self._snake.steps >= steps_limit:
-                    print(f"STEP LIMIT (len: {self._snake.len()} | steps: {self._snake.steps})")
+                    print(
+                        f"STEP LIMIT (len: {self._snake.len()} | steps: {self._snake.steps})"
+                    )
                     self._write_logs()  # Write the last step
                     break
             tot_len += self._snake.len()
@@ -152,7 +160,9 @@ class Game:
 
         avg_len = tot_len / num_episodes
         avg_steps = tot_steps / num_episodes
-        print(f"\n[Summary]\nAverage Length: {avg_len:.2f}\nAverage Steps: {avg_steps:.2f}\n")
+        print(
+            f"\n[Summary]\nAverage Length: {avg_len:.2f}\nAverage Steps: {avg_steps:.2f}\n"
+        )
 
         self._on_exit()
 
@@ -236,7 +246,9 @@ class Game:
                 self._log_file.close()
 
     def _write_logs(self):
-        self._log_file.write(f"[ Episode {self._episode} / Step {self._snake.steps} ]\n")
+        self._log_file.write(
+            f"[ Episode {self._episode} / Step {self._snake.steps} ]\n"
+        )
         for i in range(self._map.num_rows):
             for j in range(self._map.num_cols):
                 pos = Pos(i, j)
@@ -247,12 +259,19 @@ class Game:
                     self._log_file.write("# ")
                 elif t == PointType.FOOD:
                     self._log_file.write("F ")
-                elif t == PointType.HEAD_L or t == PointType.HEAD_U or t == PointType.HEAD_R or t == PointType.HEAD_D:
+                elif (
+                    t == PointType.HEAD_L
+                    or t == PointType.HEAD_U
+                    or t == PointType.HEAD_R
+                    or t == PointType.HEAD_D
+                ):
                     self._log_file.write("H ")
                 elif pos == self._snake.tail():
                     self._log_file.write("T ")
                 else:
                     self._log_file.write("B ")
             self._log_file.write("\n")
-        self._log_file.write(f"[ last/next direc: {self._snake.direc}/{self._snake.direc_next} ]\n")
+        self._log_file.write(
+            f"[ last/next direc: {self._snake.direc}/{self._snake.direc_next} ]\n"
+        )
         self._log_file.write("\n")

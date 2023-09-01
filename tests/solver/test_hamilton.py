@@ -4,7 +4,9 @@ from snake.solver import HamiltonSolver
 
 def test_cycle():
     m = Map(6, 6)
-    s = Snake(m, Direc.RIGHT, [Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR])
+    s = Snake(
+        m, Direc.RIGHT, [Pos(1, 2), Pos(1, 1)], [PointType.HEAD_R, PointType.BODY_HOR]
+    )
     solver = HamiltonSolver(s, False)
     table = solver.table
     cnt = 0
