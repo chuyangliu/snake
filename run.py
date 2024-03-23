@@ -4,6 +4,7 @@ from snake.game import Game, GameConf, GameMode
 
 
 def main():
+    """The main CLI"""
     dict_solver = {
         "greedy": "GreedySolver",
         "hamilton": "HamiltonSolver",
