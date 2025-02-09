@@ -194,3 +194,72 @@ class Snake:
         ):
             old_head_type = PointType.BODY_DL
         return old_head_type, new_head_type
+
+
+import pygame
+import random
+
+# Initialize pygame
+pygame.init()
+
+# Constants
+WIDTH, HEIGHT = 500, 500
+CELL_SIZE = 20
+WHITE, GREEN, RED, BLACK = (255, 255, 255), (0, 255, 0), (255, 0, 0), (0, 0, 0)
+
+# Set up display
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Snake Game AI")
+
+# Snake and Food Initialization
+snake = [(100, 100)]
+direction = (CELL_SIZE, 0)
+food = (random.randrange(0, WIDTH, CELL_SIZE), random.randrange(0, HEIGHT, CELL_SIZE))
+
+# AI Logic: Moves towards food
+def move_towards_food():
+    global direction
+    head_x, head_y = snake[0]
+    food_x, food_y = food
+
+    if head_x < food_x:
+        direction = (CELL_SIZE, 0)  # Move Right
+    elif head_x > food_x:
+        direction = (-CELL_SIZE, 0)  # Move Left
+    elif head_y < food_y:
+        direction = (0, CELL_SIZE)  # Move Down
+    elif head_y > food_y:
+        direction = (0, -CELL_SIZE)  # Move Up
+
+# Game Loop
+running = True
+clock = pygame.time.Clock()
+while running:
+    pygame.time.delay(100)  # Control speed
+    screen.fill(BLACK)
+
+    # Move Snake
+    move_towards_food()
+    new_head = (snake[0][0] + direction[0], snake[0][1] + direction[1])
+    snake.insert(0, new_head)
+
+    # Check Collision with Food
+    if new_head == food:
+        food = (random.randrange(0, WIDTH, CELL_SIZE), random.randrange(0, HEIGHT, CELL_SIZE))
+    else:
+        snake.pop()  # Remove tail if no food eaten
+
+    # Draw Snake and Food
+    for part in snake:
+        pygame.draw.rect(screen, GREEN, (*part, CELL_SIZE, CELL_SIZE))
+    pygame.draw.rect(screen, RED, (*food, CELL_SIZE, CELL_SIZE))
+
+    pygame.display.update()
+
+    # Check for collisions (wall or self)
+    if (new_head[0] < 0 or new_head[0] >= WIDTH or
+        new_head[1] < 0 or new_head[1] >= HEIGHT or
+        new_head in snake[1:]):
+        running = False  # End game if snake crashes
+
+pygame.quit()
